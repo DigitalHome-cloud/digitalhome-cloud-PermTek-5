@@ -2,44 +2,36 @@
 
 PermTek-5 has no user pool of its own. `backend/amplify/auth/resource.ts`
 references the pool DHC core defines (ADR 0008), so one account works across
-Portal, Designer, Modeler and PermTek-5. The backend needs six identifiers of
-that pool at synth time. They are **not committed** (this repository is public
-and ARNs carry the account number); they come from the environment.
+Portal, Designer, Modeler and PermTek-5.
 
-## The six variables
+## How the pool is found
 
-| Variable | What | Where it comes from |
-|---|---|---|
-| `DHC_USER_POOL_ID` | the user pool | DHC core's deployed outputs (`auth.user_pool_id`) |
-| `DHC_USER_POOL_CLIENT_ID` | the web app client the DHC apps use | `auth.user_pool_client_id` |
-| `DHC_IDENTITY_POOL_ID` | the identity pool | `auth.identity_pool_id` |
-| `DHC_AUTH_ROLE_ARN` | the identity pool's authenticated role | the identity pool's roles |
-| `DHC_UNAUTH_ROLE_ARN` | its unauthenticated role | the identity pool's roles |
-| `DHC_ADMINS_GROUP_ROLE_ARN` | the IAM role of the `dhc-admins` group | the group |
+Nothing about the pool is kept in this repository or in PermTek-5's settings.
+Right before each deploy, `backend/scripts/dhc-auth-env.mjs` asks the **DHC core
+backend** which pool it deployed, and exports what `referenceAuth` needs:
 
-Read them with the AWS CLI (credentials of the DHC account):
+| Exported | From the core backend |
+|---|---|
+| `DHC_USER_POOL_ID`, `DHC_USER_POOL_CLIENT_ID`, `DHC_IDENTITY_POOL_ID` | outputs `userPoolId`, `webClientId`, `identityPoolId` of the core branch's stack |
+| `DHC_AUTH_ROLE_ARN`, `DHC_UNAUTH_ROLE_ARN` | the identity pool's two roles, in the core's auth stack |
+| `DHC_ADMINS_GROUP_ROLE_ARN` | the `dhc-admins` group's role, in the core's auth stack |
 
-```bash
-# the pool, client and identity pool: from DHC core's deployed outputs
-npx ampx generate outputs --app-id <core app id> --branch stage --out-dir /tmp/dhc-core
-jq -r '.auth | .user_pool_id, .user_pool_client_id, .identity_pool_id' /tmp/dhc-core/amplify_outputs.json
+It reads only Amplify and CloudFormation (the core's own `amplify-*` stacks).
+The core is named by two variables, the same ones the DHC frontends use:
 
-# the identity pool's roles
-aws cognito-identity get-identity-pool-roles --identity-pool-id <identity pool id> \
-  --query 'Roles.[authenticated, unauthenticated]' --output text
-
-# the dhc-admins group's role
-aws cognito-idp get-group --user-pool-id <user pool id> --group-name dhc-admins --query 'Group.RoleArn' --output text
-```
+| Variable | Value |
+|---|---|
+| `AMPLIFY_BACKEND_APP_ID` | the Amplify app id of `digitalhome-cloud-core` |
+| `AMPLIFY_BACKEND_APP_BRANCH` | its deployed branch (`stage`) |
 
 ## Where they go
 
-- **Hosted branches** (`main`, `stage`): environment variables of the Amplify
-  app `digitalhome-cloud-PermTek-5`, at app level (both branches use the one
-  DHC pool): `aws amplify update-app --app-id <app id> --environment-variables …`
-  or the console (App settings → Environment variables).
-- **A sandbox**: export them in the shell (or `set -a; source .env.local; set +a`)
-  before `npm run dev` / `npx ampx sandbox`.
+- **Hosted branches** (`main`, `stage`): environment variables of the Amplify app
+  `digitalhome-cloud-PermTek-5`, at app level (both branches use the one DHC
+  pool). `amplify.yml` runs the lookup before `ampx pipeline-deploy`.
+- **A sandbox**: export them in the shell (or `set -a; source .env.local; set +a`);
+  `npm run dev` runs the lookup before `ampx sandbox`. To run `ampx` by hand:
+  `eval "$(node backend/scripts/dhc-auth-env.mjs)"` first.
 
 ## What referencing the pool does to it
 

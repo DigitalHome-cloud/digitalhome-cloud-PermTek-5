@@ -32,8 +32,8 @@ site files live in a private site pack, never here (ADR 0013).
 npm install && npm --prefix backend install     # two installs: backend/ is not a workspace
 npm test && npm run backend:typecheck
 npm run build                                   # must pass with no amplify_outputs.json
-npm run dev                                     # sandbox + site; first export the DHC_* variables
-                                                # (docs/setup/shared-auth.md)
+npm run dev                                     # sandbox + site; first export AMPLIFY_BACKEND_APP_ID/_BRANCH
+                                                # of DHC core (docs/setup/shared-auth.md)
 ```
 
 Branches: `stage` integrates, `main` is production (Amplify app

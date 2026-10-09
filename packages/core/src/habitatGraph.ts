@@ -55,6 +55,8 @@ export function habitatToTtl(h: Habitat): Promise<string> {
     add(c.id, "row", int(c.row)); add(c.id, "col", int(c.col));
     add(c.id, "grows", namedNode(CROP_IRI + c.cropId));
     add(c.id, "cellStatus", p(c.status));
+    if (c.depthMm !== undefined) add(c.id, "cellSowingDepthMm", int(c.depthMm));
+    if (c.seeds !== undefined) add(c.id, "cellSeedsPerPoint", int(c.seeds));
     if (c.sownOn) add(c.id, "sownOn", literal(c.sownOn, namedNode(XSD + "date")));
   }
   for (const g of h.plants) {
@@ -104,6 +106,8 @@ export function habitatFromTtl(ttl: string): Habitat {
     id, bedId: str(id, "inBed") ?? "", row: num(id, "row") ?? 0, col: num(id, "col") ?? 0, cropId: crop(id),
     status: (CELL_STATUSES as string[]).includes(local(one(id, "cellStatus")) ?? "") ? (local(one(id, "cellStatus")) as CellStatus) : "CellPlanned",
     ...(str(id, "sownOn") && { sownOn: str(id, "sownOn") }),
+    ...(num(id, "cellSowingDepthMm") !== undefined && { depthMm: num(id, "cellSowingDepthMm") }),
+    ...(num(id, "cellSeedsPerPoint") !== undefined && { seeds: num(id, "cellSeedsPerPoint") }),
   }));
   const plants: GardenPlant[] = ofType("GardenPlant").map((id) => ({
     id, name: label(id), zoneId: str(id, "inZone") ?? "", cropId: crop(id),

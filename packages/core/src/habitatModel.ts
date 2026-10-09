@@ -20,7 +20,11 @@ export const CELL_STATUSES: CellStatus[] = ["CellPlanned", "CellSown", "CellGrow
 /** Ids are full IRIs in the app's id space, minted (ADR-0003). */
 export interface Zone { id: string; name: string; kind: ZoneKind; exposure: Exposure[]; areaM2?: number; offsetC?: number }
 export interface Bed { id: string; name: string; zoneId: string; lengthCm: number; widthCm: number; depthCm?: number; cellCm: number }
-export interface Cell { id: string; bedId: string; row: number; col: number; cropId: string; status: CellStatus; sownOn?: string }
+export interface Cell {
+  id: string; bedId: string; row: number; col: number; cropId: string; status: CellStatus; sownOn?: string;
+  /** Only when this cell differs from the crop's sowing depth / seeds per point. */
+  depthMm?: number; seeds?: number;
+}
 export interface GardenPlant {
   id: string; name: string; zoneId: string; cropId: string;
   plantedYear?: number; rootstock?: string; xM?: number; yM?: number;
@@ -78,4 +82,35 @@ export function checkHabitat(h: Habitat): Problem[] {
     if (!cropById(c.cropId)) problems.push({ code: "unknownCrop", id: c.id });
   }
   return problems;
+}
+
+/**
+ * What a seeder (a person, or the gantry of ADR 0017) does at one cell.
+ * Bed coordinates in mm: the origin is the outer corner of row 0 / column 0,
+ * x runs along the bed's length (columns), y across its width (rows); the
+ * point is the cell's centre. Depth is below the substrate surface.
+ */
+export interface SowingJob {
+  cellId: string; bedId: string; cropId: string;
+  xMm: number; yMm: number; depthMm: number; seeds: number;
+  /** Keep this clear around the point (the crop's spacing). */
+  spacingMm: number;
+  /** When to look whether it came up (days after sowing). */
+  checkAfterDays: number | null;
+}
+
+export function sowingJob(h: Habitat, cell: Cell): SowingJob | null {
+  const bed = h.beds.find((b) => b.id === cell.bedId);
+  const crop = cropById(cell.cropId);
+  if (!bed || !crop) return null;
+  const cellMm = bed.cellCm * 10;
+  return {
+    cellId: cell.id, bedId: bed.id, cropId: crop.id,
+    xMm: Math.round((cell.col + 0.5) * cellMm),
+    yMm: Math.round((cell.row + 0.5) * cellMm),
+    depthMm: cell.depthMm ?? crop.needs.sowingDepthMm ?? 5,
+    seeds: cell.seeds ?? crop.needs.seedsPerPoint ?? 1,
+    spacingMm: (crop.needs.spacingCm ?? bed.cellCm) * 10,
+    checkAfterDays: crop.needs.germinationDays ?? null,
+  };
 }

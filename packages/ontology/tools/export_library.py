@@ -20,7 +20,9 @@ LIBRARY = os.path.join(ROOT, "abox", "library", "crops.ttl")
 OUT = os.path.join(ROOT, "..", "core", "src", "library.generated.ts")
 PERMA = Namespace("https://permaculture.digitalhome.cloud/ontology#")
 ID = "https://permaculture.digitalhome.cloud/id/"
-NEEDS = ("sowMinTempC", "plantOutMinNightC", "boltAboveC", "frostTender", "daysToHarvest", "spacingCm")
+NEEDS = ("sowMinTempC", "plantOutMinNightC", "boltAboveC", "frostTender", "daysToHarvest", "spacingCm",
+         "sowingDepthMm", "seedsPerPoint", "germinationDays", "waterMmPerWeek")
+INTS = ("daysToHarvest", "spacingCm", "sowingDepthMm", "seedsPerPoint", "germinationDays")
 
 
 def local(node):
@@ -37,7 +39,7 @@ def export(g):
             v = g.value(crop, PERMA[n])
             if v is not None:
                 v = v.toPython()
-                needs[n] = v if isinstance(v, bool) else (int(v) if n in ("daysToHarvest", "spacingCm") else float(v))
+                needs[n] = v if isinstance(v, bool) else (int(v) if n in INTS else float(v))
         windows = []
         for w in g.objects(crop, PERMA.typicalWindow):
             x = {"activity": local(g.value(w, PERMA.activity)),

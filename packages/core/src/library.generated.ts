@@ -58,7 +58,11 @@ export const LIBRARY: LibraryCrop[] = [
       "plantOutMinNightC": 13.0,
       "frostTender": true,
       "daysToHarvest": 150,
-      "spacingCm": 50
+      "spacingCm": 50,
+      "sowingDepthMm": 5,
+      "seedsPerPoint": 2,
+      "germinationDays": 12,
+      "waterMmPerWeek": 30.0
     },
     "windows": []
   },
@@ -80,7 +84,11 @@ export const LIBRARY: LibraryCrop[] = [
       "plantOutMinNightC": 12.0,
       "frostTender": true,
       "daysToHarvest": 70,
-      "spacingCm": 20
+      "spacingCm": 20,
+      "sowingDepthMm": 3,
+      "seedsPerPoint": 3,
+      "germinationDays": 8,
+      "waterMmPerWeek": 25.0
     },
     "windows": []
   },
@@ -149,7 +157,11 @@ export const LIBRARY: LibraryCrop[] = [
       "sowMinTempC": 10.0,
       "frostTender": false,
       "daysToHarvest": 90,
-      "spacingCm": 20
+      "spacingCm": 20,
+      "sowingDepthMm": 10,
+      "seedsPerPoint": 4,
+      "germinationDays": 14,
+      "waterMmPerWeek": 20.0
     },
     "windows": []
   },
@@ -171,7 +183,11 @@ export const LIBRARY: LibraryCrop[] = [
       "plantOutMinNightC": 10.0,
       "frostTender": true,
       "daysToHarvest": 60,
-      "spacingCm": 80
+      "spacingCm": 80,
+      "sowingDepthMm": 25,
+      "seedsPerPoint": 2,
+      "germinationDays": 7,
+      "waterMmPerWeek": 30.0
     },
     "windows": []
   },
@@ -194,7 +210,11 @@ export const LIBRARY: LibraryCrop[] = [
       "boltAboveC": 27.0,
       "frostTender": false,
       "daysToHarvest": 50,
-      "spacingCm": 20
+      "spacingCm": 20,
+      "sowingDepthMm": 10,
+      "seedsPerPoint": 3,
+      "germinationDays": 14,
+      "waterMmPerWeek": 15.0
     },
     "windows": []
   },
@@ -232,7 +252,11 @@ export const LIBRARY: LibraryCrop[] = [
       "boltAboveC": 25.0,
       "frostTender": false,
       "daysToHarvest": 55,
-      "spacingCm": 25
+      "spacingCm": 25,
+      "sowingDepthMm": 5,
+      "seedsPerPoint": 3,
+      "germinationDays": 7,
+      "waterMmPerWeek": 25.0
     },
     "windows": []
   },
@@ -269,7 +293,11 @@ export const LIBRARY: LibraryCrop[] = [
       "sowMinTempC": 8.0,
       "frostTender": false,
       "daysToHarvest": 75,
-      "spacingCm": 15
+      "spacingCm": 15,
+      "sowingDepthMm": 10,
+      "seedsPerPoint": 3,
+      "germinationDays": 21,
+      "waterMmPerWeek": 20.0
     },
     "windows": []
   },
@@ -362,7 +390,11 @@ export const LIBRARY: LibraryCrop[] = [
       "boltAboveC": 24.0,
       "frostTender": false,
       "daysToHarvest": 30,
-      "spacingCm": 5
+      "spacingCm": 5,
+      "sowingDepthMm": 10,
+      "seedsPerPoint": 2,
+      "germinationDays": 5,
+      "waterMmPerWeek": 20.0
     },
     "windows": []
   },
@@ -384,7 +416,11 @@ export const LIBRARY: LibraryCrop[] = [
       "boltAboveC": 24.0,
       "frostTender": false,
       "daysToHarvest": 35,
-      "spacingCm": 10
+      "spacingCm": 10,
+      "sowingDepthMm": 5,
+      "seedsPerPoint": 3,
+      "germinationDays": 6,
+      "waterMmPerWeek": 20.0
     },
     "windows": []
   },
@@ -455,7 +491,11 @@ export const LIBRARY: LibraryCrop[] = [
       "boltAboveC": 22.0,
       "frostTender": false,
       "daysToHarvest": 45,
-      "spacingCm": 10
+      "spacingCm": 10,
+      "sowingDepthMm": 20,
+      "seedsPerPoint": 2,
+      "germinationDays": 10,
+      "waterMmPerWeek": 25.0
     },
     "windows": []
   },
@@ -476,7 +516,11 @@ export const LIBRARY: LibraryCrop[] = [
       "sowMinTempC": 7.0,
       "frostTender": false,
       "daysToHarvest": 70,
-      "spacingCm": 5
+      "spacingCm": 5,
+      "sowingDepthMm": 10,
+      "seedsPerPoint": 3,
+      "germinationDays": 12,
+      "waterMmPerWeek": 20.0
     },
     "windows": []
   },
@@ -531,7 +575,11 @@ export const LIBRARY: LibraryCrop[] = [
       "plantOutMinNightC": 12.0,
       "frostTender": true,
       "daysToHarvest": 150,
-      "spacingCm": 40
+      "spacingCm": 40,
+      "sowingDepthMm": 5,
+      "seedsPerPoint": 2,
+      "germinationDays": 12,
+      "waterMmPerWeek": 25.0
     },
     "windows": []
   },
@@ -552,7 +600,11 @@ export const LIBRARY: LibraryCrop[] = [
       "sowMinTempC": 8.0,
       "frostTender": false,
       "daysToHarvest": 60,
-      "spacingCm": 30
+      "spacingCm": 30,
+      "sowingDepthMm": 20,
+      "seedsPerPoint": 1,
+      "germinationDays": 10,
+      "waterMmPerWeek": 25.0
     },
     "windows": []
   },
@@ -590,7 +642,11 @@ export const LIBRARY: LibraryCrop[] = [
       "plantOutMinNightC": 10.0,
       "frostTender": true,
       "daysToHarvest": 120,
-      "spacingCm": 50
+      "spacingCm": 50,
+      "sowingDepthMm": 5,
+      "seedsPerPoint": 2,
+      "germinationDays": 8,
+      "waterMmPerWeek": 30.0
     },
     "windows": []
   },

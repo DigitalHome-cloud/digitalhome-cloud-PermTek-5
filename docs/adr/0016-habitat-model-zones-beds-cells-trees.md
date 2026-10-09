@@ -46,7 +46,18 @@ garden need less, and nothing geographic.
    - Everything is *to confirm*. A site's own `perma:SeasonWindow`s (the
      site calendars of ADR 0012) take precedence when the app reads them, a
      later step.
-5. **The library reaches the app as generated TypeScript**
+5. **What a seeder needs is in the A-Box**, so a gantry (ADR 0017) can work
+   from it alone:
+   - per crop: sowing depth (mm), seeds per point, days to germinate, water
+     (mm per week), spacing;
+   - per cell: optional depth and seed overrides.
+   - `sowingJob(habitat, cell)` turns a cell into bed coordinates (mm from the
+     corner of row 0 / column 0, x along the length, y across the width, the
+     cell's centre), plus depth, seeds, clearance and when to check
+     germination.
+   - Machine calibration (where the bed's corner and the soil surface are for
+     the gantry) stays on the robot edge.
+6. **The library reaches the app as generated TypeScript**
    (`tools/export_library.py` → `packages/core/src/library.generated.ts`),
    with a drift test, like the Lambda's copy of the shapes.
 

@@ -3,7 +3,7 @@ import fs from "node:fs";
 import { test } from "node:test";
 
 import {
-  checkHabitat, climateMonths, cropById, crops, deriveWindows, habitatFromTtl, habitatToTtl, isWoody, whatNow,
+  checkHabitat, climateMonths, sowingJob, cropById, crops, deriveWindows, habitatFromTtl, habitatToTtl, isWoody, whatNow,
 } from "../dist/index.js";
 
 // docs/adr/0016: the calendar from an area's climate; the habitat's graph.
@@ -97,4 +97,16 @@ test("what now: in May the sown radishes and growing lettuce are picked; in Marc
   assert.ok(may.some((i) => i.suggestion && i.cropId === "crop-spinach"), "the roof bed could take spinach");
   const march = whatNow(h, lowland, 3);
   assert.equal(did(march, "Flowering", "crop-plum")?.lateFrost, true);
+});
+
+test("a sowing job for the robot: cell centre in mm from the bed's corner, depth and seeds", () => {
+  const h = habitatFromTtl(DEMO);
+  const lettuce = h.cells.find((c) => c.cropId === "crop-lettuce" && c.row === 1 && c.col === 4);
+  assert.deepEqual(sowingJob(h, lettuce), {
+    cellId: lettuce.id, bedId: lettuce.bedId, cropId: "crop-lettuce",
+    xMm: 450, yMm: 150, depthMm: 5, seeds: 3, spacingMm: 250, checkAfterDays: 7,
+  });
+  const deeper = h.cells.find((c) => c.depthMm !== undefined);
+  assert.equal(deeper.cropId, "crop-radish");
+  assert.equal(sowingJob(h, deeper).depthMm, 15, "a cell's own depth wins over the crop's");
 });

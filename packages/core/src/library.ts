@@ -21,6 +21,14 @@ export interface CropNeeds {
   frostTender?: boolean;
   daysToHarvest?: number;
   spacingCm?: number;
+  /** How deep the seed goes (mm); the seeder's z. */
+  sowingDepthMm?: number;
+  /** Seeds at one point; the strongest is kept. */
+  seedsPerPoint?: number;
+  /** Days to come up in good conditions: when to check the point. */
+  germinationDays?: number;
+  /** Rain plus watering wanted in the growing season (mm = l/m² per week). */
+  waterMmPerWeek?: number;
 }
 
 export interface TypicalWindow { activity: string; from: number; to: number; part?: string }

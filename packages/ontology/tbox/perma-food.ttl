@@ -242,3 +242,25 @@ perma:typicalWindow a owl:ObjectProperty ;
 perma:TypicalWindow a owl:Class ;
     rdfs:label "Typical window"@en , "Typisches Zeitfenster"@de , "Période habituelle"@fr ;
     rdfs:comment "When an activity usually happens for a crop in a stated climate (perma:basis), e.g. pruning or flowering of a fruit tree. A site's own perma:SeasonWindow overrides it."@en .
+
+# ------------------------------------------------------------ how to sow and tend (by hand or by a gantry robot)
+
+perma:sowingDepthMm a owl:DatatypeProperty ;
+    rdfs:domain perma:Crop ; rdfs:range xsd:integer ;
+    rdfs:label "sowing depth (mm)"@en , "Saattiefe (mm)"@de , "profondeur de semis (mm)"@fr ;
+    rdfs:comment "How deep the seed goes; 0 for light germinators pressed onto the surface. A gantry's seeder uses it as its z."@en .
+
+perma:seedsPerPoint a owl:DatatypeProperty ;
+    rdfs:domain perma:Crop ; rdfs:range xsd:integer ;
+    rdfs:label "seeds per point"@en , "Samen je Saatstelle"@de , "graines par poquet"@fr ;
+    rdfs:comment "Seeds sown at one point; the strongest seedling is kept (thinning)."@en .
+
+perma:germinationDays a owl:DatatypeProperty ;
+    rdfs:domain perma:Crop ; rdfs:range xsd:integer ;
+    rdfs:label "days to germinate"@en , "Keimdauer (Tage)"@de , "durée de levée (jours)"@fr ;
+    rdfs:comment "In good conditions; after this, a camera pass can check whether the point came up."@en .
+
+perma:waterMmPerWeek a owl:DatatypeProperty ;
+    rdfs:domain perma:Crop ; rdfs:range xsd:decimal ;
+    rdfs:label "water (mm per week)"@en , "Wasser (mm pro Woche)"@de , "eau (mm par semaine)"@fr ;
+    rdfs:comment "Rain plus watering the crop wants in its growing season; 1 mm is 1 litre per m². Shallow roof beds dry faster."@en .

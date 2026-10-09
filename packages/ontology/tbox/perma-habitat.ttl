@@ -114,6 +114,16 @@ perma:cellStatus a owl:ObjectProperty ;
     rdfs:label "status"@en , "Stand"@de , "état"@fr ;
     rdfs:comment "One concept from perma:CellStatuses: planned, sown, growing, harvested."@en .
 
+perma:cellSowingDepthMm a owl:DatatypeProperty ;
+    rdfs:domain perma:PlantingCell ; rdfs:range xsd:integer ;
+    rdfs:label "sowing depth here (mm)"@en , "Saattiefe hier (mm)"@de , "profondeur de semis ici (mm)"@fr ;
+    rdfs:comment "Only when this cell differs from the crop's perma:sowingDepthMm."@en .
+
+perma:cellSeedsPerPoint a owl:DatatypeProperty ;
+    rdfs:domain perma:PlantingCell ; rdfs:range xsd:integer ;
+    rdfs:label "seeds here"@en , "Samen hier"@de , "graines ici"@fr ;
+    rdfs:comment "Only when this cell differs from the crop's perma:seedsPerPoint."@en .
+
 perma:sownOn a owl:DatatypeProperty ;
     rdfs:domain perma:PlantingCell ; rdfs:range xsd:date ;
     rdfs:label "sown on"@en , "gesät am"@de , "semé le"@fr .

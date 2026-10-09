@@ -39,7 +39,7 @@ id:cell-c008 a perma:PlantingCell ; perma:inBed id:bed-b-citybed ; perma:row 7 ;
 id:cell-c009 a perma:PlantingCell ; perma:inBed id:bed-b-citybed ; perma:row 7 ; perma:col 7 ;
     perma:grows crop:crop-lettuce ; perma:cellStatus perma:CellGrowing ; perma:sownOn "2026-04-18"^^xsd:date .
 id:cell-c010 a perma:PlantingCell ; perma:inBed id:bed-b-citybed ; perma:row 10 ; perma:col 10 ;
-    perma:grows crop:crop-radish ; perma:cellStatus perma:CellSown ; perma:sownOn "2026-05-02"^^xsd:date .
+    perma:grows crop:crop-radish ; perma:cellStatus perma:CellSown ; perma:sownOn "2026-05-02"^^xsd:date ; perma:cellSowingDepthMm 15 .
 id:cell-c011 a perma:PlantingCell ; perma:inBed id:bed-b-citybed ; perma:row 10 ; perma:col 11 ;
     perma:grows crop:crop-radish ; perma:cellStatus perma:CellSown ; perma:sownOn "2026-05-02"^^xsd:date .
 id:cell-c012 a perma:PlantingCell ; perma:inBed id:bed-b-citybed ; perma:row 10 ; perma:col 12 ;

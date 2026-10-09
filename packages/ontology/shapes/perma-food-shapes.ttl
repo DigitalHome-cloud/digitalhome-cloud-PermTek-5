@@ -41,6 +41,10 @@ permash:CropShape a sh:NodeShape ;
     sh:property [ sh:path perma:frostTender ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
     sh:property [ sh:path perma:daysToHarvest ; sh:maxCount 1 ; sh:datatype xsd:integer ; sh:minInclusive 1 ; sh:maxInclusive 730 ] ;
     sh:property [ sh:path perma:spacingCm ; sh:maxCount 1 ; sh:datatype xsd:integer ; sh:minInclusive 1 ; sh:maxInclusive 2000 ] ;
+    sh:property [ sh:path perma:sowingDepthMm ; sh:maxCount 1 ; sh:datatype xsd:integer ; sh:minInclusive 0 ; sh:maxInclusive 150 ] ;
+    sh:property [ sh:path perma:seedsPerPoint ; sh:maxCount 1 ; sh:datatype xsd:integer ; sh:minInclusive 1 ; sh:maxInclusive 20 ] ;
+    sh:property [ sh:path perma:germinationDays ; sh:maxCount 1 ; sh:datatype xsd:integer ; sh:minInclusive 1 ; sh:maxInclusive 120 ] ;
+    sh:property [ sh:path perma:waterMmPerWeek ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minInclusive 0 ; sh:maxInclusive 100 ] ;
     sh:property [ sh:path perma:growthForm ; sh:maxCount 1 ; sh:in ( perma:Tree perma:Shrub ) ;
                   sh:message "A crop's growth form is perma:Tree or perma:Shrub (or none, for herbaceous crops)."@en ] ;
     sh:property [ sh:path perma:typicalWindow ; sh:node permash:TypicalWindowShape ] .

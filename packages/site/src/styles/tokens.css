@@ -1,5 +1,5 @@
 /*
- * D-LAB-5 template — design tokens.
+ * PermTek-5 — design tokens: the template's names, the DigitalHome.Cloud Portal's look.
  *
  * Everything is a CSS custom property on :root, component classes are
  * .pt-{component}__{part}--{modifier}, and the palette is dark-first.
@@ -18,27 +18,31 @@
 
 :root {
   /* -- surfaces ---------------------------------------------------------- */
-  --pt-bg: #0f172a;
-  --pt-bg-sunken: #020617;
-  --pt-surface: #1e293b;
-  --pt-surface-raised: #334155;
+  --pt-bg: #0d0f0e;
+  --pt-bg-sunken: #0a0c0b;
+  --pt-surface: #111614;
+  --pt-surface-raised: #18201c;
   /* The rail sits deeper than a card so the content area reads as the
      foreground. In light it is the opposite — white against a tinted page. */
-  --pt-rail: #0b1120;
-  --pt-border: #334155;
-  --pt-border-strong: #475569;
+  --pt-rail: #0a0c0b;
+  --pt-border: rgba(120, 140, 130, 0.14);
+  --pt-border-strong: rgba(120, 140, 130, 0.3);
 
   /* -- text -------------------------------------------------------------- */
-  --pt-text: #e5e7eb;
-  --pt-text-muted: #94a3b8;
-  --pt-text-inverse: #0f172a;
+  --pt-text: #dfe7e2;
+  --pt-text-muted: #8a958f;
+  --pt-text-inverse: #0a0c0b;
 
-  /* -- accents ----------------------------------------------------------- */
-  --pt-accent: #38bdf8;
-  --pt-accent-strong: #0ea5e9;
-  --pt-success: #22c55e;
-  --pt-warning: #f59e0b;
-  --pt-danger: #ef4444;
+  /* -- accents ----------------------------------------------------------- *
+   * The DigitalHome.Cloud Portal's palette (repos/portal src/styles/
+   * overview.css, docs/design-identity.md): near-black green surfaces, green
+   * as the accent, amber for warnings.
+   * ---------------------------------------------------------------------- */
+  --pt-accent: #6fae7e;
+  --pt-accent-strong: #7fbe8e;
+  --pt-success: #6fae7e;
+  --pt-warning: #c9954f;
+  --pt-danger: #e06c64;
 
   /* -- categorical ------------------------------------------------------- *
    * Six hues for whatever a fork ends up distinguishing — series in a chart,
@@ -47,16 +51,16 @@
    * survive both themes and the common forms of colour blindness. Use them in
    * order; do not reach past six without checking the pairs still separate.
    * ---------------------------------------------------------------------- */
-  --pt-cat-1: #38bdf8;
-  --pt-cat-2: #f59e0b;
-  --pt-cat-3: #a78bfa;
-  --pt-cat-4: #34d399;
-  --pt-cat-5: #fb7185;
-  --pt-cat-6: #94a3b8;
+  --pt-cat-1: #62b6c9;
+  --pt-cat-2: #c9954f;
+  --pt-cat-3: #8a8fd6;
+  --pt-cat-4: #6fae7e;
+  --pt-cat-5: #d98a8a;
+  --pt-cat-6: #8a958f;
 
   /* Text drawn ON a categorical fill. The six above are mid-tone, so a dark
      ink reads on all of them in either theme. */
-  --pt-cat-ink: #0f172a;
+  --pt-cat-ink: #0a0c0b;
 
   /* -- type -------------------------------------------------------------- */
   --pt-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -71,49 +75,49 @@
   --pt-space-8: 2rem;
   --pt-radius: 0.5rem;
   --pt-radius-sm: 0.25rem;
-  --pt-shadow: 0 10px 30px rgb(2 6 23 / 0.5);
+  --pt-shadow: 0 10px 30px rgb(0 0 0 / 0.5);
 }
 
 /*
  * Light theme.
  */
 [data-pt-theme="light"] {
-  --pt-bg: #f1f5f9;
-  --pt-bg-sunken: #f8fafc;
+  --pt-bg: #f2f5f3;
+  --pt-bg-sunken: #f8faf9;
   --pt-surface: #ffffff;
   /* Slate 200, NOT the page tint. Setting this to #f1f5f9 makes it identical
      to --pt-bg, so anything painted "raised" is painted invisible. In dark
      the ladder runs bg → surface → raised, getting lighter; in light it runs
      the other way, because on a tinted page a card is white and a raised
      element is what separates itself from the card. */
-  --pt-surface-raised: #e2e8f0;
+  --pt-surface-raised: #e3e9e5;
   --pt-rail: #ffffff;
-  --pt-border: #cbd5e1;
-  --pt-border-strong: #94a3b8;
+  --pt-border: #d3dbd6;
+  --pt-border-strong: #9aa8a0;
 
-  --pt-text: #0f172a;
-  --pt-text-muted: #334155;
+  --pt-text: #121614;
+  --pt-text-muted: #3d4741;
   --pt-text-inverse: #ffffff;
 
   /* Darkened from the dark-theme accents: #38bdf8 on white is about 1.9:1,
      nowhere near the 4.5:1 that body text needs. Any accent used for text or
      for a control's outline has to be recomputed here, not reused. */
-  --pt-accent: #0369a1;
-  --pt-accent-strong: #075985;
-  --pt-success: #15803d;
-  --pt-warning: #b45309;
-  --pt-danger: #b91c1c;
+  --pt-accent: #2f6e40;
+  --pt-accent-strong: #255a34;
+  --pt-success: #2f6e40;
+  --pt-warning: #8a5a17;
+  --pt-danger: #b42318;
 
   /* The categorical hues are darkened by the same reasoning. They are used as
      FILLS more often than as text, but a 1.9:1 fill against a white card is
      just as unreadable as 1.9:1 text. */
-  --pt-cat-1: #0284c7;
-  --pt-cat-2: #b45309;
-  --pt-cat-3: #7c3aed;
-  --pt-cat-4: #059669;
-  --pt-cat-5: #e11d48;
-  --pt-cat-6: #475569;
+  --pt-cat-1: #1d6b7c;
+  --pt-cat-2: #8a5a17;
+  --pt-cat-3: #4e529e;
+  --pt-cat-4: #2f6e40;
+  --pt-cat-5: #a3364a;
+  --pt-cat-6: #55605a;
   --pt-cat-ink: #ffffff;
 
-  --pt-shadow: 0 10px 30px rgb(15 23 42 / 0.12);
+  --pt-shadow: 0 10px 30px rgb(18 22 20 / 0.12);
 }

@@ -1,0 +1,26 @@
+@prefix perma:  <https://permaculture.digitalhome.cloud/ontology#> .
+@prefix id:     <https://permaculture.digitalhome.cloud/id/> .
+@prefix schema: <https://schema.org/> .
+
+# Added 2026-10-09: second set of recipes, each keeping the harvest a different way.
+
+id:recipe-pistou a schema:Recipe ;
+    schema:name "Pistou"@fr , "Pistou (basil sauce)"@en , "Pistou (Basilikumsauce)"@de ;
+    schema:inLanguage "fr" ;
+    schema:recipeYield "environ 12 portions" ;
+    schema:totalTime "PT20M" ;
+    perma:preservesAs perma:Frozen ;
+    perma:shelfLifeDays 180 ;
+    schema:description "Garlic in oil must not be kept at room temperature: freeze at once. Add cheese only when serving."@en ;
+    schema:recipeInstructions (
+        "Laver et sécher le basilic, éplucher l'ail."
+        "Piler ou mixer le basilic et l'ail avec le sel, puis ajouter l'huile d'olive en filet."
+        "Répartir aussitôt dans un bac à glaçons et congeler ; démouler les cubes dans un sac."
+        "Au moment de servir, ajouter éventuellement du parmesan râpé."
+    ) ;
+    perma:usesIngredient
+        [ schema:name "1 gros bouquet de basilic (50 g de feuilles)" ; perma:crop id:crop-basil ; perma:part perma:Leaf ; perma:acceptsMethod perma:Fresh ] ,
+        [ schema:name "3 gousses d'ail" ; perma:crop id:crop-garlic ; perma:part perma:Bulb ; perma:acceptsMethod perma:Fresh , perma:Cellar ] ,
+        [ schema:name "10 cl d'huile d'olive" ] ,
+        [ schema:name "1 pincée de sel" ] ,
+        [ schema:name "parmesan râpé (à l'usage)" ] .

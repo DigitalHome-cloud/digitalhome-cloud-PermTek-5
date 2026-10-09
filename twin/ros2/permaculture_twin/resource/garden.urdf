@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<robot name="garden">
+  <webots>
+    <plugin type="permaculture_twin.garden_driver.GardenDriver" />
+  </webots>
+</robot>

@@ -1,0 +1,25 @@
+@prefix perma:  <https://permaculture.digitalhome.cloud/ontology#> .
+@prefix id:     <https://permaculture.digitalhome.cloud/id/> .
+@prefix schema: <https://schema.org/> .
+
+# Added 2026-10-09: second set of recipes, each keeping the harvest a different way.
+
+id:recipe-compote-de-pommes a schema:Recipe ;
+    schema:name "Compote de pommes en bocaux"@fr , "Bottled apple compote"@en , "Apfelkompott im Glas"@de ;
+    schema:inLanguage "fr" ;
+    schema:recipeYield "environ 4 bocaux de 500 ml" ;
+    schema:totalTime "PT2H" ;
+    perma:preservesAs perma:Bottled ;
+    perma:shelfLifeDays 365 ;
+    schema:description "Apples are acid enough for bottling at 100 °C; follow the jar maker's time."@en ;
+    schema:recipeInstructions (
+        "Éplucher, épépiner et couper les pommes en morceaux."
+        "Les cuire à couvert avec l'eau et la cannelle 15 à 20 minutes, sucrer à son goût."
+        "Écraser ou laisser en morceaux, remplir les bocaux chauds."
+        "Fermer et stériliser selon la notice du fabricant de bocaux."
+    ) ;
+    perma:usesIngredient
+        [ schema:name "2 kg de pommes" ; perma:crop id:crop-apple ; perma:part perma:Fruit ; perma:acceptsMethod perma:Fresh , perma:Cellar ] ,
+        [ schema:name "10 cl d'eau" ] ,
+        [ schema:name "100 g de sucre (facultatif)" ] ,
+        [ schema:name "1 bâton de cannelle" ] .

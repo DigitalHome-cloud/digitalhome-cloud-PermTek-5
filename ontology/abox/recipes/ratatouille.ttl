@@ -1,0 +1,33 @@
+@prefix perma:  <https://permaculture.digitalhome.cloud/ontology#> .
+@prefix id:     <https://permaculture.digitalhome.cloud/id/> .
+@prefix schema: <https://schema.org/> .
+
+# Added 2026-10-09: second set of recipes, each keeping the harvest a different way.
+
+id:recipe-ratatouille a schema:Recipe ;
+    schema:name "Ratatouille"@fr , "Ratatouille"@en , "Ratatouille"@de ;
+    schema:inLanguage "fr" ;
+    schema:recipeYield "4 à 6 personnes, 2 à 3 boîtes de congélation" ;
+    schema:totalTime "PT2H" ;
+    perma:preservesAs perma:Frozen ;
+    perma:shelfLifeDays 240 ;
+    schema:description "Frozen, not bottled: low-acid vegetables bottled at 100 °C carry a botulism risk."@en ;
+    schema:recipeInstructions (
+        "Couper les aubergines, les courgettes et les poivrons en dés ; émincer les oignons et l'ail."
+        "Faire revenir chaque légume séparément dans l'huile d'olive, puis les réunir avec les tomates concassées, le thym et le laurier."
+        "Saler, poivrer et laisser mijoter 45 minutes à couvert ; ajouter le basilic à la fin."
+        "Laisser refroidir, répartir en portions et congeler aussitôt."
+    ) ;
+    perma:usesIngredient
+        [ schema:name "2 aubergines" ; perma:crop id:crop-aubergine ; perma:part perma:Fruit ; perma:acceptsMethod perma:Fresh ] ,
+        [ schema:name "3 courgettes" ; perma:crop id:crop-courgette ; perma:part perma:Fruit ; perma:acceptsMethod perma:Fresh ] ,
+        [ schema:name "2 poivrons" ; perma:crop id:crop-sweet-pepper ; perma:part perma:Fruit ; perma:acceptsMethod perma:Fresh ] ,
+        [ schema:name "6 tomates bien mûres" ; perma:crop id:crop-tomato ; perma:part perma:Fruit ; perma:acceptsMethod perma:Fresh ] ,
+        [ schema:name "2 oignons" ; perma:crop id:crop-onion ; perma:part perma:Bulb ; perma:acceptsMethod perma:Fresh , perma:Cellar ] ,
+        [ schema:name "3 gousses d'ail" ; perma:crop id:crop-garlic ; perma:part perma:Bulb ; perma:acceptsMethod perma:Fresh , perma:Cellar ] ,
+        [ schema:name "2 branches de thym" ; perma:crop id:crop-thyme ; perma:part perma:Leaf ; perma:acceptsMethod perma:Fresh , perma:Dried ] ,
+        [ schema:name "1 feuille de laurier" ; perma:crop id:crop-bay-laurel ; perma:part perma:Leaf ; perma:acceptsMethod perma:Fresh , perma:Dried ] ,
+        [ schema:name "quelques feuilles de basilic" ; perma:crop id:crop-basil ; perma:part perma:Leaf ; perma:acceptsMethod perma:Fresh ] ,
+        [ schema:name "6 cuillères à soupe d'huile d'olive" ] ,
+        [ schema:name "sel" ] ,
+        [ schema:name "poivre" ; perma:crop id:crop-black-pepper ; perma:part perma:Fruit ; perma:acceptsMethod perma:Dried ] .

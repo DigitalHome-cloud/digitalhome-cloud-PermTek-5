@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<robot name="explorer_rover">
+  <webots>
+    <!-- webots_ros2_driver would publish every device on its own topics, the radio
+         included: a channel between rovers that the stigmergy rule forbids (ADR 0007).
+         Only the plugin's interface is exposed. -->
+    <device reference="camera" type="Camera"><ros><enabled>false</enabled></ros></device>
+    <device reference="gps" type="GPS"><ros><enabled>false</enabled></ros></device>
+    <device reference="ds_front_left" type="DistanceSensor"><ros><enabled>false</enabled></ros></device>
+    <device reference="ds_front_center" type="DistanceSensor"><ros><enabled>false</enabled></ros></device>
+    <device reference="ds_front_right" type="DistanceSensor"><ros><enabled>false</enabled></ros></device>
+    <device reference="drop_left" type="DistanceSensor"><ros><enabled>false</enabled></ros></device>
+    <device reference="drop_right" type="DistanceSensor"><ros><enabled>false</enabled></ros></device>
+    <device reference="ir_rx" type="Receiver"><ros><enabled>false</enabled></ros></device>
+    <device reference="ir_tx" type="Emitter"><ros><enabled>false</enabled></ros></device>
+    <device reference="radio_rx" type="Receiver"><ros><enabled>false</enabled></ros></device>
+    <device reference="radio_tx" type="Emitter"><ros><enabled>false</enabled></ros></device>
+
+    <plugin type="permaculture_twin.rover_driver.RoverDriver" />
+  </webots>
+</robot>

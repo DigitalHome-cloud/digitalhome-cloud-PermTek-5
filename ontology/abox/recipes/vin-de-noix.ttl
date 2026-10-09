@@ -1,0 +1,25 @@
+@prefix perma:  <https://permaculture.digitalhome.cloud/ontology#> .
+@prefix id:     <https://permaculture.digitalhome.cloud/id/> .
+@prefix schema: <https://schema.org/> .
+
+# Added 2026-10-09: second set of recipes, each keeping the harvest a different way.
+
+id:recipe-vin-de-noix a schema:Recipe ;
+    schema:name "Vin de noix"@fr , "Walnut wine"@en , "Nusswein"@de ;
+    schema:inLanguage "fr" ;
+    schema:recipeYield "environ 6 litres" ;
+    schema:totalTime "P40D" ;
+    perma:preservesAs perma:Macerated ;
+    perma:shelfLifeDays 1095 ;
+    schema:description "Green walnuts are picked around the Saint-Jean (late June), before the shell hardens."@en ;
+    schema:recipeInstructions (
+        "Cueillir les noix vertes vers la Saint-Jean, les couper en quatre (gants : elles tachent)."
+        "Les mettre dans un grand récipient avec le vin rouge, l'eau-de-vie et le sucre ; remuer."
+        "Laisser macérer 40 jours au frais et à l'abri de la lumière, en remuant de temps en temps."
+        "Filtrer, mettre en bouteilles et attendre quelques mois avant de servir."
+    ) ;
+    perma:usesIngredient
+        [ schema:name "40 noix vertes" ; perma:crop id:crop-walnut ; perma:part perma:Fruit ; perma:acceptsMethod perma:Fresh ] ,
+        [ schema:name "5 litres de vin rouge" ] ,
+        [ schema:name "1 litre d'eau-de-vie" ] ,
+        [ schema:name "1 kg de sucre" ] .

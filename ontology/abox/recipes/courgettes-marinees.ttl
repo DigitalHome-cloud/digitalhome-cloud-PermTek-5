@@ -1,0 +1,34 @@
+@prefix perma:  <https://permaculture.digitalhome.cloud/ontology#> .
+@prefix id:     <https://permaculture.digitalhome.cloud/id/> .
+@prefix schema: <https://schema.org/> .
+
+# The first recipe, as given by the owner (2026-10-09). Lines keep their wording;
+# lines from the garden link to a crop, a part and how the recipe takes it (dill: fresh or dried,
+# owner 2026-10-09); the others are bought.
+
+id:recipe-courgettes-marinees a schema:Recipe ;
+    schema:name "Courgettes marinées"@fr , "Marinated courgettes"@en , "Eingelegte Zucchini"@de ;
+    schema:inLanguage "fr" ;
+    schema:recipeYield "500 g de courgettes" ;
+    schema:recipeCategory "conserve au réfrigérateur"@fr ;
+    schema:totalTime "P3D" ;
+    perma:preservesAs perma:Pickled ;
+    perma:shelfLifeDays 14 ;     # in the fridge, not sterilised; to confirm
+    schema:recipeInstructions (
+        "Éplucher les courgettes, les évider et les couper en lamelles."
+        "Mélanger ensemble : 2 cuillères à soupe de vinaigre (essence de vinaigre à 24 %), 4 cuillères à soupe d'eau, 2 cuillères à soupe de sucre et 1 cuillère à café de sel."
+        "Ajouter : 1 gros oignon émincé, 1 poivron coupé en morceaux, de l'aneth, du poivre, des graines de moutarde et du curry."
+        "Laisser mariner au réfrigérateur pendant 3 jours dans un récipient couvert, et remuer le tout 3 fois par jour !"
+    ) ;
+    perma:usesIngredient
+        [ schema:name "500 g de courgettes" ; perma:crop id:crop-courgette ; perma:part perma:Fruit ; perma:acceptsMethod perma:Fresh ] ,
+        [ schema:name "2 cuillères à soupe de vinaigre (essence de vinaigre à 24 %)" ] ,
+        [ schema:name "4 cuillères à soupe d'eau" ] ,
+        [ schema:name "2 cuillères à soupe de sucre" ] ,
+        [ schema:name "1 cuillère à café de sel" ] ,
+        [ schema:name "1 gros oignon émincé" ; perma:crop id:crop-onion ; perma:part perma:Bulb ; perma:acceptsMethod perma:Fresh , perma:Cellar ] ,
+        [ schema:name "1 poivron coupé en morceaux" ; perma:crop id:crop-sweet-pepper ; perma:part perma:Fruit ; perma:acceptsMethod perma:Fresh ] ,
+        [ schema:name "de l'aneth" ; perma:crop id:crop-dill ; perma:part perma:Leaf ; perma:acceptsMethod perma:Fresh , perma:Dried ] ,
+        [ schema:name "du poivre" ; perma:crop id:crop-black-pepper ; perma:part perma:Fruit ; perma:acceptsMethod perma:Dried ] ,
+        [ schema:name "des graines de moutarde" ; perma:crop id:crop-white-mustard ; perma:part perma:Seed ; perma:acceptsMethod perma:Dried ] ,
+        [ schema:name "du curry" ] .

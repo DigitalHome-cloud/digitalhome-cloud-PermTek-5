@@ -1,0 +1,62 @@
+#VRML_SIM R2025a utf8
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Writable IR marker post: a stake with an IR transceiver on top.
+# It broadcasts its state (time since last inspection, last soil moisture)
+# and accepts writes from passing rovers. irRange is exposed so the
+# supervisor can shorten it in strong sunlight.
+
+PROTO IrPost [
+  field SFVec3f    translation    0 0 0
+  field SFRotation rotation       0 0 1 0
+  field SFString   name           "post"
+  field MFString   controllerArgs [ "1" ]
+  field SFFloat    irRange        3.0
+]
+{
+  Robot {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    controller "ir_post"
+    controllerArgs IS controllerArgs
+    children [
+      Pose {
+        translation 0 0 0.6
+        children [
+          Shape {
+            appearance PBRAppearance { baseColor 0.45 0.3 0.15 roughness 1 metalness 0 }
+            geometry Cylinder { height 1.2 radius 0.04 }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0 1.22
+        children [
+          Shape {
+            appearance PBRAppearance { baseColor 0.1 0.1 0.1 roughness 0.6 metalness 0 }
+            geometry Box { size 0.08 0.08 0.06 }
+          }
+        ]
+      }
+      Emitter {
+        name "ir_tx"
+        type "infra-red"
+        channel 1
+        range IS irRange
+        aperture -1
+        translation 0 0 1.22
+      }
+      Receiver {
+        name "ir_rx"
+        type "infra-red"
+        channel 2
+        aperture -1
+        translation 0 0 1.22
+      }
+    ]
+    boundingObject Pose {
+      translation 0 0 0.6
+      children [ Cylinder { height 1.2 radius 0.04 } ]
+    }
+  }
+}

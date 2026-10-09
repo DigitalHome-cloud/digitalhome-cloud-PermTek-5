@@ -1,0 +1,172 @@
+#VRML_SIM R2025a utf8
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Explorer rover: 4WD skid steer, observe-only.
+# Devices match the v1 BOM: RTK GNSS (gps), IMU, encoders, front distance
+# sensors, two down-looking drop sensors (swales, pond), camera on a mast,
+# IR transceiver on the mast for the posts, radio link to the garden
+# supervisor (which emulates UWB ranging and the soil probe).
+# gpsAccuracy is exposed so the supervisor can degrade GNSS under the oaks.
+
+PROTO ExplorerRover [
+  field SFVec3f    translation    0 0 0.12
+  field SFRotation rotation       0 0 1 0
+  field SFString   name           "rover1"
+  field SFString   controller     "explorer"
+  field MFString   controllerArgs []
+  field SFFloat    gpsAccuracy    0.02
+]
+{
+  Robot {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    controller IS controller
+    controllerArgs IS controllerArgs
+    children [
+      DEF BODY Pose {
+        translation 0 0 0.05
+        children [
+          Shape {
+            appearance PBRAppearance { baseColor 0.95 0.45 0.05 roughness 0.6 metalness 0 }
+            geometry Box { size 0.5 0.4 0.15 }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0 0.55
+        children [
+          Shape {
+            appearance PBRAppearance { baseColor 0.6 0.6 0.6 roughness 0.5 metalness 0 }
+            geometry Cylinder { height 0.85 radius 0.015 }
+          }
+        ]
+      }
+      HingeJoint {
+        jointParameters HingeJointParameters { axis 0 1 0 anchor 0.17 0.24 0 }
+        device [
+          RotationalMotor { name "wheel_fl" maxVelocity 10 maxTorque 20 }
+          PositionSensor { name "wheel_fl_enc" }
+        ]
+        endPoint Solid {
+          translation 0.17 0.24 0
+          rotation 1 0 0 1.5708
+          children [
+            DEF WHEEL Shape {
+              appearance PBRAppearance { baseColor 0.1 0.1 0.1 roughness 1 metalness 0 }
+              geometry Cylinder { height 0.08 radius 0.1 }
+            }
+          ]
+          name "wheel_fl"
+          boundingObject USE WHEEL
+          physics Physics { density -1 mass 0.8 }
+        }
+      }
+      HingeJoint {
+        jointParameters HingeJointParameters { axis 0 1 0 anchor 0.17 -0.24 0 }
+        device [
+          RotationalMotor { name "wheel_fr" maxVelocity 10 maxTorque 20 }
+          PositionSensor { name "wheel_fr_enc" }
+        ]
+        endPoint Solid {
+          translation 0.17 -0.24 0
+          rotation 1 0 0 1.5708
+          children [ USE WHEEL ]
+          name "wheel_fr"
+          boundingObject USE WHEEL
+          physics Physics { density -1 mass 0.8 }
+        }
+      }
+      HingeJoint {
+        jointParameters HingeJointParameters { axis 0 1 0 anchor -0.17 0.24 0 }
+        device [
+          RotationalMotor { name "wheel_rl" maxVelocity 10 maxTorque 20 }
+          PositionSensor { name "wheel_rl_enc" }
+        ]
+        endPoint Solid {
+          translation -0.17 0.24 0
+          rotation 1 0 0 1.5708
+          children [ USE WHEEL ]
+          name "wheel_rl"
+          boundingObject USE WHEEL
+          physics Physics { density -1 mass 0.8 }
+        }
+      }
+      HingeJoint {
+        jointParameters HingeJointParameters { axis 0 1 0 anchor -0.17 -0.24 0 }
+        device [
+          RotationalMotor { name "wheel_rr" maxVelocity 10 maxTorque 20 }
+          PositionSensor { name "wheel_rr_enc" }
+        ]
+        endPoint Solid {
+          translation -0.17 -0.24 0
+          rotation 1 0 0 1.5708
+          children [ USE WHEEL ]
+          name "wheel_rr"
+          boundingObject USE WHEEL
+          physics Physics { density -1 mass 0.8 }
+        }
+      }
+      GPS { name "gps" translation 0 0 0.95 accuracy IS gpsAccuracy }
+      InertialUnit { name "imu" }
+      Camera {
+        name "camera"
+        translation 0.03 0 0.98
+        rotation 0 1 0 0.35
+        width 320
+        height 240
+        fieldOfView 1.2
+      }
+      DistanceSensor {
+        name "ds_front_left"
+        translation 0.26 0.12 0.06
+        rotation 0 0 1 0.45
+        lookupTable [ 0 0 0, 1.5 1500 0 ]
+      }
+      DistanceSensor {
+        name "ds_front_center"
+        translation 0.26 0 0.06
+        lookupTable [ 0 0 0, 1.5 1500 0 ]
+      }
+      DistanceSensor {
+        name "ds_front_right"
+        translation 0.26 -0.12 0.06
+        rotation 0 0 1 -0.45
+        lookupTable [ 0 0 0, 1.5 1500 0 ]
+      }
+      DistanceSensor {
+        name "drop_left"
+        translation 0.3 0.15 0
+        rotation 0 1 0 1.1
+        lookupTable [ 0 0 0, 1 1000 0 ]
+      }
+      DistanceSensor {
+        name "drop_right"
+        translation 0.3 -0.15 0
+        rotation 0 1 0 1.1
+        lookupTable [ 0 0 0, 1 1000 0 ]
+      }
+      Emitter {
+        name "ir_tx"
+        type "infra-red"
+        channel 2
+        range 3
+        aperture -1
+        translation 0 0 1.0
+      }
+      Receiver {
+        name "ir_rx"
+        type "infra-red"
+        channel 1
+        aperture -1
+        translation 0 0 1.0
+      }
+      Receiver { name "radio_rx" channel 5 }
+      Emitter { name "radio_tx" channel 6 range -1 }
+    ]
+    boundingObject Pose {
+      translation 0 0 0.05
+      children [ Box { size 0.5 0.4 0.15 } ]
+    }
+    physics Physics { density -1 mass 14 }
+  }
+}

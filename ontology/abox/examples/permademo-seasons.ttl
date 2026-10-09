@@ -1,0 +1,153 @@
+@prefix perma: <https://permaculture.digitalhome.cloud/ontology#> .
+@prefix id:    <https://permaculture.digitalhome.cloud/id/> .
+
+# Season calendar of PermaDemo: when each crop is sown, planted out and harvested on this site.
+# Basis: general practice, temperate lowland, last frost mid-April (invented site). Every window starts 'to confirm'.
+
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-courgette ;
+   perma:activity perma:SowIndoors ; perma:fromMonth 4 ; perma:toMonth 4 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice, temperate lowland, last frost mid-April (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-courgette ;
+   perma:activity perma:PlantOut ; perma:fromMonth 5 ; perma:toMonth 6 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice, temperate lowland, last frost mid-April (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-courgette ;
+   perma:activity perma:Harvest ; perma:part perma:Fruit ; perma:fromMonth 6 ; perma:toMonth 9 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice, temperate lowland, last frost mid-April (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-onion ;
+   perma:activity perma:PlantOut ; perma:fromMonth 3 ; perma:toMonth 4 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice, temperate lowland, last frost mid-April (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-onion ;
+   perma:activity perma:Harvest ; perma:part perma:Bulb ; perma:fromMonth 7 ; perma:toMonth 8 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice, temperate lowland, last frost mid-April (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-sweet-pepper ;
+   perma:activity perma:SowIndoors ; perma:fromMonth 2 ; perma:toMonth 3 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice, temperate lowland, last frost mid-April (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-sweet-pepper ;
+   perma:activity perma:PlantOut ; perma:fromMonth 5 ; perma:toMonth 5 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice, temperate lowland, last frost mid-April (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-sweet-pepper ;
+   perma:activity perma:Harvest ; perma:part perma:Fruit ; perma:fromMonth 7 ; perma:toMonth 10 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice, temperate lowland, last frost mid-April (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-dill ;
+   perma:activity perma:SowOutdoors ; perma:fromMonth 4 ; perma:toMonth 7 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice, temperate lowland, last frost mid-April (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-dill ;
+   perma:activity perma:Harvest ; perma:part perma:Leaf ; perma:fromMonth 6 ; perma:toMonth 9 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice, temperate lowland, last frost mid-April (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-dill ;
+   perma:activity perma:Harvest ; perma:part perma:Seed ; perma:fromMonth 8 ; perma:toMonth 9 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice, temperate lowland, last frost mid-April (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-white-mustard ;
+   perma:activity perma:SowOutdoors ; perma:fromMonth 3 ; perma:toMonth 4 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice, temperate lowland, last frost mid-April (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-white-mustard ;
+   perma:activity perma:Harvest ; perma:part perma:Seed ; perma:fromMonth 7 ; perma:toMonth 8 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice, temperate lowland, last frost mid-April (invented site)" .
+
+# Seed saving: when seed of each crop is ripe on this site (onion: summer of its second year).
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-courgette ;
+   perma:activity perma:SaveSeed ; perma:fromMonth 9 ; perma:toMonth 9 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-sweet-pepper ;
+   perma:activity perma:SaveSeed ; perma:fromMonth 9 ; perma:toMonth 10 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-dill ;
+   perma:activity perma:SaveSeed ; perma:fromMonth 8 ; perma:toMonth 9 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-white-mustard ;
+   perma:activity perma:SaveSeed ; perma:fromMonth 7 ; perma:toMonth 8 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+
+# Added 2026-10-09 with the second set of recipes. Perennial herbs: leaves all year.
+# Caraway and white cabbage are biennial: seed in the second year. Walnut: green fruit at
+# the Saint-Jean (late June) for vin de noix, ripe nuts in autumn.
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-tomato ;
+   perma:activity perma:SowIndoors ; perma:fromMonth 3 ; perma:toMonth 4 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-tomato ;
+   perma:activity perma:PlantOut ; perma:fromMonth 5 ; perma:toMonth 5 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-tomato ;
+   perma:activity perma:Harvest ; perma:part perma:Fruit ; perma:fromMonth 7 ; perma:toMonth 10 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-tomato ;
+   perma:activity perma:SaveSeed ; perma:fromMonth 8 ; perma:toMonth 9 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-aubergine ;
+   perma:activity perma:SowIndoors ; perma:fromMonth 2 ; perma:toMonth 3 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-aubergine ;
+   perma:activity perma:PlantOut ; perma:fromMonth 5 ; perma:toMonth 6 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-aubergine ;
+   perma:activity perma:Harvest ; perma:part perma:Fruit ; perma:fromMonth 7 ; perma:toMonth 9 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-aubergine ;
+   perma:activity perma:SaveSeed ; perma:fromMonth 9 ; perma:toMonth 9 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-garlic ;
+   perma:activity perma:PlantOut ; perma:fromMonth 10 ; perma:toMonth 11 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-garlic ;
+   perma:activity perma:Harvest ; perma:part perma:Bulb ; perma:fromMonth 6 ; perma:toMonth 7 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-garlic ;
+   perma:activity perma:SaveSeed ; perma:fromMonth 7 ; perma:toMonth 7 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-basil ;
+   perma:activity perma:SowIndoors ; perma:fromMonth 4 ; perma:toMonth 4 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-basil ;
+   perma:activity perma:PlantOut ; perma:fromMonth 5 ; perma:toMonth 6 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-basil ;
+   perma:activity perma:Harvest ; perma:part perma:Leaf ; perma:fromMonth 6 ; perma:toMonth 9 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-basil ;
+   perma:activity perma:SaveSeed ; perma:fromMonth 9 ; perma:toMonth 9 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-thyme ;
+   perma:activity perma:PlantOut ; perma:fromMonth 4 ; perma:toMonth 5 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-thyme ;
+   perma:activity perma:Harvest ; perma:part perma:Leaf ; perma:fromMonth 1 ; perma:toMonth 12 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-rosemary ;
+   perma:activity perma:PlantOut ; perma:fromMonth 4 ; perma:toMonth 5 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-rosemary ;
+   perma:activity perma:Harvest ; perma:part perma:Leaf ; perma:fromMonth 1 ; perma:toMonth 12 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-bay-laurel ;
+   perma:activity perma:PlantOut ; perma:fromMonth 4 ; perma:toMonth 5 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-bay-laurel ;
+   perma:activity perma:Harvest ; perma:part perma:Leaf ; perma:fromMonth 1 ; perma:toMonth 12 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-white-cabbage ;
+   perma:activity perma:SowOutdoors ; perma:fromMonth 4 ; perma:toMonth 5 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-white-cabbage ;
+   perma:activity perma:PlantOut ; perma:fromMonth 6 ; perma:toMonth 7 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-white-cabbage ;
+   perma:activity perma:Harvest ; perma:part perma:Leaf ; perma:fromMonth 9 ; perma:toMonth 11 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-caraway ;
+   perma:activity perma:SowOutdoors ; perma:fromMonth 4 ; perma:toMonth 5 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-caraway ;
+   perma:activity perma:Harvest ; perma:part perma:Seed ; perma:fromMonth 7 ; perma:toMonth 8 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-caraway ;
+   perma:activity perma:SaveSeed ; perma:fromMonth 7 ; perma:toMonth 8 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-apple ;
+   perma:activity perma:Harvest ; perma:part perma:Fruit ; perma:fromMonth 8 ; perma:toMonth 10 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-walnut ;
+   perma:activity perma:Harvest ; perma:part perma:Fruit ; perma:fromMonth 6 ; perma:toMonth 6 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .
+[] a perma:SeasonWindow ; perma:atSite id:site-permademo ; perma:forCrop id:crop-walnut ;
+   perma:activity perma:Harvest ; perma:part perma:Seed ; perma:fromMonth 9 ; perma:toMonth 10 ;
+   perma:confirmation perma:ToConfirm ; perma:basis "general practice (invented site)" .

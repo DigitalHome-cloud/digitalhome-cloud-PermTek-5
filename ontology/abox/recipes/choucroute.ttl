@@ -1,0 +1,24 @@
+@prefix perma:  <https://permaculture.digitalhome.cloud/ontology#> .
+@prefix id:     <https://permaculture.digitalhome.cloud/id/> .
+@prefix schema: <https://schema.org/> .
+
+# Added 2026-10-09: second set of recipes, each keeping the harvest a different way.
+
+id:recipe-choucroute a schema:Recipe ;
+    schema:name "Choucroute maison"@fr , "Home-made sauerkraut"@en , "Hausgemachtes Sauerkraut"@de ;
+    schema:inLanguage "fr" ;
+    schema:recipeYield "un bocal de 1,5 l" ;
+    schema:totalTime "P4W" ;
+    perma:preservesAs perma:Fermented ;
+    perma:shelfLifeDays 180 ;
+    schema:description "About 2 % salt by weight; keep the cabbage under its brine; cool place once fermented."@en ;
+    schema:recipeInstructions (
+        "Retirer les feuilles extérieures et le trognon, émincer le chou très finement."
+        "Mélanger avec le sel et le carvi, malaxer jusqu'à ce que le chou rende son jus."
+        "Tasser fortement dans un bocal ou un pot à choucroute, le chou doit être couvert de son jus ; poser un poids."
+        "Laisser fermenter 3 à 4 semaines vers 18 à 20 °C, puis conserver au frais."
+    ) ;
+    perma:usesIngredient
+        [ schema:name "1 kg de chou blanc" ; perma:crop id:crop-white-cabbage ; perma:part perma:Leaf ; perma:acceptsMethod perma:Fresh , perma:Cellar ] ,
+        [ schema:name "20 g de sel" ] ,
+        [ schema:name "1 cuillère à café de graines de carvi" ; perma:crop id:crop-caraway ; perma:part perma:Seed ; perma:acceptsMethod perma:Dried ] .

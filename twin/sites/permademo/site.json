@@ -1,0 +1,544 @@
+{
+  "name": "PermaDemo",
+  "info": [
+    "PermaDemo: an invented hillside permaculture garden for study and testing, not a real place.",
+    "Terrain: plane through a high point (z 28) and a low point (z 0), about 25 % grade."
+  ],
+  "z_offset": 0.0,
+  "time_scale": 120,
+  "terrain": {
+    "high": {
+      "pos": [
+        12.0,
+        42.0
+      ],
+      "z": 28.0
+    },
+    "low": {
+      "pos": [
+        8.0,
+        -70.0
+      ],
+      "z": 0.0
+    },
+    "bbox": [
+      -50.0,
+      -75.0,
+      55.0,
+      50.0
+    ]
+  },
+  "garden": {
+    "a": [
+      [
+        -35,
+        -5
+      ],
+      [
+        -15,
+        9
+      ],
+      [
+        10,
+        15
+      ],
+      [
+        28,
+        17
+      ],
+      [
+        35,
+        12
+      ],
+      [
+        22,
+        -2
+      ],
+      [
+        5,
+        -4
+      ],
+      [
+        -28,
+        -14
+      ]
+    ],
+    "b": [
+      [
+        -19.77,
+        -12.34
+      ],
+      [
+        0.23,
+        -6.28
+      ],
+      [
+        12,
+        -10
+      ],
+      [
+        8,
+        -22
+      ],
+      [
+        -8,
+        -25
+      ],
+      [
+        -22,
+        -20
+      ]
+    ],
+    "axis": [
+      [
+        -35,
+        -5
+      ],
+      [
+        35,
+        12
+      ]
+    ],
+    "zone_areas_m2": {
+      "zone1": 128,
+      "zone3": 488
+    },
+    "labels": {
+      "zone1": "Zone 1 - Kitchen garden",
+      "zone2": "Zone 2 - Orchard garden",
+      "zone3": "Zone 3 - Forest garden",
+      "zone4": "Zone 4 - Extensive orchard"
+    }
+  },
+  "frame": {
+    "no_go": [
+      {
+        "label": "bat roost (oak cavity)",
+        "circle": [
+          -27,
+          -8
+        ],
+        "r": 2.5
+      },
+      {
+        "label": "pond edge",
+        "circle": [
+          -15.0,
+          -18.0
+        ],
+        "r": 3.8
+      },
+      {
+        "label": "steep bank",
+        "polygon": [
+          [
+            30,
+            13
+          ],
+          [
+            34,
+            12.5
+          ],
+          [
+            33,
+            10
+          ],
+          [
+            30.5,
+            11
+          ]
+        ]
+      }
+    ]
+  },
+  "pool": {
+    "pos": [
+      24.0,
+      32.0
+    ],
+    "size": [
+      7.0,
+      3.5
+    ],
+    "yaw_deg": 10.0
+  },
+  "pond": {
+    "pos": [
+      -15.0,
+      -18.0
+    ],
+    "radius": 2.8,
+    "depth": 0.6
+  },
+  "vegetation": [
+    {
+      "id": "oak_1",
+      "class": "tree",
+      "circle": [
+        -27,
+        -8
+      ],
+      "height_m": 9.0,
+      "canopy": true,
+      "canopy_r": 3.5,
+      "trunk": 0.4,
+      "species": "Quercus pubescens",
+      "status": "existing",
+      "map_status": "confirmed"
+    },
+    {
+      "id": "oak_2",
+      "class": "tree",
+      "circle": [
+        -21,
+        -2
+      ],
+      "height_m": 9.0,
+      "canopy": true,
+      "canopy_r": 3.5,
+      "trunk": 0.4,
+      "species": "Quercus pubescens",
+      "status": "existing",
+      "map_status": "confirmed"
+    },
+    {
+      "id": "oak_3",
+      "class": "tree",
+      "circle": [
+        -15,
+        2
+      ],
+      "height_m": 9.0,
+      "canopy": true,
+      "canopy_r": 3.5,
+      "trunk": 0.4,
+      "species": "Quercus pubescens",
+      "status": "existing",
+      "map_status": "confirmed"
+    },
+    {
+      "id": "oak_4",
+      "class": "tree",
+      "circle": [
+        -11,
+        -4
+      ],
+      "height_m": 9.0,
+      "canopy": true,
+      "canopy_r": 3.5,
+      "trunk": 0.4,
+      "species": "Quercus pubescens",
+      "status": "existing",
+      "map_status": "confirmed"
+    },
+    {
+      "id": "oak_5",
+      "class": "tree",
+      "circle": [
+        -22,
+        -10
+      ],
+      "height_m": 9.0,
+      "canopy": true,
+      "canopy_r": 3.5,
+      "trunk": 0.4,
+      "species": "Quercus pubescens",
+      "status": "existing",
+      "map_status": "confirmed"
+    },
+    {
+      "id": "apple_1",
+      "class": "tree",
+      "circle": [
+        -4.0,
+        -14.0
+      ],
+      "height_m": 5.0,
+      "canopy": false,
+      "canopy_r": 2.5,
+      "species": "Malus domestica",
+      "status": "planted",
+      "map_status": "confirmed"
+    },
+    {
+      "id": "pear_1",
+      "class": "tree",
+      "circle": [
+        4.0,
+        -12.0
+      ],
+      "height_m": 5.0,
+      "canopy": false,
+      "canopy_r": 2.2,
+      "species": "Pyrus communis",
+      "status": "planted",
+      "map_status": "confirmed"
+    },
+    {
+      "id": "service_tree_1",
+      "class": "tree",
+      "circle": [
+        0.0,
+        -20.0
+      ],
+      "height_m": 5.0,
+      "canopy": false,
+      "canopy_r": 2.0,
+      "species": "Sorbus domestica",
+      "status": "planted",
+      "map_status": "confirmed"
+    },
+    {
+      "id": "walnut_1",
+      "class": "tree",
+      "circle": [
+        -9.0,
+        -20.5
+      ],
+      "height_m": 7.0,
+      "canopy": true,
+      "canopy_r": 3.5,
+      "species": "Juglans regia",
+      "status": "planted",
+      "map_status": "confirmed"
+    },
+    {
+      "id": "hazel_1",
+      "class": "shrub",
+      "circle": [
+        16.0,
+        4.0
+      ],
+      "r": 1.0,
+      "height_m": 3.0,
+      "species": "Corylus avellana",
+      "status": "existing",
+      "map_status": "confirmed"
+    },
+    {
+      "id": "meadow_zone4",
+      "class": "meadow",
+      "polygon": [
+        [
+          -19.77,
+          -12.34
+        ],
+        [
+          0.23,
+          -6.28
+        ],
+        [
+          12,
+          -10
+        ],
+        [
+          8,
+          -22
+        ],
+        [
+          -8,
+          -25
+        ],
+        [
+          -22,
+          -20
+        ]
+      ],
+      "status": "existing",
+      "map_status": "confirmed"
+    },
+    {
+      "id": "tall_grass_zone3",
+      "class": "tall_grass",
+      "polygon": [
+        [
+          -34,
+          -5
+        ],
+        [
+          -24,
+          -12
+        ],
+        [
+          -20,
+          -4
+        ],
+        [
+          -26,
+          2
+        ]
+      ],
+      "status": "existing",
+      "map_status": "to_confirm"
+    },
+    {
+      "id": "bramble_1",
+      "class": "bramble",
+      "polygon": [
+        [
+          -31,
+          -11
+        ],
+        [
+          -28,
+          -13
+        ],
+        [
+          -26,
+          -11.5
+        ],
+        [
+          -29,
+          -9.5
+        ]
+      ],
+      "height_m": 1.5,
+      "species": "Rubus fruticosus",
+      "status": "existing",
+      "map_status": "to_confirm"
+    },
+    {
+      "id": "hedge_north",
+      "class": "hedge",
+      "polygon": [
+        [
+          -14,
+          6.0
+        ],
+        [
+          -6,
+          7.8
+        ],
+        [
+          -6,
+          8.8
+        ],
+        [
+          -14,
+          7.0
+        ]
+      ],
+      "height_m": 2.0,
+      "status": "planted",
+      "map_status": "confirmed"
+    },
+    {
+      "id": "crop_beds",
+      "class": "crop",
+      "polygon": [
+        [
+          -8,
+          1
+        ],
+        [
+          -4,
+          2
+        ],
+        [
+          -4.5,
+          4
+        ],
+        [
+          -8.5,
+          3
+        ]
+      ],
+      "height_m": 0.4,
+      "status": "planted",
+      "map_status": "confirmed"
+    }
+  ],
+  "posts": [
+    {
+      "label": "guild-apple1",
+      "zone": "zone4",
+      "near_tree": "apple_1"
+    },
+    {
+      "label": "guild-pear1",
+      "zone": "zone4",
+      "near_tree": "pear_1"
+    },
+    {
+      "label": "fascine 1 tree",
+      "zone": "zone2",
+      "near_fascine": 1
+    },
+    {
+      "label": "fascine 2 tree",
+      "zone": "zone2",
+      "near_fascine": 2
+    },
+    {
+      "label": "fascine 3 tree",
+      "zone": "zone2",
+      "near_fascine": 3
+    },
+    {
+      "label": "zone3 north edge",
+      "zone": "zone3",
+      "zone_edge": [
+        -15,
+        9
+      ],
+      "inset": 2.5
+    }
+  ],
+  "anchors": [
+    [
+      -34,
+      -5
+    ],
+    [
+      -27,
+      -13
+    ],
+    [
+      -14,
+      9
+    ],
+    [
+      -6,
+      -4
+    ]
+  ],
+  "unknown": [
+    {
+      "kind": "rock",
+      "pos": [
+        -2.0,
+        4.0
+      ],
+      "r": 0.35,
+      "h": 0.4
+    },
+    {
+      "kind": "rock",
+      "pos": [
+        14.0,
+        8.0
+      ],
+      "r": 0.3,
+      "h": 0.35
+    },
+    {
+      "kind": "branch",
+      "pos": [
+        -9.0,
+        -9.5
+      ],
+      "r": 0.4,
+      "h": 0.3
+    },
+    {
+      "kind": "rock",
+      "pos": [
+        2.0,
+        -17.0
+      ],
+      "r": 0.3,
+      "h": 0.4
+    }
+  ],
+  "explore_first": true
+}

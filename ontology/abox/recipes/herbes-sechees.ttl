@@ -1,0 +1,24 @@
+@prefix perma:  <https://permaculture.digitalhome.cloud/ontology#> .
+@prefix id:     <https://permaculture.digitalhome.cloud/id/> .
+@prefix schema: <https://schema.org/> .
+
+# Added 2026-10-09: second set of recipes, each keeping the harvest a different way.
+
+id:recipe-herbes-sechees a schema:Recipe ;
+    schema:name "Herbes séchées du jardin"@fr , "Garden dried herbs"@en , "Getrocknete Gartenkräuter"@de ;
+    schema:inLanguage "fr" ;
+    schema:recipeYield "un bocal" ;
+    schema:totalTime "P2W" ;
+    perma:preservesAs perma:Dried ;
+    perma:shelfLifeDays 365 ;
+    schema:description "Pick on a dry morning before flowering; dry in the shade; store airtight and dark."@en ;
+    schema:recipeInstructions (
+        "Couper les branches de thym et de romarin et les feuilles de laurier un matin sec, avant la floraison."
+        "Les lier en petits bouquets et les suspendre à l'ombre, dans un endroit sec et aéré, 1 à 2 semaines."
+        "Effeuiller quand les feuilles se brisent sous les doigts."
+        "Conserver dans un bocal fermé, à l'abri de la lumière."
+    ) ;
+    perma:usesIngredient
+        [ schema:name "1 botte de thym" ; perma:crop id:crop-thyme ; perma:part perma:Leaf ; perma:acceptsMethod perma:Fresh ] ,
+        [ schema:name "1 botte de romarin" ; perma:crop id:crop-rosemary ; perma:part perma:Leaf ; perma:acceptsMethod perma:Fresh ] ,
+        [ schema:name "une poignée de feuilles de laurier" ; perma:crop id:crop-bay-laurel ; perma:part perma:Leaf ; perma:acceptsMethod perma:Fresh ] .

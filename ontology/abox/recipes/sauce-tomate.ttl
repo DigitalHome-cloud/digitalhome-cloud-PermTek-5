@@ -1,0 +1,29 @@
+@prefix perma:  <https://permaculture.digitalhome.cloud/ontology#> .
+@prefix id:     <https://permaculture.digitalhome.cloud/id/> .
+@prefix schema: <https://schema.org/> .
+
+# Added 2026-10-09: second set of recipes, each keeping the harvest a different way.
+
+id:recipe-sauce-tomate a schema:Recipe ;
+    schema:name "Sauce tomate en bocaux"@fr , "Bottled tomato sauce"@en , "Tomatensauce im Glas"@de ;
+    schema:inLanguage "fr" ;
+    schema:recipeYield "environ 4 bocaux de 500 ml" ;
+    schema:totalTime "PT3H" ;
+    perma:preservesAs perma:Bottled ;
+    perma:shelfLifeDays 365 ;
+    schema:description "Lemon juice added for acidity before bottling; follow the jar maker's sterilisation time."@en ;
+    schema:recipeInstructions (
+        "Ébouillanter et peler les tomates, les couper en morceaux."
+        "Faire revenir l'oignon et l'ail émincés dans l'huile, ajouter les tomates, le thym et le laurier ; cuire à découvert 1 heure jusqu'à épaississement. Saler."
+        "Retirer le laurier, mettre 1 cuillère à soupe de jus de citron dans chaque bocal de 500 ml, remplir de sauce chaude."
+        "Fermer et stériliser selon la notice du fabricant de bocaux ; laisser refroidir, vérifier la fermeture."
+    ) ;
+    perma:usesIngredient
+        [ schema:name "3 kg de tomates" ; perma:crop id:crop-tomato ; perma:part perma:Fruit ; perma:acceptsMethod perma:Fresh ] ,
+        [ schema:name "2 oignons" ; perma:crop id:crop-onion ; perma:part perma:Bulb ; perma:acceptsMethod perma:Fresh , perma:Cellar ] ,
+        [ schema:name "4 gousses d'ail" ; perma:crop id:crop-garlic ; perma:part perma:Bulb ; perma:acceptsMethod perma:Fresh , perma:Cellar ] ,
+        [ schema:name "3 branches de thym" ; perma:crop id:crop-thyme ; perma:part perma:Leaf ; perma:acceptsMethod perma:Fresh , perma:Dried ] ,
+        [ schema:name "2 feuilles de laurier" ; perma:crop id:crop-bay-laurel ; perma:part perma:Leaf ; perma:acceptsMethod perma:Fresh , perma:Dried ] ,
+        [ schema:name "3 cuillères à soupe d'huile d'olive" ] ,
+        [ schema:name "4 cuillères à soupe de jus de citron" ] ,
+        [ schema:name "sel" ] .

@@ -31,6 +31,7 @@ export const onRenderBody: GatsbySSR["onRenderBody"] = ({
   // palette the page is about to paint.
   setHeadComponents([
     <link key="pt-icon" rel="icon" href="/favicon.svg" type="image/svg+xml" />,
+    <link key="pt-touch-icon" rel="apple-touch-icon" href="/apple-touch-icon.png" />,
     <meta
       key="pt-theme-light"
       name="theme-color"

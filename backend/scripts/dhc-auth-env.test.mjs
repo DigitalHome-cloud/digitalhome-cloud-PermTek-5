@@ -32,7 +32,21 @@ test("resolves the pool, client, identity pool and the three roles", () => {
     DHC_AUTH_ROLE_ARN: "arn:aws:iam::000000000000:role/core-authRole",
     DHC_UNAUTH_ROLE_ARN: "arn:aws:iam::000000000000:role/core-unauthRole",
     DHC_ADMINS_GROUP_ROLE_ARN: "arn:aws:iam::000000000000:role/core-admins",
+    DHC_CORE_API_URL: "",
+    DHC_CORE_BUCKET: "",
+    DHC_CORE_REGION: "eu-central-1",
   });
+});
+
+test("names the core's API and bucket when the core stack has them", () => {
+  const more = [...OUTPUTS,
+    { OutputKey: "awsAppsyncApiEndpoint", OutputValue: "https://api.example/graphql" },
+    { OutputKey: "bucketName", OutputValue: "core-bucket" },
+    { OutputKey: "storageRegion", OutputValue: "eu-west-1" }];
+  const { env } = resolve(ARN, more, AUTH);
+  assert.equal(env.DHC_CORE_API_URL, "https://api.example/graphql");
+  assert.equal(env.DHC_CORE_BUCKET, "core-bucket");
+  assert.equal(env.DHC_CORE_REGION, "eu-west-1");
 });
 
 test("refuses a core stack without auth outputs or the admins role", () => {

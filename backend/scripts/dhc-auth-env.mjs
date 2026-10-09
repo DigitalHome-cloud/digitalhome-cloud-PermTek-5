@@ -9,7 +9,9 @@
 // Amplify app and branch (the same two variables the DHC frontends use). From
 // that branch's CloudFormation stack it reads the pool, the web client, the
 // identity pool, the identity pool's two roles and the dhc-admins group role,
-// and prints them as DHC_* exports for backend/amplify/auth/resource.ts.
+// and prints them as DHC_* exports for backend/amplify/auth/resource.ts. It
+// also names the core's API and bucket (DHC_CORE_*), which PermTek-5 reads in
+// place: a habitat's home, its area and the area's weather (docs/adr/0015).
 //
 // Only Amplify and CloudFormation reads on the core's own stacks: the same kind
 // of access `ampx` needs to deploy. Nothing is written anywhere; stdout is meant
@@ -55,6 +57,10 @@ export function resolve(stackArn, outputs, authResources, group = OPERATOR_GROUP
       DHC_AUTH_ROLE_ARN: role("amplifyAuthauthenticatedUserRole"),
       DHC_UNAUTH_ROLE_ARN: role("amplifyAuthunauthenticatedUserRole"),
       DHC_ADMINS_GROUP_ROLE_ARN: role(groupRolePrefix(group)),
+      // read in place, never copied; optional, so an older core still deploys
+      DHC_CORE_API_URL: out.awsAppsyncApiEndpoint ?? "",
+      DHC_CORE_BUCKET: out.bucketName ?? "",
+      DHC_CORE_REGION: out.storageRegion ?? out.awsAppsyncRegion ?? region,
     },
   };
 }

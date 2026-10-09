@@ -4,6 +4,9 @@
 // createTenant/createSpace are refused by their rules: nobody may write.)
 //
 //   addTenant(name, adminEmail, sameAs?)                 operators (dhc-admins)
+//   startForHome(smartHomeId, name?)                     the home's owners (DHC core decides,
+//                                                        asked with the caller's own token):
+//                                                        one tenant per home, docs/adr/0015
 //                                                        sameAs: another site's tenant code,
 //                                                        so both use the same ids (see sameAsCode)
 //   addSpace(tenantId, name)                          that tenant's admins
@@ -25,10 +28,11 @@ import {
   ListUsersInGroupCommand,
   type UserType,
 } from "@aws-sdk/client-cognito-identity-provider";
-import { PutCommand } from "@aws-sdk/lib-dynamodb";
+import { PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { ADMIN_GROUP, TENANT, SPACE, claimsOf } from "../shared/claims";
 import { MfaRequired, requireMfa } from "../shared/mfa";
 import { doc, getTenant, getSpace, isAdminOf, mint, spacesOfTenant, type Space } from "../shared/spaces";
+import { HOME_ID, homeAsCaller, ownsHome } from "../shared/dhcCore";
 
 const cognito = new CognitoIdentityProviderClient({});
 const SPACE_TABLE = () => process.env.SPACE_TABLE_NAME!;
@@ -159,6 +163,47 @@ export const handler = async (event: AppSyncResolverEvent<Args>) => {
       await cognito.send(new AdminAddUserToGroupCommand({ UserPoolId: userPoolId, GroupName: h.id, Username: admin.Username }));
       for (const x of [v, ...privates]) {
         await cognito.send(new AdminAddUserToGroupCommand({ UserPoolId: userPoolId, GroupName: x.id, Username: admin.Username }));
+      }
+      return { ...h, createdAt: t, updatedAt: t };
+    }
+
+    if (field === "startForHome") {
+      const homeId = String(a.smartHomeId || "").trim().toUpperCase();
+      if (!HOME_ID.test(homeId)) throw new Refused("That is not a DigitalHome.Cloud home id.");
+      const token = (event.request?.headers as Record<string, string> | undefined)?.authorization;
+      const home = await homeAsCaller(homeId, token);
+      const sub = (event.identity as { sub?: string } | null)?.sub;
+      if (!home || !ownsHome(home, sub, username)) throw new Refused("Only the home's owners start permaculture for it.");
+      const found = await doc.send(new QueryCommand({
+        TableName: TENANT_TABLE(), IndexName: "byHome",
+        KeyConditionExpression: "smartHomeId = :h", ExpressionAttributeValues: { ":h": homeId }, Limit: 1,
+      }));
+      const existing = found.Items?.[0] as { id: string; name: string } | undefined;
+      if (existing) {
+        // Every owner of the home administers its habitat (docs/adr/0015): a
+        // co-owner arriving later joins, as admin and reader of the shared space.
+        if (!isAdminOf(groups, existing.id)) {
+          const shared = (await spacesOfTenant(existing.id)).filter((x) => x.kind === "shared").map((x) => x.id);
+          for (const g of [existing.id, ...shared]) {
+            await cognito.send(new AdminAddUserToGroupCommand({ UserPoolId: userPoolId, GroupName: g, Username: username }));
+          }
+        }
+        return existing;
+      }
+      const name = clean(a.name || "Garden", "A site");
+      const h = { id: mint("t"), name, smartHomeId: homeId };
+      const v: Space = { id: mint("s"), tenantId: h.id, tenantName: name, name: "Everyone", kind: "shared" };
+      await cognito.send(new CreateGroupCommand({ UserPoolId: userPoolId, GroupName: h.id, Description: `Admins of ${name}` }));
+      await cognito.send(new CreateGroupCommand({ UserPoolId: userPoolId, GroupName: v.id, Description: `${name}: ${v.name}` }));
+      const t = now();
+      await doc.send(new PutCommand({
+        TableName: TENANT_TABLE(),
+        Item: { ...h, __typename: "Tenant", createdAt: t, updatedAt: t },
+        ConditionExpression: "attribute_not_exists(id)",
+      }));
+      await putSpace(v);
+      for (const g of [h.id, v.id]) {
+        await cognito.send(new AdminAddUserToGroupCommand({ UserPoolId: userPoolId, GroupName: g, Username: username }));
       }
       return { ...h, createdAt: t, updatedAt: t };
     }

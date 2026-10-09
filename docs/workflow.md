@@ -25,17 +25,21 @@ flowchart LR
   twin(["Twin: every step tried here first"]) -.-> s2 & s3 & s4 & s6
 ```
 
-## 0 · Create the site
+## 0 · Start from the home
 
-*Cloud · about 10 minutes · the owner*
+*Portal · a minute · the home's owner*
 
 - Sign in with the DigitalHome.Cloud account (one user pool).
-- Create a site. This creates a tenant with a `shared` and a `private` space
-  (ADR 0009). The owner is tenant admin, with two-step sign-in.
-- Give an approximate location. Only its **location cell** goes to the DHC
-  environment service, for weather; coordinates stay in the private space.
+- In the Portal, open the home and choose **Permaculture**. PermTek-5 opens
+  with `?home=…`; an owner of the home starts its habitat (ADR 0015). This
+  creates a tenant with a `shared` space; the owners are its admins, with
+  two-step sign-in. Sites without a home (PermaDemo, study sites) are still
+  created by an operator (ADR 0009).
+- The location is the home's, in DHC core: its area (country and postal code)
+  gives the weather. Nothing about the place is copied into PermTek-5; finer
+  coordinates, when needed, stay in the private space.
 
-**Output**: an empty site the owner can see on the Portal's loop page.
+**Output**: a habitat with the area's climate on its page.
 
 ## 1 · Desk observation (Observe)
 

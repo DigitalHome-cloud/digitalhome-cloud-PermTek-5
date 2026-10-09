@@ -20,6 +20,8 @@
 export interface Tenant {
   id: string;
   name: string;
+  /** The DigitalHome.Cloud home this habitat belongs to (docs/adr/0015), if any. */
+  smartHomeId?: string | null;
 }
 
 /**

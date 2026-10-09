@@ -1027,3 +1027,16 @@ a {
 .pt-install__manual summary { cursor: pointer; font-size: 0.875rem; color: var(--pt-text-muted); }
 
 .pt-install__cmd { font-family: var(--pt-font-mono); font-size: 0.75rem; background: var(--pt-bg-sunken); padding: var(--pt-space-2) var(--pt-space-3); border-radius: var(--pt-radius-sm); overflow-x: auto; }
+
+/* -- habitat and climate (docs/adr/0016) ----------------------------------- */
+
+.pt-habitat__start { display: grid; gap: var(--pt-space-3); max-width: 30rem; }
+
+.pt-climate { display: grid; gap: var(--pt-space-2); }
+.pt-climate__scroll { overflow-x: auto; }
+.pt-climate__table { font-variant-numeric: tabular-nums; min-width: 40rem; }
+.pt-climate__table td, .pt-climate__table thead th { text-align: right; }
+/* frost by the mean daily minimum: under 0 °C, and under 5 °C */
+.pt-climate--frost { color: var(--pt-danger); font-weight: 600; }
+.pt-climate--cold { color: var(--pt-warning); }
+.pt-climate__source { font-size: 0.8125rem; margin: 0; }

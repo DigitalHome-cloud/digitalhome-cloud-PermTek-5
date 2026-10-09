@@ -3,8 +3,9 @@ import type { HeadFC, PageProps } from "gatsby";
 import { Link } from "gatsby";
 import { Shell } from "../components/Shell";
 import { useSession } from "../components/AuthGate";
-import { listSpaces } from "../lib/data";
-import type { Space } from "../lib/data";
+import { HabitatPanel, HomeEntry } from "../components/Habitat";
+import { listSpaces, listTenants } from "../lib/data";
+import type { Space, Tenant } from "../lib/data";
 import { useT } from "../lib/i18n";
 
 /**
@@ -14,21 +15,34 @@ import { useT } from "../lib/i18n";
  * to handle here — and no page below needs one either. That is the whole point
  * of gating at the root.
  *
+ * Opened from the Portal with `?home=<smartHomeId>`, it starts with that
+ * home's habitat (docs/adr/0015); otherwise with the habitats this person
+ * administers.
+ *
  * Spaces are not created here: a tenant's admins add them in Settings (the
  * tenants function creates the row and its Cognito group together), and
  * operators create tenants there too.
  */
-const IndexPage: React.FC<PageProps> = () => {
+const IndexPage: React.FC<PageProps> = ({ location }) => {
   const session = useSession();
   const { t } = useT();
   const [spaces, setSpaces] = React.useState<Space[] | null>(null);
   const [error, setError] = React.useState<string | null>(null);
 
+  const [myTenants, setMyTenants] = React.useState<Tenant[] | null>(null);
+  const homeId = new URLSearchParams(location.search).get("home");
+
   React.useEffect(() => {
     listSpaces()
       .then(setSpaces)
       .catch((err: unknown) => setError(err instanceof Error ? err.message : String(err)));
+    // Operators list every tenant; a habitat is shown only to its own admins.
+    listTenants()
+      .then((ts) => setMyTenants(ts.filter((x) => session.tenants.includes(x.id))))
+      .catch(() => setMyTenants([]));
   }, []);
+
+  const habitats = (myTenants ?? []).filter((x) => x.smartHomeId);
 
   const tenants = [...new Set((spaces ?? []).map((s) => s.tenantName ?? s.tenantId))];
 
@@ -55,6 +69,10 @@ const IndexPage: React.FC<PageProps> = () => {
           </dl>
         </div>
       </div>
+
+      {homeId
+        ? <HomeEntry homeId={homeId} tenants={myTenants} />
+        : habitats.map((h) => <HabitatPanel key={h.id} tenant={h} />)}
 
       <h1 className="pt-cards__heading">{t("nav.spaces")}</h1>
 

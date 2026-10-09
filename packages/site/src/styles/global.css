@@ -1,0 +1,1029 @@
+/*
+ * D-LAB-5 template — component styles.
+ *
+ * Every value here comes from tokens.css. If you find yourself typing a hex
+ * code in this file, the token is missing — add it there, in BOTH themes,
+ * rather than hard-coding it once.
+ *
+ * Naming is .pt-{component}__{part}--{modifier} throughout. It is not
+ * fashionable and it is not enforced by tooling; it is here so that a class in
+ * the markup can be found in this file by reading it.
+ *
+ * NOTE (constraint 13 in the dlab5-cloud-template skill): a change to
+ * this file needs a clean build to
+ * appear. `npm run build` reuses the cached stylesheet and emits an IDENTICAL
+ * content hash, so the page renders with the old CSS and your edit looks like
+ * it did nothing. Run:
+ *     rm -rf packages/site/.cache packages/site/public && npm run build
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#___gatsby,
+#gatsby-focus-wrapper {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--pt-bg);
+  color: var(--pt-text);
+  font-family: var(--pt-font);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+code {
+  font-family: var(--pt-font-mono);
+  font-size: 0.9em;
+  background: var(--pt-bg-sunken);
+  padding: 0.1em 0.35em;
+  border-radius: var(--pt-radius-sm);
+}
+
+a {
+  color: var(--pt-accent);
+}
+
+/* -- the sign-in / notice screen ------------------------------------------ */
+
+.pt-gate {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: var(--pt-space-6);
+}
+
+.pt-gate__card {
+  width: 100%;
+  max-width: 26rem;
+  background: var(--pt-surface);
+  border: 1px solid var(--pt-border);
+  border-radius: var(--pt-radius);
+  box-shadow: var(--pt-shadow);
+  padding: var(--pt-space-8);
+  display: grid;
+  gap: var(--pt-space-4);
+}
+
+.pt-gate__title {
+  margin: 0;
+  font-size: 1.375rem;
+  letter-spacing: -0.01em;
+}
+
+.pt-gate__subtitle {
+  margin: 0;
+  color: var(--pt-text-muted);
+  font-size: 0.875rem;
+}
+
+.pt-gate__error {
+  margin: 0;
+  color: var(--pt-danger);
+  font-size: 0.875rem;
+}
+
+/* -- form primitives ------------------------------------------------------ */
+
+.pt-field {
+  display: grid;
+  gap: var(--pt-space-1);
+  font-size: 0.875rem;
+}
+
+.pt-field > span {
+  color: var(--pt-text-muted);
+}
+
+.pt-field input,
+.pt-field textarea,
+.pt-field select {
+  background: var(--pt-bg-sunken);
+  border: 1px solid var(--pt-border-strong);
+  border-radius: var(--pt-radius-sm);
+  color: var(--pt-text);
+  font: inherit;
+  padding: var(--pt-space-2) var(--pt-space-3);
+}
+
+.pt-field input:focus-visible,
+.pt-field textarea:focus-visible,
+.pt-field select:focus-visible {
+  outline: 2px solid var(--pt-accent);
+  outline-offset: 1px;
+}
+
+/* -- a password field with a reveal toggle -------------------------------- */
+
+/* The input and the eye share a box, so the button can sit inside the field
+   rather than beside it — beside it, the field stops lining up with every
+   other field in the form. */
+.pt-field__control {
+  position: relative;
+  display: block;
+}
+
+.pt-field__control input {
+  width: 100%;
+  /* Room for the button, so a long password scrolls under it rather than
+     behind it. */
+  padding-right: 2.5rem;
+}
+
+.pt-field__reveal {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 2.25rem;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  color: var(--pt-text-muted);
+}
+
+.pt-field__reveal:hover {
+  color: var(--pt-text);
+}
+
+/* It is out of the tab order, so :focus-visible will not fire — but a pointer
+   user still needs to see the state change, and aria-pressed is the thing that
+   is actually true. */
+.pt-field__reveal[aria-pressed="true"] {
+  color: var(--pt-accent);
+}
+
+.pt-button {
+  background: var(--pt-accent-strong);
+  border: 0;
+  border-radius: var(--pt-radius-sm);
+  color: var(--pt-text-inverse);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  padding: var(--pt-space-3) var(--pt-space-4);
+}
+
+.pt-button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.pt-button--ghost {
+  background: none;
+  color: var(--pt-text);
+  border: 1px solid var(--pt-border-strong);
+}
+
+.pt-button--ghost:hover {
+  background: var(--pt-surface);
+  border-color: var(--pt-text-muted);
+}
+
+.pt-linkbutton {
+  background: none;
+  border: 1px solid var(--pt-border-strong);
+  border-radius: var(--pt-radius-sm);
+  color: var(--pt-text-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.875rem;
+  padding: var(--pt-space-1) var(--pt-space-3);
+}
+
+.pt-linkbutton:hover {
+  color: var(--pt-text);
+  border-color: var(--pt-text-muted);
+}
+
+.pt-linkbutton--danger:hover {
+  color: var(--pt-danger);
+  border-color: var(--pt-danger);
+}
+
+/* -- app shell ------------------------------------------------------------ */
+
+.pt-shell {
+  min-height: 100%;
+}
+
+.pt-shell--railed {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+}
+
+.pt-shell__body {
+  min-width: 0;
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.pt-shell__header {
+  display: flex;
+  align-items: center;
+  gap: var(--pt-space-3);
+  padding: var(--pt-space-3) var(--pt-space-6);
+  background: var(--pt-bg-sunken);
+  border-bottom: 1px solid var(--pt-border);
+}
+
+.pt-shell__title {
+  font-weight: 700;
+  font-size: 0.9375rem;
+}
+
+.pt-shell__meta {
+  color: var(--pt-text-muted);
+  font-size: 0.75rem;
+}
+
+.pt-shell__spacer {
+  flex: 1;
+}
+
+.pt-shell__railtoggle {
+  min-width: 2rem;
+  line-height: 1;
+}
+
+.pt-shell__main {
+  padding: var(--pt-space-8) var(--pt-space-6);
+  max-width: 84rem;
+  width: 100%;
+  margin-inline: auto;
+}
+
+.pt-mark {
+  display: grid;
+  place-items: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  flex: none;
+  border-radius: 7px;
+  background: linear-gradient(
+    135deg,
+    var(--pt-accent),
+    var(--pt-accent-strong)
+  );
+  color: var(--pt-text-inverse);
+}
+
+/* -- rail ----------------------------------------------------------------- */
+
+.pt-rail {
+  width: 232px;
+  flex: none;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pt-space-3);
+  padding: var(--pt-space-4) 0;
+  background: var(--pt-rail);
+  border-right: 1px solid var(--pt-border);
+  transition: width 180ms ease;
+}
+
+/* Collapsed to nothing rather than to icons: at this width an icon rail would
+   need its own labelling story, and the toggle is one click away. */
+.pt-rail--closed {
+  width: 0;
+  padding-inline: 0;
+  overflow: hidden;
+  border-right-width: 0;
+}
+
+.pt-rail__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--pt-space-2);
+  padding: 0 var(--pt-space-4) var(--pt-space-3);
+  border-bottom: 1px solid var(--pt-border);
+  color: var(--pt-text);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.pt-rail__brandaccent {
+  color: var(--pt-accent);
+}
+
+.pt-rail__switcher {
+  display: grid;
+  gap: var(--pt-space-1);
+  padding: 0 var(--pt-space-4);
+}
+
+.pt-rail__switcherlabel {
+  font-family: var(--pt-font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pt-text-muted);
+}
+
+.pt-rail__switcher select {
+  width: 100%;
+  background: var(--pt-bg-sunken);
+  border: 1px solid var(--pt-border-strong);
+  border-radius: var(--pt-radius-sm);
+  color: var(--pt-text);
+  font: inherit;
+  font-size: 0.8rem;
+  padding: var(--pt-space-1) var(--pt-space-2);
+}
+
+.pt-rail__section {
+  display: grid;
+  gap: var(--pt-space-2);
+}
+
+.pt-rail__sectionlabel {
+  margin: 0;
+  padding: 0 var(--pt-space-4);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pt-text-muted);
+}
+
+.pt-rail__items {
+  list-style: none;
+  margin: 0;
+  padding: 0 var(--pt-space-3);
+  display: grid;
+  gap: 2px;
+}
+
+.pt-rail__item {
+  display: flex;
+  align-items: center;
+  gap: var(--pt-space-3);
+  padding: var(--pt-space-2) var(--pt-space-3);
+  border: 1px solid transparent;
+  border-radius: var(--pt-radius-sm);
+  color: var(--pt-text);
+  font-size: 0.8rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.pt-rail__item:hover {
+  background: var(--pt-surface);
+  border-color: var(--pt-border);
+}
+
+.pt-rail__item--on {
+  background: var(--pt-surface);
+  border-color: var(--pt-border-strong);
+}
+
+/* A rail entry that is a button must not inherit the browser's button look. */
+.pt-rail__item--button {
+  width: 100%;
+  background: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+  text-align: left;
+}
+
+.pt-rail__dot {
+  margin-left: auto;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--pt-accent);
+}
+
+.pt-rail__who,
+.pt-rail__note {
+  margin: 0;
+  padding: 0 var(--pt-space-4);
+  font-size: 0.6875rem;
+  line-height: 1.55;
+  color: var(--pt-text-muted);
+  overflow-wrap: anywhere;
+}
+
+/* -- the appearance segmented control ------------------------------------- */
+
+.pt-seg {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  margin: 0 var(--pt-space-3);
+  padding: 2px;
+  border: 1px solid var(--pt-border);
+  border-radius: var(--pt-radius-sm);
+  background: var(--pt-bg-sunken);
+}
+
+.pt-seg__option {
+  border: none;
+  border-radius: calc(var(--pt-radius-sm) - 2px);
+  background: none;
+  color: var(--pt-text-muted);
+  font: inherit;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: var(--pt-space-2) 0;
+  cursor: pointer;
+}
+
+.pt-seg__option--on {
+  background: var(--pt-surface-raised);
+  color: var(--pt-text);
+}
+
+/* -- the guest shell ------------------------------------------------------- */
+
+/* Wider than the signed-in rail: this one holds a real form with two fields,
+   not a list of links. */
+.pt-shell--guest .pt-rail {
+  width: 280px;
+}
+
+/* The sign-in form sits inside the rail, so it drops the card treatment it
+   had when it owned the page. */
+.pt-shell--guest .pt-gate__card {
+  max-width: none;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  padding: 0 var(--pt-space-4);
+  gap: var(--pt-space-3);
+}
+
+.pt-shell--guest .pt-gate__title {
+  font-size: 0.9375rem;
+}
+
+.pt-shell--guest .pt-gate__subtitle {
+  font-size: 0.75rem;
+}
+
+/* -- the guest landing ----------------------------------------------------- */
+
+/* One centred column. The rail already carries the form and the explanation,
+   so this side has one job: say what the product is. */
+.pt-guest {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: var(--pt-space-4);
+  text-align: center;
+  min-height: 100%;
+}
+
+.pt-guest__logo {
+  /* The two files are stacked in the same grid cell rather than laid out in a
+     row, so hiding one does not shift the other. */
+  display: grid;
+  width: min(15rem, 60vw);
+}
+
+.pt-guest__logoimg {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: auto;
+  border-radius: var(--pt-radius);
+}
+
+/* Dark is the default, matching :root and what the server emits. Light is the
+   override, keyed on the same attribute the pre-paint script sets — so the
+   right logo is the one that paints, not the one that replaces another. */
+.pt-guest__logoimg--light {
+  display: none;
+}
+
+[data-pt-theme="light"] .pt-guest__logoimg--dark {
+  display: none;
+}
+
+[data-pt-theme="light"] .pt-guest__logoimg--light {
+  display: block;
+}
+
+/* The product line, under the mark. Set apart from the lede below it by
+   weight rather than size, so it reads as a caption to the logo and not as a
+   second heading competing with the one above. */
+.pt-guest__tagline {
+  margin: 0;
+  max-width: 30ch;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* The hero type is reused verbatim from the signed-in home — same sizes, same
+   accent, same measure — so the two screens cannot drift apart. Only the
+   centring is specific to this page, because the guest column is centred and
+   the signed-in hero is not. */
+.pt-guest .pt-hero__lede,
+.pt-guest .pt-hero__title {
+  margin-inline: auto;
+}
+
+/* Deliberately not a .pt-button: it leaves the site, and giving it the same
+   weight as the primary action would make "buy me a coffee" compete with
+   "sign in". */
+.pt-coffee {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pt-space-2);
+  margin-top: var(--pt-space-2);
+  padding: var(--pt-space-2) var(--pt-space-4);
+  border: 1px solid var(--pt-border-strong);
+  border-radius: 999px;
+  color: var(--pt-text-muted);
+  font-size: 0.8125rem;
+  text-decoration: none;
+}
+
+.pt-coffee:hover {
+  color: var(--pt-text);
+  border-color: var(--pt-warning);
+}
+
+/* -- hero, on the signed-in home ------------------------------------------ */
+
+.pt-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 18rem);
+  gap: var(--pt-space-6);
+  align-items: center;
+  margin-bottom: var(--pt-space-6);
+}
+
+.pt-hero__copy {
+  display: grid;
+  gap: var(--pt-space-4);
+  align-content: start;
+  max-width: 40rem;
+}
+
+.pt-hero__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--pt-space-2);
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pt-accent);
+}
+
+.pt-hero__eyebrow::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.pt-hero__title {
+  margin: 0;
+  font-size: clamp(1.875rem, 1.3rem + 2.4vw, 3rem);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+
+.pt-hero__titleaccent {
+  color: var(--pt-accent);
+}
+
+.pt-hero__lede {
+  margin: 0;
+  max-width: 34rem;
+  color: var(--pt-text-muted);
+  line-height: 1.65;
+}
+
+.pt-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pt-space-3);
+}
+
+.pt-hero__art {
+  width: 100%;
+  height: auto;
+  max-height: 13rem;
+  justify-self: end;
+  opacity: 0.9;
+}
+
+/* -- stats ---------------------------------------------------------------- */
+
+.pt-stats {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  border: 1px solid var(--pt-border);
+  border-radius: var(--pt-radius);
+  background: var(--pt-surface);
+  overflow: hidden;
+}
+
+.pt-stat {
+  flex: 1 1 8rem;
+  padding: var(--pt-space-3) var(--pt-space-4);
+  border-right: 1px solid var(--pt-border);
+}
+
+.pt-stat:last-child {
+  border-right: 0;
+}
+
+.pt-stat dt {
+  font-size: 1.25rem;
+  font-weight: 700;
+  /* Tabular figures so a number that changes does not shift the layout. */
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.pt-stat dd {
+  margin: 3px 0 0;
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--pt-text-muted);
+  font-family: var(--pt-font-mono);
+}
+
+/* -- cards ---------------------------------------------------------------- */
+
+.pt-cards__heading {
+  margin: 0 0 var(--pt-space-4);
+  scroll-margin-top: var(--pt-space-6);
+}
+
+.pt-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--pt-space-4);
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+}
+
+.pt-card {
+  display: grid;
+  gap: var(--pt-space-1);
+  background: var(--pt-surface);
+  border: 1px solid var(--pt-border);
+  border-radius: var(--pt-radius);
+  padding: var(--pt-space-4);
+  color: inherit;
+  text-decoration: none;
+}
+
+.pt-card:hover {
+  border-color: var(--pt-accent);
+}
+
+.pt-card__title {
+  font-weight: 600;
+}
+
+.pt-card__body,
+.pt-card__meta {
+  color: var(--pt-text-muted);
+  font-size: 0.875rem;
+}
+
+/* -- a placeholder view --------------------------------------------------- */
+
+/*
+ * Every screen under /w/<slug>/ is one of these until a fork replaces it.
+ * Styled rather than left bare on purpose: an unstyled placeholder reads as a
+ * broken page, and the first real screen should be able to keep the frame and
+ * change only what is inside it.
+ */
+.pt-panel {
+  background: var(--pt-surface);
+  border: 1px solid var(--pt-border);
+  border-radius: var(--pt-radius);
+  padding: var(--pt-space-6);
+  display: grid;
+  gap: var(--pt-space-3);
+}
+
+.pt-panel__title {
+  margin: 0;
+  font-size: 1.0625rem;
+}
+
+.pt-panel__hint {
+  margin: 0;
+  color: var(--pt-text-muted);
+  font-size: 0.875rem;
+  max-width: 46rem;
+  line-height: 1.65;
+}
+
+.pt-pagehead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--pt-space-6);
+  flex-wrap: wrap;
+  margin-bottom: var(--pt-space-4);
+}
+
+/* -- small states --------------------------------------------------------- */
+
+.pt-lede,
+.pt-muted {
+  color: var(--pt-text-muted);
+}
+
+.pt-error {
+  color: var(--pt-danger);
+}
+
+.pt-empty {
+  border: 1px dashed var(--pt-border-strong);
+  border-radius: var(--pt-radius);
+  padding: var(--pt-space-6);
+}
+
+.pt-empty p {
+  margin: 0 0 var(--pt-space-2);
+}
+
+.pt-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pt-space-2);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pt-accent);
+}
+
+.pt-badge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.pt-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pt-space-2);
+  background: none;
+  border: 1px solid var(--pt-border-strong);
+  border-radius: 999px;
+  color: var(--pt-text-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+  padding: var(--pt-space-1) var(--pt-space-3);
+}
+
+.pt-chip--on {
+  color: var(--pt-text);
+  border-color: var(--pt-accent);
+  background: var(--pt-surface);
+}
+
+/* -- narrow viewports ------------------------------------------------------ */
+
+@media (max-width: 52rem) {
+  .pt-shell--railed {
+    grid-template-columns: 1fr;
+  }
+
+  /* The rail stops being a column and becomes a band above the content.
+     `position: static` matters: a sticky element with height:100vh at this
+     width covers the page. */
+  .pt-rail {
+    position: static;
+    height: auto;
+    width: 100%;
+    border-right: 0;
+    border-bottom: 1px solid var(--pt-border);
+  }
+
+  .pt-rail__items {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 900px) {
+  .pt-shell--guest .pt-rail {
+    width: 100%;
+  }
+
+  .pt-hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* The art is decoration; at this width the copy needs the room. */
+  .pt-hero__art {
+    display: none;
+  }
+}
+
+/* -- motion ---------------------------------------------------------------- */
+
+/*
+ * Anything that moves on its own stops when the reader has asked for that.
+ * Transitions on a deliberate action — the rail opening because a button was
+ * pressed — are covered too, which is a slight over-reach and the right
+ * trade: it is one rule, and unattended motion is what causes trouble.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* -- tenants, spaces, edges, two-step sign-in (from the Mediathek) -------- */
+
+.pt-select,
+.pt-input {
+  background: var(--pt-bg-sunken);
+  color: var(--pt-text);
+  border: 1px solid var(--pt-border);
+  border-radius: var(--pt-radius-sm);
+  padding: var(--pt-space-1) var(--pt-space-2);
+  font: inherit;
+  max-width: 100%;
+}
+
+.pt-select:focus-visible,
+.pt-input:focus-visible {
+  outline: 2px solid var(--pt-accent);
+  outline-offset: 1px;
+}
+
+.pt-chip__x {
+  background: none; border: 0; padding: 0 0 0 4px; cursor: pointer;
+  color: inherit; font: inherit; opacity: 0.7;
+}
+
+.pt-chip__x:hover { opacity: 1; }
+
+.pt-select--small { padding-block: 2px; font-size: 0.8rem; }
+
+.pt-unknown__form .pt-input { width: 12rem; }
+
+.pt-link { max-width: 36rem; }
+
+.pt-link__form { display: flex; gap: var(--pt-space-2); margin: var(--pt-space-2) 0; }
+
+.pt-link__code {
+  font-family: var(--pt-font-mono);
+  font-size: 1.4rem;
+  letter-spacing: 0.15em;
+  width: 11ch;
+  text-transform: uppercase;
+}
+
+.pt-link__actions { display: flex; gap: var(--pt-space-2); flex-wrap: wrap; align-items: center; }
+
+.pt-link__actions .pt-panel__hint { flex-basis: 100%; }
+
+.pt-facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--pt-space-1) var(--pt-space-4);
+  margin: var(--pt-space-4) 0;
+}
+
+.pt-facts dt { color: var(--pt-text-muted); }
+
+.pt-facts dd { margin: 0; overflow-wrap: anywhere; }
+
+.pt-ok { color: var(--pt-success); }
+
+.pt-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+
+.pt-table th {
+  text-align: left;
+  font-weight: 500;
+  color: var(--pt-text-muted);
+  border-bottom: 1px solid var(--pt-border);
+  padding: var(--pt-space-1) var(--pt-space-2);
+}
+
+.pt-table td {
+  border-bottom: 1px solid var(--pt-border);
+  padding: var(--pt-space-1) var(--pt-space-2);
+  overflow-wrap: anywhere;
+}
+
+.pt-steps {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pt-space-2);
+  margin: 0 0 var(--pt-space-4);
+  padding: 0;
+  align-items: center;
+}
+
+.pt-steps li {
+  display: flex;
+  align-items: center;
+  gap: var(--pt-space-2);
+  padding: var(--pt-space-1) var(--pt-space-3);
+  border: 1px solid var(--pt-border);
+  border-radius: 999px;
+  color: var(--pt-text-muted);
+  font-size: 0.9rem;
+}
+
+.pt-steps li span {
+  display: grid;
+  place-items: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  background: var(--pt-surface-raised);
+  font-size: 0.75rem;
+}
+
+.pt-steps li.is-on { border-color: var(--pt-accent); color: var(--pt-text); }
+
+.pt-steps li.is-on span { background: var(--pt-accent); color: var(--pt-text-inverse); }
+
+.pt-steps li.is-done span { background: var(--pt-success); color: var(--pt-text-inverse); }
+
+.pt-steps .pt-steps__lang { margin-left: auto; border: 0; padding: 0; }
+
+.pt-form { display: grid; gap: var(--pt-space-2); }
+
+/* Households and vaults (Settings, ADR-0005) */
+.pt-panel__sub { font-size: 0.95rem; margin: var(--pt-space-3) 0 var(--pt-space-1); }
+
+.pt-space { border-top: 1px solid var(--pt-border); margin-top: var(--pt-space-2); }
+
+.pt-members__list { list-style: none; display: flex; flex-wrap: wrap; gap: var(--pt-space-1); padding: 0; margin: var(--pt-space-1) 0; }
+
+.pt-members__add { display: flex; gap: var(--pt-space-2); flex-wrap: wrap; margin: var(--pt-space-1) 0; }
+
+.pt-members__add .pt-input { min-width: 16rem; }
+
+.pt-id { font-family: var(--pt-font-mono); font-size: 0.75rem; font-weight: 400; }
+
+/* a household's code for another site */
+.pt-sitecode { margin: 0 0 0.75rem; }
+
+.pt-sitecode summary { cursor: pointer; color: var(--pt-text-muted); font-size: 0.875rem; }
+
+.pt-sitecode code { overflow-wrap: anywhere; user-select: all; }
+
+/* two-step sign-in: QR, key, code */
+.pt-mfa { display: grid; gap: var(--pt-space-3); max-width: 22rem; }
+
+.pt-mfa__qr { justify-self: start; padding: var(--pt-space-2); background: #fff; border-radius: var(--pt-radius-sm, 4px); line-height: 0; }
+
+.pt-mfa__key { font-family: var(--pt-font-mono); letter-spacing: 0.04em; overflow-wrap: anywhere; user-select: all; }
+
+/* Settings → install an edge on another PC */
+.pt-steps { margin: 0; padding-left: 1.25rem; display: grid; gap: var(--pt-space-1); font-size: 0.875rem; }
+
+.pt-install { display: flex; flex-wrap: wrap; gap: var(--pt-space-2); }
+
+.pt-install a { text-decoration: none; }
+
+.pt-install__sha code { overflow-wrap: anywhere; font-size: 0.75rem; }
+
+.pt-install__manual summary { cursor: pointer; font-size: 0.875rem; color: var(--pt-text-muted); }
+
+.pt-install__cmd { font-family: var(--pt-font-mono); font-size: 0.75rem; background: var(--pt-bg-sunken); padding: var(--pt-space-2) var(--pt-space-3); border-radius: var(--pt-radius-sm); overflow-x: auto; }

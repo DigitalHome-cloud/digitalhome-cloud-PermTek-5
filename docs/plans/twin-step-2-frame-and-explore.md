@@ -1,6 +1,6 @@
 # Twin step 2 — frame and explore
 
-Part of ADR 0007 (amended) and `docs/workflow.md` stages 2 and 4. Status: **items 1–6 built; gate not met — rovers leave the frame at downhill edges, see Results** · 2026-10-07
+Part of ADR 0014 (amended) and `docs/workflow.md` stages 2 and 4. Status: **items 1–6 built; gate not met — rovers leave the frame at downhill edges, see Results** · 2026-10-07
 
 ## Goal
 
@@ -99,6 +99,6 @@ hardware question with a slope test bench (wheels vs tracks). The gate of this s
 measured on PermaDemo. `twin/sites/` is a library: more virtual sites for study can be
 added without code.
 
-Vegetation map added to the site file (classes from `ontology/`), used by the twin for
+Vegetation map added to the site file (classes from `packages/ontology/`), used by the twin for
 drive cost and blocked areas, canopy (RTK float, soil shade) and the world. The real site's
 layer is traced from the plan's aerial photo, all *to confirm* on the owner's walk.

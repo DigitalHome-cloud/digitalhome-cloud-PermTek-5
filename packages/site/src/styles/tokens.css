@@ -1,0 +1,119 @@
+/*
+ * D-LAB-5 template — design tokens.
+ *
+ * Everything is a CSS custom property on :root, component classes are
+ * .pt-{component}__{part}--{modifier}, and the palette is dark-first.
+ *
+ * Two themes. Dark is the default on :root; light is an override keyed on
+ * [data-pt-theme="light"], set on <html> by the pre-paint script in
+ * gatsby-ssr.tsx and thereafter by useTheme. EVERY TOKEN IS DEFINED IN BOTH —
+ * a component must never read one that exists in only one theme, because the
+ * failure is invisible until someone toggles.
+ *
+ * Plain CSS with custom properties. No Tailwind, no CSS-in-JS: the tokens have
+ * to be readable from outside the React tree, because anything a fork embeds
+ * later — an editor, a charting library, a portal — injects its own chrome and
+ * can only be tinted through custom properties.
+ */
+
+:root {
+  /* -- surfaces ---------------------------------------------------------- */
+  --pt-bg: #0f172a;
+  --pt-bg-sunken: #020617;
+  --pt-surface: #1e293b;
+  --pt-surface-raised: #334155;
+  /* The rail sits deeper than a card so the content area reads as the
+     foreground. In light it is the opposite — white against a tinted page. */
+  --pt-rail: #0b1120;
+  --pt-border: #334155;
+  --pt-border-strong: #475569;
+
+  /* -- text -------------------------------------------------------------- */
+  --pt-text: #e5e7eb;
+  --pt-text-muted: #94a3b8;
+  --pt-text-inverse: #0f172a;
+
+  /* -- accents ----------------------------------------------------------- */
+  --pt-accent: #38bdf8;
+  --pt-accent-strong: #0ea5e9;
+  --pt-success: #22c55e;
+  --pt-warning: #f59e0b;
+  --pt-danger: #ef4444;
+
+  /* -- categorical ------------------------------------------------------- *
+   * Six hues for whatever a fork ends up distinguishing — series in a chart,
+   * statuses on a badge, owners in a list. Ordered so that adjacent pairs stay
+   * apart in hue rather than by luminance alone, which is what makes them
+   * survive both themes and the common forms of colour blindness. Use them in
+   * order; do not reach past six without checking the pairs still separate.
+   * ---------------------------------------------------------------------- */
+  --pt-cat-1: #38bdf8;
+  --pt-cat-2: #f59e0b;
+  --pt-cat-3: #a78bfa;
+  --pt-cat-4: #34d399;
+  --pt-cat-5: #fb7185;
+  --pt-cat-6: #94a3b8;
+
+  /* Text drawn ON a categorical fill. The six above are mid-tone, so a dark
+     ink reads on all of them in either theme. */
+  --pt-cat-ink: #0f172a;
+
+  /* -- type -------------------------------------------------------------- */
+  --pt-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --pt-font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* -- space and shape --------------------------------------------------- */
+  --pt-space-1: 0.25rem;
+  --pt-space-2: 0.5rem;
+  --pt-space-3: 0.75rem;
+  --pt-space-4: 1rem;
+  --pt-space-6: 1.5rem;
+  --pt-space-8: 2rem;
+  --pt-radius: 0.5rem;
+  --pt-radius-sm: 0.25rem;
+  --pt-shadow: 0 10px 30px rgb(2 6 23 / 0.5);
+}
+
+/*
+ * Light theme.
+ */
+[data-pt-theme="light"] {
+  --pt-bg: #f1f5f9;
+  --pt-bg-sunken: #f8fafc;
+  --pt-surface: #ffffff;
+  /* Slate 200, NOT the page tint. Setting this to #f1f5f9 makes it identical
+     to --pt-bg, so anything painted "raised" is painted invisible. In dark
+     the ladder runs bg → surface → raised, getting lighter; in light it runs
+     the other way, because on a tinted page a card is white and a raised
+     element is what separates itself from the card. */
+  --pt-surface-raised: #e2e8f0;
+  --pt-rail: #ffffff;
+  --pt-border: #cbd5e1;
+  --pt-border-strong: #94a3b8;
+
+  --pt-text: #0f172a;
+  --pt-text-muted: #334155;
+  --pt-text-inverse: #ffffff;
+
+  /* Darkened from the dark-theme accents: #38bdf8 on white is about 1.9:1,
+     nowhere near the 4.5:1 that body text needs. Any accent used for text or
+     for a control's outline has to be recomputed here, not reused. */
+  --pt-accent: #0369a1;
+  --pt-accent-strong: #075985;
+  --pt-success: #15803d;
+  --pt-warning: #b45309;
+  --pt-danger: #b91c1c;
+
+  /* The categorical hues are darkened by the same reasoning. They are used as
+     FILLS more often than as text, but a 1.9:1 fill against a white card is
+     just as unreadable as 1.9:1 text. */
+  --pt-cat-1: #0284c7;
+  --pt-cat-2: #b45309;
+  --pt-cat-3: #7c3aed;
+  --pt-cat-4: #059669;
+  --pt-cat-5: #e11d48;
+  --pt-cat-6: #475569;
+  --pt-cat-ink: #ffffff;
+
+  --pt-shadow: 0 10px 30px rgb(15 23 42 / 0.12);
+}

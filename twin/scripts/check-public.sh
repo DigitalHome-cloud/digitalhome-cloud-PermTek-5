@@ -23,7 +23,7 @@ fi
 # 1. no plans, generated worlds or run data
 for f in "${files[@]}"; do
   case "$f" in
-    tools/plan/*|*/tools/plan/*|worlds/*|*/worlds/*|data/*|*/data/*|site_config.json|*/site_config.json)
+    tools/plan/*|twin/tools/plan/*|worlds/*|twin/worlds/*|data/*|twin/data/*|site_config.json|twin/site_config.json)
       say "generated or private file tracked: $f" ;;
     *.jpg|*.jpeg|*.tif|*.tiff|*.geojson|*.kml|*.gpx|*.dxf) say "map-like file: $f (only demo images under docs/ are allowed)" ;;
   esac
@@ -37,7 +37,7 @@ for f in "${files[@]}"; do
   fi
 done
 for f in "${files[@]}"; do
-  case "$f" in sites/*.json|sites/*/*.json|*/sites/*.json|*/sites/*/*.json)
+  case "$f" in sites/*.json|sites/*/*.json|twin/sites/*.json|twin/sites/*/*.json)
     python3 - "$f" <<'PY' || fail=1
 import json, sys
 s = json.load(open(sys.argv[1]))

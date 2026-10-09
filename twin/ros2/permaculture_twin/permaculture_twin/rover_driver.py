@@ -18,7 +18,7 @@ Lockstep: after publishing a step's sensors the driver waits for the command
 computed from exactly those readings and applies it in the same step, as
 the plain Webots controller does. Webots waits for the driver, so the
 mission node cannot fall behind the physics, however fast the simulation
-runs (ADR 0007, step 1 work item 6: free-running lag was 2-3 steps).
+runs (ADR 0014, step 1 work item 6: free-running lag was 2-3 steps).
 Before the first step it waits for the mission node to subscribe, so the
 mission sees every step from the start.
 """

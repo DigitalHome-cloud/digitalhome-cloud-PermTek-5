@@ -31,7 +31,7 @@ flowchart LR
 
 - Sign in with the DigitalHome.Cloud account (one user pool).
 - Create a site. This creates a tenant with a `shared` and a `private` space
-  (ADR 0002). The owner is tenant admin, with two-step sign-in.
+  (ADR 0009). The owner is tenant admin, with two-step sign-in.
 - Give an approximate location. Only its **location cell** goes to the DHC
   environment service, for weather; coordinates stay in the private space.
 

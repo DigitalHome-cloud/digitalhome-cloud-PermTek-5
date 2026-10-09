@@ -16,14 +16,30 @@ from the shared DHC environment service.
 
 | Part | Where | Made from |
 |---|---|---|
-| Cloud: app and backend | `repos/permaculture-cloud` (to generate) | template-dlab5-cloud (Amplify Gen 2) |
-| Nest: the garden's edge | `repos/permaculture-nest-edge` (to generate) | template-dlab5-edge, `edge_kind=iot` |
+| Cloud: the app (Gatsby 5) | `packages/site`, `packages/core`, `packages/i18n` | template-dlab5-cloud |
+| Cloud: the backend (Amplify Gen 2) | `backend/` (not a workspace, ADR-0001) | template-dlab5-cloud, sign-in through the DHC pool (ADR 0008) |
+| Ontology: crops, seasons, recipes, vegetation | `packages/ontology` | perma-core modules, SHACL; the template's placeholder T-Box until it is replaced |
 | Twin: Webots test bed | `twin/` | this project, GPL-3.0-or-later |
-| Ontology: crops, seasons, recipes, vegetation | `ontology/` | perma-core modules, SHACL |
+| Nest: the garden's edge | its own repository (to generate) | template-dlab5-edge, `edge_kind=iot` |
 
 **Public, without any real site.** Site names, plans, coordinates, calendars and
-site files live in a private site pack, never here (ADR 0006).
+site files live in a private site pack, never here (ADR 0013).
 `scripts/check-public.sh` runs before every commit.
+
+## Develop
+
+```bash
+npm install && npm --prefix backend install     # two installs: backend/ is not a workspace
+npm test && npm run backend:typecheck
+npm run build                                   # must pass with no amplify_outputs.json
+npm run dev                                     # sandbox + site; first export the DHC_* variables
+                                                # (docs/setup/shared-auth.md)
+```
+
+Branches: `stage` integrates, `main` is production (Amplify app
+`digitalhome-cloud-PermTek-5`). Guidance for working in a repository made from
+the template: the `dlab5-cloud-template` skill. The template's ADRs are
+`docs/adr/0001`–`0007`, PermTek-5's start at `0008`.
 
 ## Read first
 
@@ -32,11 +48,11 @@ site files live in a private site pack, never here (ADR 0006).
 - [docs/architecture.md](docs/architecture.md): garden · nest · cloud · twin · DHC
 - [docs/privacy-contract.md](docs/privacy-contract.md): what never leaves the nest or reaches a public repo
 - [docs/design-identity.md](docs/design-identity.md): the Portal's look and the loop
-- [docs/adr/](docs/adr/): decisions 0001–0007
-- [ontology/README.md](ontology/README.md): crop library, site calendars, recipes, vegetation map
+- [docs/adr/](docs/adr/): decisions 0008–0014 (0008–0014: the template's)
+- [packages/ontology/README.md](packages/ontology/README.md): crop library, site calendars, recipes, vegetation map
 - [twin/README.md](twin/README.md): the Webots twin
 - [twin/README.md](twin/README.md): run the twin on the demo site
 
 ## Licence
 
-Code GPL-3.0-or-later (see `twin/LICENSE`); the invented sites and examples are CC0.
+Code GPL-3.0-or-later (see `LICENSE`, `COPYRIGHT`, `NOTICE`); the invented sites and examples are CC0.

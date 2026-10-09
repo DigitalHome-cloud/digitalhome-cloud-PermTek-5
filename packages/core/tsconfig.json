@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    /* No DOM. This package is imported by the Gatsby site, by the verification
+       scripts and — if a fork needs it — by a Lambda. Anything that reaches
+       for `window` or `document` belongs in packages/site instead, and
+       dropping the DOM lib from the base config is what enforces that. */
+    "lib": ["ES2022"]
+  },
+  "include": ["src/**/*"]
+}

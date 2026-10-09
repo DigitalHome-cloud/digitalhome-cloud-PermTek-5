@@ -25,10 +25,10 @@ PermTek-5 is a new app on the DigitalHome.Cloud platform that shows a permacultu
 
 1. Observe before acting: the app suggests, a person accepts.
 2. The garden runs without internet. The edge is the coordinator; the cloud is archive, design and review.
-3. Reuse the D-LAB-5 templates and DigitalHome.Cloud: Amplify Gen 2, the DHC Cognito user pool, tenants and spaces, edges linked by device flow, one A-Box per space checked with SHACL, REC + Brick. (Revised 2026-10-07: the platform moved from Gen1 to Gen 2; see ADR 0001.)
+3. Reuse the D-LAB-5 templates and DigitalHome.Cloud: Amplify Gen 2, the DHC Cognito user pool, tenants and spaces, edges linked by device flow, one A-Box per space checked with SHACL, REC + Brick. (Revised 2026-10-07: the platform moved from Gen1 to Gen 2; see ADR 0008.)
 4. Clean core: standard ontologies stay read-only; perma-core and local labels live in sidecar files.
 5. SHACL is the gate: nothing reaches a robot or the register unless it validates.
-6. Code public, sites private: the twin and the templates are GPL; site plans, coordinates and elevations never leave private storage (ADR 0006).
+6. Code public, sites private: the twin and the templates are GPL; site plans, coordinates and elevations never leave private storage (ADR 0013).
 
 ## The loop: Observe, Design, Build, Run
 
@@ -60,7 +60,7 @@ One published site model feeds the cloud graph, the nest's copy and the Webots t
 
 ## Overlap with DigitalHome.Cloud
 
-Separate product, separate backend, shared where it saves work (ADRs 0001, 0003):
+Separate product, separate backend, shared where it saves work (ADRs 0008, 0003):
 
 | Shared | How |
 | --- | --- |
@@ -130,7 +130,7 @@ Publishing a new site version regenerates three things from one model: the A-BOX
 
 ## Webots digital twin
 
-The twin exists as a Webots project (its original handoff is kept with the private site pack): the 44.5 % slope, fascines, anchors, IR posts, nest and two explorer rovers. It is now in `twin/`, split so its code can be published (ADR 0006):
+The twin exists as a Webots project (its original handoff is kept with the private site pack): the 44.5 % slope, fascines, anchors, IR posts, nest and two explorer rovers. It is now in `twin/`, split so its code can be published (ADR 0013):
 
 - `twin/` (future public repo **permaculture-twin**, GPL-3.0-or-later): controllers, protos, a generator that reads a **site file** (`--site`), a leak guard, and an invented **demo hillside** with the same slope and features.
 - a **private site pack** outside this repository (never a public remote): the plan, its traces (`trace_plan.py` → `site.json`), the original zip. The generator rebuilds the first site's world from it identically.
@@ -148,7 +148,7 @@ The twin exists as a Webots project (its original handoff is kept with the priva
 - Twin runs write to a separate sandbox site, so simulated observations never mix with real ones. The app shows them side by side on the Twin screen.
 - Field tests feed parameters back: wheel slip on wet clay, IR range in sun, UWB error under oaks, battery use per mission.
 
-**On ROS 2** (ADR 0007): rovers become a mission node plus a Webots driver plugin, so the same node later runs on a real rover; stigmergy stays the only channel between rovers. Scenarios become files run by the garden supervisor, and the fleet console is a robot edge (**permaculture-fleet-edge**, `edge_kind=robot`). Step 1: `docs/plans/twin-step-1-ros2-rover.md`.
+**On ROS 2** (ADR 0014): rovers become a mission node plus a Webots driver plugin, so the same node later runs on a real rover; stigmergy stays the only channel between rovers. Scenarios become files run by the garden supervisor, and the fleet console is a robot edge (**permaculture-fleet-edge**, `edge_kind=robot`). Step 1: `docs/plans/twin-step-1-ros2-rover.md`.
 
 **Where it runs**: on your machine with a GPU for interactive work; headless batch runs (100+ garden hours) on a small cloud instance, results uploaded to the sandbox site.
 
@@ -158,17 +158,17 @@ Reuse the D-LAB-5 templates and what DigitalHome.Cloud already runs; add only th
 
 | Layer | Choice | Why |
 | --- | --- | --- |
-| Frontend | Gatsby 5 from template-dlab5-cloud, own repo **permaculture-cloud**, served at PermTek-5 (domain to decide) | same platform, same deploy, tenants and spaces built in |
-| Backend | Amplify Gen 2, own backend (not in DHC core) | permaculture models stay out of the SmartHome schema (ADR 0001) |
+| Frontend | Gatsby 5 from template-dlab5-cloud, in this repository (PermTek-5; domain to decide) | same platform, same deploy, tenants and spaces built in |
+| Backend | Amplify Gen 2, own backend (not in DHC core) | permaculture models stay out of the SmartHome schema (ADR 0008) |
 | Login | DHC Cognito user pool imported with `referenceAuth` | one account across apps |
 | Style | the Portal's palette and IBM Plex fonts mapped onto the template's `--app-*` tokens | one visual identity (`docs/design-identity.md`) |
 | Map | MapLibre GL, the plan as a georeferenced raster (private space) | open source, works offline-cached |
 | Knowledge graph | one A-Box per space in S3, versioned, SHACL-checked (template ADR-0007); Oxigraph only on the nest for SPARQL | no graph server to run in the cloud |
 | Validation | pySHACL on the edge, the template's SHACL check on every publish and every edge upload | the clean-core gate |
 | Observations | DynamoDB for recent data, Parquet on S3 for history | the hot/cold split already evaluated for Homematic |
-| Weather | DHC core environment service | shared with SmartHome (ADR 0003) |
+| Weather | DHC core environment service | shared with SmartHome (ADR 0010) |
 | Media | S3 behind the template's object proxy, 90-day lifecycle rule | evidence for identifications |
-| Edge (nest) | Raspberry Pi 5, template-dlab5-edge with `edge_kind=iot`: Node-RED for LoRa sentinels and IR posts, Python for link, sync, jobs, MCP | garden works offline; same wire as digitalhome-edge (ADR 0004) |
+| Edge (nest) | Raspberry Pi 5, template-dlab5-edge with `edge_kind=iot`: Node-RED for LoRa sentinels and IR posts, Python for link, sync, jobs, MCP | garden works offline; same wire as digitalhome-edge (ADR 0011) |
 | Robots | ROS 2 on rovers, `edge_kind=robot` later; Zenoh only between rovers and nest | already the robotics direction |
 | Detection | BirdNET (birds), MegaDetector (animals in camera images), Pl@ntNet API or a local plant model, as edge jobs | proven, open models first |
 | Edge → cloud | device flow link (RFC 8628) + `edge/sync.py` three-way merge of the A-Box, uploads when online | replaces the custom signed uploader |
@@ -185,7 +185,7 @@ earthworks (fence, tank, fascines) happen in the same winter.
 
 | Phase | Workflow stages | Cloud and nest | Twin | Gate |
 | --- | --- | --- | --- | --- |
-| 1 · Site and frame (Oct–Nov 2026) | 0 Create, 1 Desk, 2 Frame | generate **permaculture-cloud** (`rename.mjs … --tenant site --space …`) with `referenceAuth`; create the first site (tenant, spaces, location cell); boundary, fixed objects and no-go areas into the private space; IGN RGE ALTI terrain; perma-core + perma-bio T-Box; Portal tile | site file gains **geofence and no-go areas**; world from it; reachability check | the published frame regenerates the twin world, and the twin confirms every part is reachable from the nest |
+| 1 · Site and frame (Oct–Nov 2026) | 0 Create, 1 Desk, 2 Frame | cloud generated from template-dlab5-cloud (done 2026-10-09: `rename.mjs … --tenant Site --space Area`, `referenceAuth` to the DHC pool); create the first site (tenant, spaces, location cell); boundary, fixed objects and no-go areas into the private space; IGN RGE ALTI terrain; perma-core + perma-bio T-Box; Portal tile | site file gains **geofence and no-go areas**; world from it; reachability check | the published frame regenerates the twin world, and the twin confirms every part is reachable from the nest |
 | 2 · Build the minimum (Nov 2026–Feb 2027) | 1 Desk (weather), 3 Build | environment service in DHC core; generate **permaculture-nest-edge** (`edge_kind=iot`), pair it, prove the device flow (`scripts/verify-edge.mjs`); sentinels via LoRa into Node-RED; as-built positions | regenerate from as-built; nest and anchor places tried first | nest linked, A-Box round-trip validated; **30 days unattended** |
 | 3 · Observe from the nest (Feb–spring 2027) | 5 Observe (without robots) | Site map, Species register, Microclimate; BirdNET, MegaDetector, plant ID as nest jobs | replay of real sentinel data | first useful version: a weekly 10-minute review works |
 | 4 · Explore with robots (2027) | 4 Explore, then 5 with the post routine | review of Suggested findings; rovers as robot edges (**permaculture-fleet-edge**) | **explore mission** (coverage by stigmergy, geofence-aware contour planner), then scenarios | twin matches garden; coverage complete; map confirmed |
@@ -195,12 +195,12 @@ Each gate must pass before the next phase starts: "30 days unattended" means the
 uploads a month of sentinel data with nothing lost; "twin matches garden" means rover
 missions and position error in the garden stay within what the twin predicted.
 
-**Twin order** (ADR 0007, amended): step 1 ROS 2 rover (done, items 1–7);
+**Twin order** (ADR 0014, amended): step 1 ROS 2 rover (done, items 1–7);
 **step 2 frame and explore**: geofence and no-go areas in the site file, a contour-first
 planner that stays inside them (this also fixes the fence trap), the explore mission, then
 the switch-over to ROS only; step 3 scenarios; step 4 fleet edge; step 5 web 3D view.
 
-**Plant knowledge** (`ontology/`, prototype 2026-10-09): crop library (names EN/FR/DE/Latin,
+**Plant knowledge** (`packages/ontology/`, prototype 2026-10-09): crop library (names EN/FR/DE/Latin,
 parts, ways of keeping, seed saving), site calendars, recipes; linked to GBIF and, through
 Wikidata, to TAXREF. Next, in this order, **when the library is scaled beyond the first crops**:
 

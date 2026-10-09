@@ -29,7 +29,7 @@ owner switches; simple solutions, plain words, no marketing tone.
 
 The decisions live in `stigmergy/` (plain Python, tested by `pytest tests`).
 `controllers/` adapts them to plain Webots; `ros2/permaculture_twin` adapts
-them to ROS 2 (ADR 0007, step 1). Change behaviour in `stigmergy/`, never in
+them to ROS 2 (ADR 0014, step 1). Change behaviour in `stigmergy/`, never in
 an adapter. Rovers must stay in their own ROS namespace: run
 `tools/check_isolation.py` (or the launch test) after touching the ROS side.
 

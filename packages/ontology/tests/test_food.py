@@ -22,7 +22,7 @@ def test_concepts_in_en_de_fr():
 
 def test_library_recipe_and_calendar_conform():
     g = seasons.load(RECIPE, DEMO)            # exits on a SHACL violation
-    assert len(set(g.subjects(RDF.type, seasons.PERMA.Crop))) == 17
+    assert len(set(g.subjects(RDF.type, seasons.PERMA.Crop))) == 29
 
 
 def test_span_runs_over_the_new_year():
@@ -104,7 +104,8 @@ def test_gbif_names_are_picked_by_language_and_source():
 
 
 # Wikidata's item for the current name has no TAXREF ID yet; fill from TAXREF's own file.
-KNOWN_TAXREF_GAPS = {"https://permaculture.digitalhome.cloud/id/crop-rosemary"}
+# Wikidata has no TAXREF id for these (October 2026); plum's GBIF key has no Wikidata item at all.
+KNOWN_TAXREF_GAPS = {f"https://permaculture.digitalhome.cloud/id/crop-{c}" for c in ("rosemary", "pear", "parsley", "plum")}
 
 
 def test_every_crop_taxon_has_a_taxref_id():

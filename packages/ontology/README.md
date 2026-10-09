@@ -15,12 +15,16 @@ are given for everything a person sees.
 | `tools/vegetation_abox.py` | a site file's vegetation layer → A-Box, validated with the shapes |
 | `tbox/perma-food.ttl`, `tbox/perma-food-concepts.ttl` | crops (`perma:Crop`, harvested parts and how long they keep), site calendars (`perma:SeasonWindow`: sow, plant out, harvest, month to month), recipes (`schema:Recipe` with `perma:IngredientUse` linked to crop and part); plant parts and garden activities as SKOS |
 | `shapes/perma-food-shapes.ttl` | SHACL for crops, calendars and recipes |
-| `abox/library/crops.ttl` | the **shared crop library** (same for every project), curated, 17 crops (vegetables, herbs, apple, walnut, and the spices of the recipes): names in English, French, German and Latin; parts and ways of keeping; seed saving (life cycle, pollination, what it crosses with, isolation, years the seed stays good) |
+| `abox/library/crops.ttl` | the **shared crop library** (same for every project), curated, 29 crops (vegetables, salad crops for a roof bed, herbs, fruit trees: apple, pear, plum, sweet and sour cherry, walnut, and the spices of the recipes); what each annual needs for a calendar from the climate (sow from, plant out from, bolts above, frost-tender, days to harvest, spacing); typical windows of the trees (flowering, pruning, harvest): names in English, French, German and Latin; parts and ways of keeping; seed saving (life cycle, pollination, what it crosses with, isolation, years the seed stays good) |
 | `tbox/perma-taxa.ttl` | taxon links: `perma:taxrefId` (TAXREF CD_NOM), `perma:iucnGlobalStatus`; to merge into perma-bio |
 | `abox/library/taxa-wikidata.ttl` | **generated** by `tools/wikidata_link.py`: for each GBIF taxon, its Wikidata item and TAXREF ID (`skos:exactMatch`, `perma:taxrefId`), global IUCN category when Wikidata has one |
 | `abox/library/crops-gbif.ttl` | **generated** by `tools/gbif_link.py`: each crop's GBIF taxon (`perma:taxon`), classification, and GBIF's vernacular names EN/FR/DE as `skos:altLabel` (for search; GBIF names cover the whole species) |
 | `abox/examples/permademo-seasons.ttl` | PermaDemo's **site calendar** (each site has its own; a real site's stays in its private pack) |
-| `abox/recipes/*.ttl` | 8 recipes, lines linked to crops, parts and the ways they are accepted; each says how its result keeps: courgettes marinées (vinegar), ratatouille (frozen), sauce tomate (bottled), pistou (frozen), choucroute (fermented), vin de noix (macerated), compote de pommes (bottled), herbes séchées (dried) |
+| `abox/recipes/*.ttl` | 11 recipes, lines linked to crops, parts and the ways they are accepted; each says how its result keeps: courgettes marinées (vinegar), ratatouille (frozen), sauce tomate (bottled), pistou (frozen), choucroute (fermented), vin de noix (macerated), compote de pommes (bottled), herbes séchées (dried), salade du toit (fresh), clafoutis aux cerises, confiture de prunes (bottled) |
+| `tbox/perma-habitat.ttl`, `tbox/perma-habitat-concepts.ttl` | a habitat's places (ADR 0016): `perma:GardenZone` (roof, ground, balcony, greenhouse; exposure; microclimate offset), `perma:GrowingBed` split into cells, `perma:PlantingCell` (crop, planned → sown → growing → harvested), `perma:GardenPlant` (a fruit tree at x/y metres in its zone) |
+| `shapes/perma-habitat-shapes.ttl` | SHACL for a habitat's A-Box; the graph Lambda checks every save with it (crops by IRI) |
+| `abox/examples/citydemo-habitat.ttl` | **CityDemo**, an invented city habitat: a roof bed and three fruit trees |
+| `tools/export_library.py` | crops.ttl → `packages/core/src/library.generated.ts`, the library as the app and the calendar use it (a test fails on drift) |
 | `tools/seasons.py` | `calendar SITE`: what grows when; `recipe RECIPE SITE`: when the recipe comes from the garden, and what to buy; `pantry SITE`: month by month what the garden gives, fresh or kept (cellar, dried, frozen ...); `seeds SITE`: how to keep each crop going (seed, cloves, cuttings, grafting) and when seed is ripe there; `menu SITE`: every recipe's months from the garden and how it keeps; `sow SITE [--month M] [--recipes a,b]`: what to sow or plant now and in the next months for the recipes you want, perennials in place and what to buy |
 
 ```bash
@@ -40,6 +44,8 @@ env -u PYTHONPATH packages/ontology/.venv/bin/python packages/ontology/tools/sea
 ```bash
 env -u PYTHONPATH packages/ontology/.venv/bin/python packages/ontology/tools/gbif_link.py       # refresh the GBIF links (no key)
 env -u PYTHONPATH packages/ontology/.venv/bin/python packages/ontology/tools/wikidata_link.py   # then TAXREF and Wikidata via the GBIF IDs
+env -u PYTHONPATH packages/ontology/.venv/bin/python packages/ontology/tools/export_library.py   # after any change to crops.ttl
+node backend/scripts/sync-ontology.mjs                                                      # after any change to a T-Box, concepts or shapes
 ```
 
 **TAXREF.** Its API (taxref.mnhn.fr) answers scripts with a bot challenge

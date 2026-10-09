@@ -30,3 +30,16 @@ export { assertSpace, isSpace, spaceProblems } from "./validate.js";
 
 export { areaOfHomeId, climateMonths, frostFreeMonths, goldPath, portalUrl } from "./habitat.js";
 export type { ClimateMonth, GoldClimate, GoldSolar, GoldWind, GoldWindow } from "./habitat.js";
+
+export { CROP_IRI, cropById, cropName, crops, isWoody, monthSpan } from "./library.js";
+export type { Activity, CropNeeds, LibraryCrop, TypicalWindow } from "./library.js";
+export { FROST_RISK_MIN_C, activitiesIn, deriveWindows } from "./calendar.js";
+export type { CropCalendar } from "./calendar.js";
+export {
+  CELL_STATUSES, EXPOSURES, HABITAT_IRI, ZONE_KINDS,
+  bedGrid, checkHabitat, defaultOffset, emptyHabitat, footprint, newId, zoneOffset,
+} from "./habitatModel.js";
+export type { Bed, Cell, CellStatus, Exposure, GardenPlant, Habitat, Problem, Zone, ZoneKind } from "./habitatModel.js";
+export { habitatFromTtl, habitatToTtl } from "./habitatGraph.js";
+export { whatNow } from "./now.js";
+export type { NowItem } from "./now.js";

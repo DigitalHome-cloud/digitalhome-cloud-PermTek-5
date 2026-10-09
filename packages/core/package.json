@@ -2,7 +2,7 @@
   "name": "@dlab5/permtek5-core",
   "version": "0.1.0",
   "license": "GPL-3.0-or-later",
-  "description": "Domain logic for the app. Pure TypeScript \u2014 no React, no AWS, no DOM.",
+  "description": "Domain logic for the app. Pure TypeScript — no React, no AWS, no DOM.",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,9 +20,13 @@
     "test": "npm run build && node --test __tests__/*.test.mjs"
   },
   "devDependencies": {
+    "@types/n3": "^1.26.4",
     "typescript": "^5.6.0"
   },
   "engines": {
     "node": ">=22"
+  },
+  "dependencies": {
+    "n3": "^1.26.0"
   }
 }

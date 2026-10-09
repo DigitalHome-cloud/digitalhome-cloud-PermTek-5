@@ -192,3 +192,53 @@ perma:propagation a owl:ObjectProperty ;
     rdfs:domain perma:SeedSaving ; rdfs:range skos:Concept ;
     rdfs:label "propagated by"@en , "vermehrt durch"@de , "multiplié par"@fr ;
     rdfs:comment "How the crop is kept going: concepts from perma:PropagationMethods. Garlic from cloves, apple by grafting (its seed does not come true)."@en .
+
+# ------------------------------------------------------------ what a crop needs (for a calendar from the climate)
+#
+# General-practice thresholds, compared with an area's monthly normals (the
+# mean of the daily minimum, mean and maximum temperature), shifted by a
+# zone's microclimate offset. packages/core/src/calendar.ts derives sowing,
+# planting-out and harvest months from them; every derived month is "to
+# confirm" until the site's own records say otherwise.
+
+perma:growthForm a owl:ObjectProperty ;
+    rdfs:domain perma:Crop ; rdfs:range skos:Concept ;
+    rdfs:label "growth form"@en , "Wuchsform"@de , "port"@fr ;
+    rdfs:comment "For woody crops: perma:Tree or perma:Shrub (perma:VegetationClasses). Their calendar is typical windows, not sowing."@en .
+
+perma:sowMinTempC a owl:DatatypeProperty ;
+    rdfs:domain perma:Crop ; rdfs:range xsd:decimal ;
+    rdfs:label "sow from (mean °C)"@en , "Aussaat ab (Mittel °C)"@de , "semis à partir de (moy. °C)"@fr ;
+    rdfs:comment "Sow outdoors once the monthly mean temperature reaches this. Above every month's mean: start it under cover."@en .
+
+perma:plantOutMinNightC a owl:DatatypeProperty ;
+    rdfs:domain perma:Crop ; rdfs:range xsd:decimal ;
+    rdfs:label "plant out from (nights °C)"@en , "Auspflanzen ab (Nächte °C)"@de , "plantation à partir de (nuits °C)"@fr ;
+    rdfs:comment "For frost-tender crops: plant out once the mean daily minimum reaches this."@en .
+
+perma:boltAboveC a owl:DatatypeProperty ;
+    rdfs:domain perma:Crop ; rdfs:range xsd:decimal ;
+    rdfs:label "bolts above (max °C)"@en , "schießt über (Max °C)"@de , "monte en graines au-dessus de (max °C)"@fr ;
+    rdfs:comment "Do not sow in months whose mean daily maximum is above this: the crop runs to seed (lettuce, spinach, rocket)."@en .
+
+perma:frostTender a owl:DatatypeProperty ;
+    rdfs:domain perma:Crop ; rdfs:range xsd:boolean ;
+    rdfs:label "frost-tender"@en , "frostempfindlich"@de , "craint le gel"@fr .
+
+perma:daysToHarvest a owl:DatatypeProperty ;
+    rdfs:domain perma:Crop ; rdfs:range xsd:integer ;
+    rdfs:label "days to harvest"@en , "Tage bis zur Ernte"@de , "jours jusqu'à la récolte"@fr ;
+    rdfs:comment "From sowing to the first harvest, in good conditions."@en .
+
+perma:spacingCm a owl:DatatypeProperty ;
+    rdfs:domain perma:Crop ; rdfs:range xsd:integer ;
+    rdfs:label "spacing (cm)"@en , "Abstand (cm)"@de , "espacement (cm)"@fr ;
+    rdfs:comment "Distance between plants; in a bed it gives how many cells one plant covers."@en .
+
+perma:typicalWindow a owl:ObjectProperty ;
+    rdfs:domain perma:Crop ; rdfs:range perma:TypicalWindow ;
+    rdfs:label "typical window"@en , "typisches Zeitfenster"@de , "période habituelle"@fr .
+
+perma:TypicalWindow a owl:Class ;
+    rdfs:label "Typical window"@en , "Typisches Zeitfenster"@de , "Période habituelle"@fr ;
+    rdfs:comment "When an activity usually happens for a crop in a stated climate (perma:basis), e.g. pruning or flowering of a fruit tree. A site's own perma:SeasonWindow overrides it."@en .

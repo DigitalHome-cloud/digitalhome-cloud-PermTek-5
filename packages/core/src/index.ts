@@ -27,3 +27,6 @@ export {
 export type { DeviceCodeInfo, EdgeSummary, Space, Tenant } from "./types.js";
 
 export { assertSpace, isSpace, spaceProblems } from "./validate.js";
+
+export { areaOfHomeId, climateMonths, frostFreeMonths, goldPath, portalUrl } from "./habitat.js";
+export type { ClimateMonth, GoldClimate, GoldSolar, GoldWind, GoldWindow } from "./habitat.js";

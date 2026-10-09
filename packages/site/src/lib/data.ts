@@ -44,7 +44,7 @@ const LIST_SPACES = /* GraphQL */ `
 const GET_SPACE = /* GraphQL */ `query GetSpace($id: ID!) { getSpace(id: $id) { ${SPACE_FIELDS} } }`;
 const LIST_TENANTS = /* GraphQL */ `
   query ListTenants($nextToken: String) {
-    listTenants(limit: 500, nextToken: $nextToken) { items { id name } nextToken }
+    listTenants(limit: 500, nextToken: $nextToken) { items { id name smartHomeId } nextToken }
   }
 `;
 
@@ -207,6 +207,17 @@ export const renameTenant = async (tenantId: string, name: string) =>
 
 /** Operators: a new tenant with its shared space and first admin. With
  *  `sameAs` (another site's tenant code) it takes that site's ids. */
+const START_FOR_HOME = `mutation StartForHome($smartHomeId: String!, $name: String) {
+  startForHome(smartHomeId: $smartHomeId, name: $name) { id name smartHomeId } }`;
+
+/**
+ * Start permaculture for a DHC home, or join the habitat its other owners
+ * started (docs/adr/0015). The caller becomes its admin, so refresh the token
+ * afterwards (constraint 7).
+ */
+export const startForHome = async (smartHomeId: string, name?: string) =>
+  (await call<{ startForHome: Tenant }>(START_FOR_HOME, { smartHomeId, name: name?.trim() || null })).startForHome;
+
 export const createTenant = async (name: string, adminEmail: string, sameAs?: string) =>
   (await call<{ addTenant: Tenant }>(CREATE_TENANT, { name, adminEmail, sameAs: sameAs?.trim() || null })).addTenant;
 

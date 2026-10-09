@@ -35,7 +35,11 @@ const schema = a.schema({
       /** Minted, never derived from the name. ADR-0003. */
       id: a.id().required(),
       name: a.string().required(),
+      /** The DigitalHome.Cloud home this habitat belongs to (docs/adr/0015): one tenant per home.
+       *  Its area, and with it the climate, follows from the home in DHC core: nothing copied. */
+      smartHomeId: a.string(),
     })
+    .secondaryIndexes((index) => [index("smartHomeId").name("byHome").queryField("tenantsByHome")])
     .authorization((allow) => [
       allow.groupDefinedIn("id").to(["read"]),
       allow.group("dhc-admins").to(["read"]),       // operators see names, not content
@@ -236,6 +240,14 @@ const schema = a.schema({
     .arguments({ name: a.string().required(), adminEmail: a.string().required(), sameAs: a.string() })
     .returns(a.ref("Tenant"))
     .authorization((allow) => [allow.group("dhc-admins")])
+    .handler(a.handler.function(tenants)),
+
+  /** A home's owner starts permaculture for it (docs/adr/0015). DHC core decides who owns the home. */
+  startForHome: a
+    .mutation()
+    .arguments({ smartHomeId: a.string().required(), name: a.string() })
+    .returns(a.ref("Tenant"))
+    .authorization((allow) => [allow.authenticated()])
     .handler(a.handler.function(tenants)),
 
   addSpace: a

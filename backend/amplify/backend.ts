@@ -144,6 +144,10 @@ allow(tn, ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:Query"],
   [tenantTable.tableArn, spaceTable.tableArn, `${spaceTable.tableArn}/index/*`]);
 backend.tenants.addEnvironment("SPACE_TABLE_NAME", spaceTable.tableName);
 backend.tenants.addEnvironment("TENANT_TABLE_NAME", tenantTable.tableName);
+allow(tn, ["dynamodb:Query"], [`${tenantTable.tableArn}/index/*`]);   // byHome
+// The DHC core API: startForHome asks it, with the caller's own token, whether
+// they own the home (docs/adr/0015). Looked up at deploy time with the pool.
+backend.tenants.addEnvironment("DHC_CORE_API_URL", process.env.DHC_CORE_API_URL ?? "");
 allow(tn, [
   "cognito-idp:CreateGroup", "cognito-idp:AdminAddUserToGroup", "cognito-idp:AdminRemoveUserFromGroup",
   "cognito-idp:ListUsers", "cognito-idp:ListUsersInGroup", "cognito-idp:AdminGetUser",
@@ -331,6 +335,14 @@ backend.addOutput({
       minEdgeVersion: MIN_EDGE_VERSION,
       edgeRelease: edgeReleaseInfo.version,
       environment: process.env.AWS_BRANCH ?? "sandbox",
+    },
+    // DHC core, read in place (docs/adr/0015): the home, its area, the area's
+    // weather. Looked up at deploy time by scripts/dhc-auth-env.mjs; empty when
+    // not set, and the site then just shows no climate.
+    dhcCore: {
+      apiUrl: process.env.DHC_CORE_API_URL ?? "",
+      bucket: process.env.DHC_CORE_BUCKET ?? "",
+      region: process.env.DHC_CORE_REGION ?? "",
     },
   },
 });

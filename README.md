@@ -48,7 +48,7 @@ the template: the `dlab5-cloud-template` skill. The template's ADRs are
 - [docs/architecture.md](docs/architecture.md): garden · nest · cloud · twin · DHC
 - [docs/privacy-contract.md](docs/privacy-contract.md): what never leaves the nest or reaches a public repo
 - [docs/design-identity.md](docs/design-identity.md): the Portal's look and the loop
-- [docs/adr/](docs/adr/): decisions 0008–0014 (0008–0014: the template's)
+- [docs/adr/](docs/adr/): decisions 0001–0015 (0001–0007: the template's; 0015: a tenant is the habitat of a DHC home)
 - [packages/ontology/README.md](packages/ontology/README.md): crop library, site calendars, recipes, vegetation map
 - [twin/README.md](twin/README.md): the Webots twin
 - [twin/README.md](twin/README.md): run the twin on the demo site

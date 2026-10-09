@@ -24,6 +24,14 @@ The core is named by two variables, the same ones the DHC frontends use:
 | `AMPLIFY_BACKEND_APP_ID` | the Amplify app id of `digitalhome-cloud-core` |
 | `AMPLIFY_BACKEND_APP_BRANCH` | its deployed branch (`stage`) |
 
+The same lookup names DHC core's **API and bucket** (outputs
+`awsAppsyncApiEndpoint`, `bucketName`, `storageRegion`) as `DHC_CORE_API_URL`,
+`DHC_CORE_BUCKET`, `DHC_CORE_REGION`. The `tenants` function asks the core API
+whether the caller owns a home (`startForHome`), and the site reads the home's
+area and its weather gold in place, as the signed-in person (ADR 0015). They
+reach the site as `custom.dhcCore` in the outputs; when empty, the habitat
+page shows no climate and nothing else changes.
+
 ## Where they go
 
 - **Hosted branches** (`main`, `stage`): environment variables of the Amplify app

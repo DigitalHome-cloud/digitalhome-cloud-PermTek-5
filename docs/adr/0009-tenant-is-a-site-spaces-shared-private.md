@@ -1,6 +1,6 @@
 # ADR 0009 — A tenant is a site; spaces split shared from private
 
-Status: **Accepted** · 2026-10-07
+Status: **Accepted** · 2026-10-07 · Refined for homes by [ADR 0015](0015-tenant-is-a-habitat-of-a-dhc-home.md)
 
 ## Context
 

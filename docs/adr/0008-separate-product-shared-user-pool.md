@@ -37,8 +37,10 @@ device flow and one SHACL-checked A-Box per space.
 
 Built from template-dlab5-cloud (ADRs 0001-0007 in this folder are the
 template's). `backend/amplify/auth/resource.ts` uses `referenceAuth` with the DHC
-pool; its six identifiers come from the environment (docs/setup/shared-auth.md),
-never from this public repository.
+pool. Its identifiers are looked up from the DHC core backend at deploy time
+(`backend/scripts/dhc-auth-env.mjs`, named by `AMPLIFY_BACKEND_APP_ID` /
+`AMPLIFY_BACKEND_APP_BRANCH`), never kept in this public repository or in
+PermTek-5's settings (docs/setup/shared-auth.md).
 
 Where this departs from the template's own pool:
 

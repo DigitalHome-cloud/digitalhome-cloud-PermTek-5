@@ -26,6 +26,12 @@ backend:
         # problem — it surfaces as EUSAGE "Missing: @opentelemetry/core@2.0.0",
         # a package the root lockfile does not even contain. The parentheses
         # are what keep the two phases independent.
+        #
+        # PermTek-5 signs in through the DigitalHome.Cloud user pool (docs/adr/0008).
+        # Its identifiers are looked up from the DHC core backend named by
+        # AMPLIFY_BACKEND_APP_ID / AMPLIFY_BACKEND_APP_BRANCH (app environment
+        # variables) and exported here for auth/resource.ts. Not in the repo, not stored.
+        - eval "$(node backend/scripts/dhc-auth-env.mjs)"
         - (cd backend && npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID)
 frontend:
   phases:

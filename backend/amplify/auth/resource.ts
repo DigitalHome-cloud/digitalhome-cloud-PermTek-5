@@ -24,16 +24,18 @@ import { referenceAuth } from "@aws-amplify/backend";
  *     groups (`dhc-*`, per-home `DE-…`/`FR-…`/`BE-…`).
  *
  * The pool's identifiers and role ARNs are NOT in this repository (it is
- * public; ARNs carry the account number). They come from the environment at
- * synth time: the Amplify app's environment variables for pipeline deploys,
- * the shell for a sandbox. See .env.example and docs/setup/shared-auth.md.
+ * public; ARNs carry the account number), and not kept anywhere else either:
+ * backend/scripts/dhc-auth-env.mjs looks them up from the DHC core backend
+ * (AMPLIFY_BACKEND_APP_ID / AMPLIFY_BACKEND_APP_BRANCH) right before the deploy
+ * and exports them as DHC_* for this file. amplify.yml and scripts/dev.sh run
+ * it. See docs/setup/shared-auth.md.
  */
 function fromEnv(name: string): string {
   const value = process.env[name];
   if (!value) {
     throw new Error(
       `${name} is not set: PermTek-5 signs in with the DigitalHome.Cloud user pool, ` +
-        `whose identifiers come from the environment (see docs/setup/shared-auth.md).`,
+        `looked up from the DHC core backend by backend/scripts/dhc-auth-env.mjs (see docs/setup/shared-auth.md).`,
     );
   }
   return value;

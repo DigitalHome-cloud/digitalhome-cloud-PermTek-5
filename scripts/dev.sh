@@ -199,6 +199,18 @@ trap cleanup INT TERM EXIT
 # The sandbox is started in its own process group (setsid) so that cleanup can
 # take its whole tree down, and detached from this terminal's stdin so it
 # cannot swallow the Ctrl-C meant for the script.
+# PermTek-5 signs in through the DigitalHome.Cloud user pool (docs/adr/0008):
+# look it up from the DHC core backend unless the DHC_* variables are already set.
+if [ -z "${DHC_USER_POOL_ID:-}" ]; then
+  if [ -z "${AMPLIFY_BACKEND_APP_ID:-}" ] || [ -z "${AMPLIFY_BACKEND_APP_BRANCH:-}" ]; then
+    printf '  set AMPLIFY_BACKEND_APP_ID and AMPLIFY_BACKEND_APP_BRANCH to the DHC core app\n'
+    printf '  and branch first (docs/setup/shared-auth.md)\n'
+    exit 1
+  fi
+  DHC_ENV="$(AWS_PROFILE="${PROFILE:-${AWS_PROFILE:-}}" node "$BACKEND/scripts/dhc-auth-env.mjs")" || exit 1
+  eval "$DHC_ENV"
+fi
+
 say "starting the sandbox — first deploy takes a few minutes"
 printf '  log: %s\n' "$LOG"
 : > "$LOG"

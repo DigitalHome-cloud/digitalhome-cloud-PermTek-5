@@ -27,8 +27,8 @@ that locates a real site.
    checks the whole tree against a private denylist (`~/.config/permaculture/denylist`).
 5. **Same look as the Portal**: palette, fonts and the Observe/Design/Build/Run loop per `docs/design-identity.md`.
 6. **No double maintenance**: platform-wide things (tokens, environment service) belong in DHC; link, don't copy.
-7. **Sign-in is the DHC pool** (ADR 0008): never commit its ids or ARNs; they come from the environment
-   (docs/setup/shared-auth.md). Operators are `dhc-admins`; TOTP is DHC core's adminMfaGate.
+7. **Sign-in is the DHC pool** (ADR 0008): never commit its ids or ARNs; they are looked up from DHC core
+   at deploy time (backend/scripts/dhc-auth-env.mjs, docs/setup/shared-auth.md). Operators are `dhc-admins`; TOTP is DHC core's adminMfaGate.
 8. Repository naming: `-user-` not `-operator-`, `-management-` not `-design-`.
 
 ## Layout

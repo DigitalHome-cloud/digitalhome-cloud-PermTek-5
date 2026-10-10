@@ -50,3 +50,30 @@ export const onCreatePage: GatsbyNode["onCreatePage"] = async ({
     actions.createPage({ ...page, matchPath: "/w/*" });
   }
 };
+
+/**
+ * `/edge.json`: where an edge finds this site's edge API, so a person links
+ * an edge by the site's address instead of pasting an AWS URL. It repeats
+ * what the About page shows (custom.app in the backend's outputs): nothing
+ * here is a credential. Without outputs (a build with no backend) it is not
+ * written, and an edge then asks for the address by hand.
+ */
+export const onPostBuild: GatsbyNode["onPostBuild"] = async ({ reporter }) => {
+  const fs = await import("node:fs");
+  const path = await import("node:path");
+  let app: Record<string, string> | undefined;
+  try {
+    app = JSON.parse(fs.readFileSync(path.join(__dirname, "src", "amplify_outputs.json"), "utf8")).custom?.app;
+  } catch {
+    app = undefined;
+  }
+  if (!app?.edgeApi) {
+    reporter.info("no backend outputs: /edge.json not written");
+    return;
+  }
+  fs.writeFileSync(
+    path.join(__dirname, "public", "edge.json"),
+    JSON.stringify({ name: "PermTek-5", edgeApi: app.edgeApi, minEdgeVersion: app.minEdgeVersion ?? null,
+                     environment: app.environment ?? null, link: "/link" }) + "\n",
+  );
+};

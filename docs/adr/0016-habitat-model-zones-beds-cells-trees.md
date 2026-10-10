@@ -72,3 +72,16 @@ garden need less, and nothing geographic.
   Turtle).
 - The gantry robot (ADR 0017) plans jobs on cells and changes their status;
   nothing in this model is specific to hand or robot work.
+
+## Addendum, 2026-10-10: what people see is Site → Areas
+
+On screen the levels are **Site** (the tenant: one per home) and its
+**Areas** (the roof, the garden: `perma:GardenZone`, whose labels now say
+Area / Bereich / Zone). The class and property names keep their first form
+(`GardenZone`, `inZone`), so stored maps do not change.
+
+The template's access level (the shared space, optional private spaces) is no
+longer shown as a level of its own: a site's shared space appears as the site
+itself, a private one as a "private group" in Settings. The word *area* is not
+used for anything else: the DHC weather area is called the home's *postal
+area* in PermTek-5's texts.

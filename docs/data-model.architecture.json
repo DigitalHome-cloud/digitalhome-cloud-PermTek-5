@@ -1,0 +1,360 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "The PermTek-5 data model",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1240,
+      660
+    ],
+    "views": [
+      {
+        "id": "site",
+        "label": "A site belongs to a home",
+        "focus": [
+          "dhome",
+          "parea",
+          "site",
+          "group",
+          "edge"
+        ],
+        "note": "One site per DigitalHome. Its members form the shared group; private groups are optional. The climate is the home's postal area."
+      },
+      {
+        "id": "map",
+        "label": "Areas, beds, cells, plants",
+        "focus": [
+          "graph",
+          "area",
+          "bed",
+          "cell",
+          "plant"
+        ],
+        "note": "The map is an RDF graph per group. An area (roof, garden) holds growing beds split into cells, and long-lived plants such as fruit trees."
+      },
+      {
+        "id": "crops",
+        "label": "One crop library",
+        "focus": [
+          "cell",
+          "plant",
+          "crop"
+        ],
+        "note": "Cells and plants point at crops of the shared library: names in four languages, what a crop needs, how deep and how far apart to sow."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "dhome",
+      "type": "database",
+      "label": "DigitalHome",
+      "sublabel": "smartHomeId · owners",
+      "pos": [
+        60,
+        60
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "parea",
+      "type": "database",
+      "label": "Postal area",
+      "sublabel": "weather normals",
+      "pos": [
+        60,
+        300
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "site",
+      "type": "security",
+      "label": "Site",
+      "sublabel": "t-… · admins group",
+      "pos": [
+        300,
+        60
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "edge",
+      "type": "backend",
+      "label": "Edge",
+      "sublabel": "token · version",
+      "pos": [
+        300,
+        300
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "group",
+      "type": "security",
+      "label": "Group",
+      "sublabel": "s-… · shared or private",
+      "pos": [
+        540,
+        60
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "graph",
+      "type": "database",
+      "label": "Graph",
+      "sublabel": "A-Box · version",
+      "pos": [
+        780,
+        60
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "area",
+      "type": "database",
+      "label": "Area",
+      "sublabel": "roof · garden · offset °C",
+      "pos": [
+        780,
+        300
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "tag": "perma:GardenZone"
+    },
+    {
+      "id": "bed",
+      "type": "database",
+      "label": "Growing bed",
+      "sublabel": "length · width · cell cm",
+      "pos": [
+        1020,
+        300
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "plant",
+      "type": "database",
+      "label": "Garden plant",
+      "sublabel": "tree · year · x/y m",
+      "pos": [
+        540,
+        520
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "crop",
+      "type": "database",
+      "label": "Crop",
+      "sublabel": "names · needs · sowing",
+      "pos": [
+        780,
+        520
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "cell",
+      "type": "database",
+      "label": "Planting cell",
+      "sublabel": "row · col · status · sown",
+      "pos": [
+        1020,
+        520
+      ],
+      "size": [
+        150,
+        64
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "DigitalHome.Cloud core",
+      "wraps": [
+        "dhome",
+        "parea"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "PermTek-5 · DynamoDB",
+      "wraps": [
+        "site",
+        "edge",
+        "group",
+        "graph"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "A site's map · RDF, checked by SHACL",
+      "wraps": [
+        "area",
+        "bed",
+        "plant",
+        "cell"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "ofhome",
+      "from": "dhome",
+      "to": "site",
+      "label": "smartHomeId",
+      "variant": "emphasis"
+    },
+    {
+      "id": "inarea",
+      "from": "dhome",
+      "to": "parea",
+      "label": "postal code",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        135,
+        212
+      ]
+    },
+    {
+      "id": "has",
+      "from": "site",
+      "to": "group",
+      "label": "has"
+    },
+    {
+      "id": "linked",
+      "from": "edge",
+      "to": "site",
+      "label": "linked to",
+      "fromSide": "top",
+      "toSide": "bottom",
+      "labelAt": [
+        375,
+        212
+      ]
+    },
+    {
+      "id": "abox",
+      "from": "group",
+      "to": "graph",
+      "label": "one"
+    },
+    {
+      "id": "holds",
+      "from": "graph",
+      "to": "area",
+      "label": "holds",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        855,
+        212
+      ]
+    },
+    {
+      "id": "beds",
+      "from": "area",
+      "to": "bed",
+      "label": "beds"
+    },
+    {
+      "id": "cells",
+      "from": "bed",
+      "to": "cell",
+      "label": "cells",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        1095,
+        442
+      ]
+    },
+    {
+      "id": "plants",
+      "from": "area",
+      "to": "plant",
+      "label": "plants",
+      "fromSide": "left",
+      "toSide": "top"
+    },
+    {
+      "id": "pgrows",
+      "from": "plant",
+      "to": "crop",
+      "label": "grows"
+    },
+    {
+      "id": "cgrows",
+      "from": "cell",
+      "to": "crop",
+      "label": "grows"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Three levels",
+      "items": [
+        "Site: one per home, its admins and members",
+        "Area: the roof, the garden, a balcony",
+        "Bed and cells, or single plants like trees"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Linked, not copied",
+      "items": [
+        "The home and its postal area stay in DigitalHome.Cloud",
+        "Crops are IRIs into one shared library",
+        "Positions are metres inside an area, never geographic"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Kept safe",
+      "items": [
+        "Every save carries the version it started from",
+        "Shapes refuse a map that does not fit the model",
+        "A group's readers are a sign-in group of its own"
+      ]
+    }
+  ]
+}

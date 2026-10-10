@@ -209,8 +209,8 @@ for (const fn of [backend.edgeDeviceAuthz, backend.edgeToken, backend.edgeTokenR
 // the local dev server for a personal sandbox (it has no public site).
 // APP_LINK_URL overrides both.
 const LINK_URLS: Record<string, string> = {
-  main: "https://permtek-5.digitalhome.cloud/link",
-  stage: "https://stage.permtek-5.digitalhome.cloud/link",
+  main: "https://permtek5.digitalhome.cloud/link",
+  stage: "https://stage-permtek5.digitalhome.cloud/link",
 };
 backend.edgeDeviceAuthz.addEnvironment(
   "LINK_URL",

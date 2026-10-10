@@ -192,7 +192,7 @@ export const handler = async (event: AppSyncResolverEvent<Args>) => {
       }
       const name = clean(a.name || "Garden", "A site");
       const h = { id: mint("t"), name, smartHomeId: homeId };
-      const v: Space = { id: mint("s"), tenantId: h.id, tenantName: name, name: "Everyone", kind: "shared" };
+      const v: Space = { id: mint("s"), tenantId: h.id, tenantName: name, name: "Shared", kind: "shared" };
       await cognito.send(new CreateGroupCommand({ UserPoolId: userPoolId, GroupName: h.id, Description: `Admins of ${name}` }));
       await cognito.send(new CreateGroupCommand({ UserPoolId: userPoolId, GroupName: v.id, Description: `${name}: ${v.name}` }));
       const t = now();

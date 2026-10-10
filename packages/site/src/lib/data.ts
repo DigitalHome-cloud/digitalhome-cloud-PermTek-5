@@ -159,6 +159,16 @@ async function all_<T>(query: string, field: string, variables: Record<string, u
 /* -- tenants and spaces (ADR-0005) ----------------------------------------- */
 
 /**
+ * What a space is called on screen. People think in sites and their areas
+ * (roof, garden), not in access groups: a site's shared space is shown as the
+ * site itself, a private one as the site and its group's name.
+ */
+export function spaceTitle(space: Pick<Space, "name" | "kind" | "tenantName">): string {
+  const site = space.tenantName ?? space.name;
+  return space.kind === "private" ? `${site} · 🔒 ${space.name}` : site;
+}
+
+/**
  * The spaces this person can see: those they read, and all spaces of the
  * tenants they administer.
  *

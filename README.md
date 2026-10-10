@@ -50,6 +50,7 @@ the template: the `dlab5-cloud-template` skill. The template's ADRs are
 - [docs/design-identity.md](docs/design-identity.md): the Portal's look and the loop
 - [docs/adr/](docs/adr/): decisions 0001–0018 (0001–0007: the template's; 0015: a tenant is the habitat of a DHC home; 0016: the habitat model; 0017: the roof-bed gantry; 0018: its twin edge)
 - [docs/specs/roofbed-robot.md](docs/specs/roofbed-robot.md): design of the gantry robot for a roof bed
+- `/how/` and `/model/` on the site: how PermTek-5 works and its data model, drawn with Archify from `docs/how-it-works.architecture.json` and `docs/data-model.architecture.json` (deliver them into `packages/site/static/how/` and `static/model/` after a change)
 - [packages/ontology/README.md](packages/ontology/README.md): crop library, site calendars, recipes, vegetation map
 - [twin/README.md](twin/README.md): the Webots twin
 - [twin/README.md](twin/README.md): run the twin on the demo site

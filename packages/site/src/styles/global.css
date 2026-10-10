@@ -1139,3 +1139,10 @@ a {
 .pt-recipes__legend { display: flex; flex-wrap: wrap; gap: var(--pt-space-2) var(--pt-space-4); font-size: 0.8125rem; }
 .pt-bed--preview .pt-bed__cell { cursor: default; }
 .pt-bed__cell--old { outline: 1px solid var(--pt-text); outline-offset: -1px; }
+
+/* the year in the bed */
+.pt-recipes__slider input { width: min(24rem, 100%); }
+.pt-yeartable { border-collapse: collapse; font-size: 0.8125rem; width: 100%; }
+.pt-yeartable th, .pt-yeartable td { text-align: left; vertical-align: top; padding: var(--pt-space-1) var(--pt-space-2); border-top: 1px solid var(--pt-border); }
+.pt-yeartable tbody tr { cursor: pointer; }
+.pt-yeartable__at { background: var(--pt-surface-raised); }

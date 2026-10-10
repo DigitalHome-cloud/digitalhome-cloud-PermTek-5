@@ -55,37 +55,27 @@ const icon = (path: React.ReactNode) => (
  * route and a screen are three different things, and collapsing them into one
  * table is how a route ends up with no way to be inactive.
  */
-export function railItems(id: string): RailItem[] {
+export function railItems(id: string, t: (key: string) => string): RailItem[] {
   return [
     {
       key: "overview",
-      label: "Overview",
+      label: t("view.overview"),
       href: `/w/${id}/`,
-      icon: icon(<path d="M4 6h16M4 12h11M4 18h7" />),
+      // a bed of cells
+      icon: icon(<><rect x="3" y="6" width="18" height="12" rx="1.5" /><path d="M9 6v12M15 6v12M3 12h18" /></>),
     },
     {
-      key: "items",
-      label: "Items",
-      href: `/w/${id}/items/`,
-      icon: icon(
-        <>
-          <rect x="3" y="4" width="7" height="6" rx="1.4" />
-          <rect x="14" y="14" width="7" height="6" rx="1.4" />
-          <path d="M6.5 10v6h7.5" />
-        </>
-      ),
+      key: "calendar",
+      label: t("view.calendar"),
+      href: `/w/${id}/calendar/`,
+      icon: icon(<><rect x="3" y="5" width="18" height="16" rx="1.5" /><path d="M3 10h18M8 3v4M16 3v4" /></>),
     },
     {
-      key: "reports",
-      label: "Reports",
-      href: `/w/${id}/reports/`,
-      icon: icon(
-        <>
-          <path d="M9 4h7l4 4v12a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z" />
-          <path d="M16 4v4h4" />
-          <path d="M11 13h6M11 17h4" />
-        </>
-      ),
+      key: "now",
+      label: t("view.now"),
+      href: `/w/${id}/now/`,
+      // a sprout
+      icon: icon(<><path d="M12 20v-8" /><path d="M12 13c0-4-3-6-7-6 0 4 3 6 7 6z" /><path d="M12 11c0-4 3-6 7-6 0 4-3 6-7 6z" /></>),
     },
   ];
 }
@@ -98,11 +88,11 @@ export function railItems(id: string): RailItem[] {
  * eleven items with no shape, and buries an importer inside a screen where
  * nobody looking for one would think to check.
  */
-export function toolItems(id: string): RailItem[] {
+export function toolItems(id: string, t: (key: string) => string): RailItem[] {
   return [
     {
       key: "import",
-      label: "Import",
+      label: t("view.import"),
       href: `/w/${id}/import/`,
       // An arrow entering a tray.
       icon: icon(
@@ -115,7 +105,7 @@ export function toolItems(id: string): RailItem[] {
     },
     {
       key: "export",
-      label: "Export",
+      label: t("view.export"),
       href: `/w/${id}/export/`,
       icon: icon(
         <>
@@ -279,7 +269,7 @@ export function Shell({ children, space, active, title }: ShellProps) {
         <Link className="pt-rail__brand" to="/">
           <Mark />
           <span>
-            template<span className="pt-rail__brandaccent">.dlab5</span>
+            permtek<span className="pt-rail__brandaccent">-5</span>
           </span>
         </Link>
 
@@ -287,10 +277,10 @@ export function Shell({ children, space, active, title }: ShellProps) {
           <>
             <SpaceSwitcher id={space.id} />
             <RailSection label={t("shell.space")}>
-              <RailLinks items={railItems(space.id)} active={space.active} />
+              <RailLinks items={railItems(space.id, t)} active={space.active} />
             </RailSection>
             <RailSection label={t("shell.tools")}>
-              <RailLinks items={toolItems(space.id)} active={space.active} />
+              <RailLinks items={toolItems(space.id, t)} active={space.active} />
             </RailSection>
           </>
         ) : (

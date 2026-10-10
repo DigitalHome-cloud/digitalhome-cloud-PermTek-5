@@ -1040,3 +1040,66 @@ a {
 .pt-climate--frost { color: var(--pt-danger); font-weight: 600; }
 .pt-climate--cold { color: var(--pt-warning); }
 .pt-climate__source { font-size: 0.8125rem; margin: 0; }
+
+/* -- habitat map, calendar, now (docs/adr/0016) ---------------------------- */
+
+.pt-savebar {
+  position: sticky; top: 0; z-index: 2;
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--pt-space-3);
+  background: var(--pt-surface-raised); border: 1px solid var(--pt-border-strong);
+  border-radius: var(--pt-radius); padding: var(--pt-space-2) var(--pt-space-4); margin-bottom: var(--pt-space-4);
+}
+.pt-savebar .pt-error { flex-basis: 100%; margin: 0; padding-left: 1.2rem; }
+
+.pt-habitat { display: grid; gap: var(--pt-space-4); }
+.pt-habitat__actions { display: flex; flex-wrap: wrap; gap: var(--pt-space-2); margin: 0; }
+.pt-habitat__zonehead { display: flex; align-items: center; gap: var(--pt-space-3); }
+.pt-habitat__name { font-size: 1.0625rem; font-weight: 600; max-width: 20rem; }
+.pt-habitat__fields { display: flex; flex-wrap: wrap; gap: var(--pt-space-3); }
+.pt-habitat__fields .pt-field { width: 9.5rem; }
+.pt-habitat__chips { display: flex; flex-wrap: wrap; gap: var(--pt-space-2); }
+
+.pt-bedbox { display: grid; gap: var(--pt-space-2); border-top: 1px solid var(--pt-border); padding-top: var(--pt-space-3); }
+.pt-bedbox__hint { margin: 0; font-size: 0.8125rem; }
+.pt-bedbox__brush { max-width: 22rem; }
+.pt-bed__scroll { overflow-x: auto; padding-bottom: var(--pt-space-1); }
+.pt-bed { display: grid; gap: 1px; width: max-content; background: var(--pt-border); border: 1px solid var(--pt-border-strong); }
+.pt-bed__cell {
+  width: 1.25rem; height: 1.25rem; padding: 0; border: 0; cursor: pointer;
+  background: var(--pt-bg-sunken);
+}
+.pt-bed__cell:hover { outline: 2px solid var(--pt-accent); outline-offset: -2px; }
+.pt-bed__cell--near { opacity: 0.35; }
+.pt-bed__cell--CellPlanned { opacity: 0.6; background-image: repeating-linear-gradient(45deg, transparent 0 3px, rgba(255, 255, 255, 0.35) 3px 5px); }
+.pt-bed__cell--CellHarvested { opacity: 0.4; }
+.pt-bed__cell--sel { outline: 2px solid var(--pt-text); outline-offset: -2px; }
+.pt-cellpanel { display: grid; gap: var(--pt-space-2); background: var(--pt-surface-raised); border-radius: var(--pt-radius-sm); padding: var(--pt-space-3); }
+.pt-cellpanel__job { margin: 0; font-size: 0.8125rem; font-variant-numeric: tabular-nums; }
+
+.pt-plants { display: grid; gap: var(--pt-space-3); grid-template-columns: minmax(10rem, 16rem) 1fr; align-items: start; }
+@media (max-width: 720px) { .pt-plants { grid-template-columns: 1fr; } }
+.pt-plants__sketch { width: 100%; height: auto; }
+.pt-plants__ground { fill: var(--pt-bg-sunken); stroke: var(--pt-border-strong); stroke-width: 0.05; }
+.pt-plants__label { fill: var(--pt-text-muted); }
+.pt-input--num { width: 5.5rem; }
+
+.pt-cal { min-width: 46rem; }
+.pt-cal td, .pt-cal thead th { text-align: center; white-space: nowrap; }
+.pt-cal__now { background: var(--pt-surface-raised); }
+.pt-cal__dot { display: inline-block; width: 0.6rem; height: 0.6rem; border-radius: 50%; margin-right: 0.4rem; }
+.pt-cal__act {
+  display: inline-block; min-width: 1.4rem; margin: 1px; padding: 0 0.2rem; border-radius: 3px;
+  font-size: 0.75rem; font-weight: 600; text-align: center; border: 1px solid var(--pt-border-strong);
+}
+.pt-cal__act--SowIndoors, .pt-cal__act--SowOutdoors, .pt-cal__act--PlantOut { background: var(--pt-accent); color: var(--pt-text-inverse); border-color: transparent; }
+.pt-cal__act--Harvest { background: var(--pt-success); color: var(--pt-text-inverse); border-color: transparent; }
+.pt-cal__act--Flowering { color: var(--pt-text); }
+.pt-cal__act--frost { background: var(--pt-warning); color: var(--pt-text-inverse); border-color: transparent; }
+.pt-cal__act--WinterPrune, .pt-cal__act--SummerPrune { color: var(--pt-text-muted); }
+.pt-cal__legend { display: flex; flex-wrap: wrap; gap: var(--pt-space-3); font-size: 0.8125rem; color: var(--pt-text-muted); margin: 0; }
+
+.pt-now__month { max-width: 12rem; }
+.pt-now { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--pt-space-2); }
+.pt-now__frost { border-left: 3px solid var(--pt-warning); padding-left: var(--pt-space-2); }
+.pt-now__warn { color: var(--pt-warning); font-size: 0.875rem; }
+.pt-now__could { display: flex; flex-wrap: wrap; gap: var(--pt-space-2); margin: 0; }

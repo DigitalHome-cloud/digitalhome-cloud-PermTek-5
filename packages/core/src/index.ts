@@ -43,3 +43,4 @@ export type { Bed, Cell, CellStatus, Exposure, GardenPlant, Habitat, Problem, So
 export { habitatFromTtl, habitatToTtl } from "./habitatGraph.js";
 export { whatNow } from "./now.js";
 export type { NowItem } from "./now.js";
+export { CITYDEMO_TTL } from "./example.generated.js";

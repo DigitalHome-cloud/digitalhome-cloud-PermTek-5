@@ -1,4 +1,4 @@
-# Roof-bed gantry robot: design
+# Gantry5-gen1: the roof-bed gantry robot
 
 Status: **design; the twin exists (ADR 0018), no hardware yet** · ADR 0017 · model: ADR 0016
 

@@ -185,15 +185,30 @@ camera frames beyond the pictures chosen for upload stay on the edge.
 
 ## 7. What the robot does, and does not
 
-- **Feeds the worms** (`feed_worms`): a person fills the hopper at the bed's
-  near end; the gantry carries portions to the worm box and spreads them in
-  rotation, so no corner is overloaded; each feeding is logged. The lid is
-  opened by the gantry's tool or stays open under a rain cover.
-- **Waters from above** with clean water where seedlings need it.
-- **Probes and photographs** cells and the worm box's surface.
-- **Does not** refill the tank, empty the box, harvest castings or flush the
-  pipes: those are a person's, a few times a year.
-- Every job is a proposal a person confirms, as before (ADR 0017).
+The principle of a Perma5Guild: **nature does the work; the robot does the
+routine part of what a person would otherwise do by hand**, and every job is
+still a proposal a person confirms.
+
+| Intervention | Who | How |
+|---|---|---|
+| Sow, water seeds from above, probe, photograph | robot | the gantry's tools |
+| Feed scraps | robot | from the hopper a person fills, a portion at a time, by the feeding guide |
+| Add dry bedding | robot | from the hopper's second compartment, with a feeding when the guide's balance of browns asks for it |
+| Moisten a dry box | robot | clean water through the feed hatch |
+| Drain the sump | the edge | it opens the tap when the sump is half full and the tank has room |
+| Harvest compost | robot, in small portions, to this bed | it stops feeding one half of the box so the worms move to the other; after about ten days it scoops finished castings from the resting half and top-dresses the cells that have had least |
+| Fill the hopper (scraps and bedding), say what went in | person | the feeding guide checks the load |
+| Wrap against frost, shade in heat | person | on the keeper's notice |
+| Empty a refused hopper, clear a jam, refill the tank | person | |
+| Full clean-out, once or twice a year | person | |
+
+- **The feeding guide** (`packages/ontology/guides/wormbed5-feeding.json`)
+  says what the worms get, how much, where and when. The robot follows it and
+  refuses what breaks it: a hopper load with meat, dairy, oil or cooked food,
+  too much citrus, a second feeding within twelve hours, the same spot twice.
+- **The compost is for this bed.** It goes back in small portions, a spoonful
+  per plant, little and often. Nothing is carried away.
+- **It does not** lift bins, wrap, shade, or decide alone.
 
 ## 8. Open questions
 

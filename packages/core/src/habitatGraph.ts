@@ -63,6 +63,7 @@ export function habitatToTtl(h: Habitat): Promise<string> {
     if (b.tankPipes !== undefined) add(b.id, "tankPipeCount", int(b.tankPipes));
     if (b.tankPipeMm !== undefined) add(b.id, "tankPipeMm", int(b.tankPipeMm));
     if (b.wormBinCm !== undefined) add(b.id, "wormBinCm", int(b.wormBinCm));
+    if (b.mulchCm) add(b.id, "mulchCm", int(b.mulchCm));
   }
   for (const c of h.cells) {
     add(c.id, "a", p("PlantingCell"));
@@ -146,6 +147,7 @@ export function habitatFromTtl(ttl: string): Habitat {
     ...(num(id, "tankPipeCount") !== undefined && { tankPipes: num(id, "tankPipeCount") }),
     ...(num(id, "tankPipeMm") !== undefined && { tankPipeMm: num(id, "tankPipeMm") }),
     ...(num(id, "wormBinCm") !== undefined && { wormBinCm: num(id, "wormBinCm") }),
+    ...(num(id, "mulchCm") && { mulchCm: num(id, "mulchCm") }),
   }));
   const cells: Cell[] = ofType("PlantingCell").map((id) => ({
     id, bedId: str(id, "inBed") ?? "", row: num(id, "row") ?? 0, col: num(id, "col") ?? 0, cropId: crop(id),

@@ -49,6 +49,8 @@ export interface Bed {
   /** A wicking bed (docs/specs/roofbed-system.md): what the substrate is, the drain pipes under it that
    *  hold the water, and how much of the bed's far end a worm box takes. */
   substrate?: SubstrateKind; tankPipes?: number; tankPipeMm?: number; wormBinCm?: number;
+  /** Mulch on the soil, cm; thin on a robot bed (a seeder and a camera have to reach the soil). */
+  mulchCm?: number;
 }
 export interface Cell {
   id: string; bedId: string; row: number; col: number; cropId: string; status: CellStatus; sownOn?: string;

@@ -128,3 +128,21 @@ test("a household's recipes are kept in its graph, line by line, beside everythi
   assert.ok(!/recipe-/.test(back.rest), "the recipe's triples are not counted as foreign");
   assert.equal(habitatFromTtl(await habitatToTtl(emptyHabitat())).recipes, undefined);
 });
+
+test("a cover crop takes every gap the plants leave: no bare soil", async () => {
+  const { crops, habitatFromTtl, habitatToTtl, emptyHabitat } = await import("../dist/index.js");
+  assert.deepEqual(crops().filter((c) => c.coverCrop).map((c) => c.id).sort(), ["crop-phacelia", "crop-white-clover", "crop-white-mustard"]);
+  const b = bed();
+  const wants = plantCounts(b, ["crop-carrot", "crop-onion", "crop-lettuce", "crop-bush-bean"]);
+  const bare = suggestPlanting(b, wants), covered = suggestPlanting(b, wants, [], { cover: "crop-white-clover" });
+  assert.ok(bare.cover < 0.95 && bare.coverCells === 0);
+  assert.equal(covered.cover, 1);
+  assert.equal(covered.coverCells, covered.cells.filter((p) => p.cropId === "crop-white-clover").length);
+  assert.ok(covered.coverCells > 10);
+  assert.deepEqual([covered.score, covered.goodPairs], [bare.score, bare.goodPairs], "the cover does not change what the crops are to each other");
+  assert.deepEqual(covered.cells.filter((p) => p.cropId !== "crop-white-clover"), bare.cells);
+  // and a bed says how thick its mulch is
+  const h = { ...emptyHabitat(), zones: [{ id: "https://permtek-5.digitalhome.cloud/id/zone-z", name: "Roof", kind: "RoofZone", exposure: [] }],
+    beds: [{ ...b, id: "https://permtek-5.digitalhome.cloud/id/bed-b", zoneId: "https://permtek-5.digitalhome.cloud/id/zone-z", mulchCm: 2 }] };
+  assert.equal(habitatFromTtl(await habitatToTtl(h)).beds[0].mulchCm, 2);
+});

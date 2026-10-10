@@ -43,6 +43,8 @@
 
 <https://permaculture.digitalhome.cloud/id/crop-pear> perma:taxon <https://www.gbif.org/species/5362573> .
 
+<https://permaculture.digitalhome.cloud/id/crop-phacelia> perma:taxon <https://www.gbif.org/species/2928226> .
+
 <https://permaculture.digitalhome.cloud/id/crop-plum> perma:taxon <https://www.gbif.org/species/7931731> .
 
 <https://permaculture.digitalhome.cloud/id/crop-radish> perma:taxon <https://www.gbif.org/species/7678610> .
@@ -70,6 +72,8 @@
 <https://permaculture.digitalhome.cloud/id/crop-walnut> perma:taxon <https://www.gbif.org/species/3054368> .
 
 <https://permaculture.digitalhome.cloud/id/crop-white-cabbage> perma:taxon <https://www.gbif.org/species/3042845> .
+
+<https://permaculture.digitalhome.cloud/id/crop-white-clover> perma:taxon <https://www.gbif.org/species/5358748> .
 
 <https://permaculture.digitalhome.cloud/id/crop-white-mustard> perma:taxon <https://www.gbif.org/species/3047621> .
 
@@ -269,6 +273,35 @@
         "Basilic romain"@fr,
         "Basilic à épis nombreux"@fr,
         "Ocime basilic"@fr .
+
+<https://www.gbif.org/species/2928226> a dwc:Taxon ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
+    dcterms:source "GBIF Backbone Taxonomy" ;
+    dwc:family "Hydrophyllaceae" ;
+    dwc:genus "Phacelia" ;
+    dwc:kingdom "Plantae" ;
+    dwc:scientificName "Phacelia tanacetifolia Benth." ;
+    dwc:scientificNameAuthorship "Benth." ;
+    dwc:taxonID "gbif:2928226" ;
+    dwc:taxonRank "species" ;
+    dwc:taxonomicStatus "accepted" ;
+    skos:altLabel "Bueschelblume"@de,
+        "Büschelschön"@de,
+        "Phazelie"@de,
+        "Rainfarn-Büschelschön"@de,
+        "Rainfarn-Phazelie"@de,
+        "Rainfarnblaettrige Phazelie"@de,
+        "Phacelia"@en,
+        "Scorpion Weed"@en,
+        "fiddleneck"@en,
+        "lacy phacelia"@en,
+        "lacy scorpion-weed"@en,
+        "tansy phacelia"@en,
+        "Phacelie a feuilles de tanaisie"@fr,
+        "Phacélie à feuilles de tanaisie"@fr,
+        "phacelia"@fr,
+        "phacélie"@fr,
+        "phacélie à feulles de tanaisie"@fr .
 
 <https://www.gbif.org/species/2930137> a dwc:Taxon ;
     dcterms:modified "2026-10-10"^^xsd:date ;
@@ -747,6 +780,35 @@
         "Haricot"@fr,
         "Haricot commun"@fr,
         "Haricot cultive"@fr .
+
+<https://www.gbif.org/species/5358748> a dwc:Taxon ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
+    dcterms:source "GBIF Backbone Taxonomy" ;
+    dwc:family "Fabaceae" ;
+    dwc:genus "Trifolium" ;
+    dwc:kingdom "Plantae" ;
+    dwc:scientificName "Trifolium repens L." ;
+    dwc:scientificNameAuthorship "L." ;
+    dwc:taxonID "gbif:5358748" ;
+    dwc:taxonRank "species" ;
+    dwc:taxonomicStatus "accepted" ;
+    skos:altLabel "Kriech-Klee"@de,
+        "Kriechender Klee"@de,
+        "Weiss-Klee"@de,
+        "Weiß-Klee"@de,
+        "Weißklee"@de,
+        "Dutch clover"@en,
+        "New Zealand Clover"@en,
+        "White Clover"@en,
+        "giant clover"@en,
+        "ladino"@en,
+        "ladino clover"@en,
+        "Trefle blanc"@fr,
+        "Trefle rampant"@fr,
+        "Trèfle blanc"@fr,
+        "Trèfle de Hollande"@fr,
+        "Trèfle rampant"@fr,
+        "coucou"@fr .
 
 <https://www.gbif.org/species/5362573> a dwc:Taxon ;
     dcterms:modified "2026-10-10"^^xsd:date ;

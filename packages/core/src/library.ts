@@ -58,6 +58,8 @@ export interface LibraryCrop {
   windows: TypicalWindow[];
   /** Herbaceous crops only. */
   mix?: CropMix;
+  /** Sown to cover bare soil between and after the crops. */
+  coverCrop?: boolean;
 }
 
 export const CROP_IRI = "https://permaculture.digitalhome.cloud/id/";

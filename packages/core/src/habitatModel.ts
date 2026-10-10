@@ -19,7 +19,15 @@ export const CELL_STATUSES: CellStatus[] = ["CellPlanned", "CellSown", "CellGrow
 
 /** Ids are full IRIs in the app's id space, minted (ADR-0003). */
 export interface Zone { id: string; name: string; kind: ZoneKind; exposure: Exposure[]; areaM2?: number; offsetC?: number }
-export interface Bed { id: string; name: string; zoneId: string; lengthCm: number; widthCm: number; depthCm?: number; cellCm: number }
+export type SubstrateKind = "LightweightRoofSubstrate" | "GardenSoil" | "PottingCompost";
+export const SUBSTRATE_KINDS: SubstrateKind[] = ["LightweightRoofSubstrate", "GardenSoil", "PottingCompost"];
+
+export interface Bed {
+  id: string; name: string; zoneId: string; lengthCm: number; widthCm: number; depthCm?: number; cellCm: number;
+  /** A wicking bed (docs/specs/roofbed-system.md): what the substrate is, the drain pipes under it that
+   *  hold the water, and how much of the bed's far end a worm box takes. */
+  substrate?: SubstrateKind; tankPipes?: number; tankPipeMm?: number; wormBinCm?: number;
+}
 export interface Cell {
   id: string; bedId: string; row: number; col: number; cropId: string; status: CellStatus; sownOn?: string;
   /** Only when this cell differs from the crop's sowing depth / seeds per point. */
@@ -56,9 +64,14 @@ export function footprint(cropId: string, b: Bed): number {
   return spacing ? Math.max(1, Math.round(spacing / b.cellCm)) : 1;
 }
 
+/** The columns at the bed's far end that the worm box takes: no cells there. */
+export function wormBinCols(b: Bed): number {
+  return b.wormBinCm ? Math.min(bedGrid(b).cols, Math.ceil(b.wormBinCm / b.cellCm)) : 0;
+}
+
 export const zoneOffset = (h: Habitat, zoneId: string) => h.zones.find((z) => z.id === zoneId)?.offsetC ?? 0;
 
-export interface Problem { code: "cellOutside" | "cellTwice" | "noZone" | "noBed" | "unknownCrop"; id: string }
+export interface Problem { code: "cellOutside" | "cellTwice" | "cellInBin" | "noZone" | "noBed" | "unknownCrop"; id: string }
 
 /** What SHACL cannot check, reported all at once. */
 export function checkHabitat(h: Habitat): Problem[] {
@@ -76,6 +89,7 @@ export function checkHabitat(h: Habitat): Problem[] {
     if (!b) { problems.push({ code: "noBed", id: c.id }); continue; }
     const { rows, cols } = bedGrid(b);
     if (c.row < 0 || c.col < 0 || c.row >= rows || c.col >= cols) problems.push({ code: "cellOutside", id: c.id });
+    else if (c.col >= cols - wormBinCols(b)) problems.push({ code: "cellInBin", id: c.id });
     const key = `${c.bedId}|${c.row}|${c.col}`;
     if (seen.has(key)) problems.push({ code: "cellTwice", id: c.id });
     seen.add(key);

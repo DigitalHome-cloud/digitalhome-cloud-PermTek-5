@@ -48,8 +48,9 @@ the template: the `dlab5-cloud-template` skill. The template's ADRs are
 - [docs/architecture.md](docs/architecture.md): garden · nest · cloud · twin · DHC
 - [docs/privacy-contract.md](docs/privacy-contract.md): what never leaves the nest or reaches a public repo
 - [docs/design-identity.md](docs/design-identity.md): the Portal's look and the loop
-- [docs/adr/](docs/adr/): decisions 0001–0018 (0001–0007: the template's; 0015: a tenant is the habitat of a DHC home; 0016: the habitat model; 0017: the roof-bed gantry; 0018: its twin edge)
+- [docs/adr/](docs/adr/): decisions 0001–0019 (0001–0007: the template's; 0015: a tenant is the habitat of a DHC home; 0016: the habitat model; 0017: the roof-bed gantry; 0018: its twin edge; 0019: the worm box and the liquid loop)
 - [docs/specs/roofbed-robot.md](docs/specs/roofbed-robot.md): design of the gantry robot for a roof bed
+- [docs/specs/roofbed-system.md](docs/specs/roofbed-system.md): the roof bed as a system: how heavy, how deep, the worm box, the liquid loop, sensors
 - `/how/` and `/model/` on the site: how PermTek-5 works and its data model, drawn with Archify from `docs/how-it-works.architecture.json` and `docs/data-model.architecture.json` (deliver them into `packages/site/static/how/` and `static/model/` after a change)
 - [packages/ontology/README.md](packages/ontology/README.md): crop library, site calendars, recipes, vegetation map
 - [twin/README.md](twin/README.md): the Webots twin

@@ -57,6 +57,11 @@ cloud (PermTek-5)                     robot edge on the Pi (edge_kind=robot)
 | `water_cells` | list of cells with millilitres each | millilitres given per cell |
 | `probe_cells` | list of cells | moisture and temperature per cell |
 | `photo_pass` | bed, or a list of cells | one image per cell or strip, with its cell |
+| `feed_worms` | grams, and the spot in the worm box | grams dropped; the hopper's weight before and after |
+
+`feed_worms` and the bed's water and compost loop are in `roofbed-system.md`.
+`water_cells` gives clean water from above; the worm box's liquid reaches the
+plants from below and is never sprayed.
 
 Each action first checks the safety node, homes if position is unknown, and
 is cancellable. Feedback is the current cell.

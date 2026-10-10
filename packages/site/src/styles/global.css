@@ -1103,3 +1103,10 @@ a {
 .pt-now__frost { border-left: 3px solid var(--pt-warning); padding-left: var(--pt-space-2); }
 .pt-now__warn { color: var(--pt-warning); font-size: 0.875rem; }
 .pt-now__could { display: flex; flex-wrap: wrap; gap: var(--pt-space-2); margin: 0; }
+
+/* the bed's wet weight, and the worm box's end of the grid (docs/specs/roofbed-system.md) */
+.pt-bedload { margin: 0; font-size: 0.875rem; padding: var(--pt-space-2) var(--pt-space-3); border-left: 3px solid var(--pt-border-strong);
+  background: var(--pt-surface-raised); border-radius: var(--pt-radius-sm); }
+.pt-bedload--terrace { border-left-color: var(--pt-warning); }
+.pt-bedload--heavy { border-left-color: var(--pt-danger); }
+.pt-bed__cell--bin { cursor: default; background: repeating-linear-gradient(90deg, var(--pt-surface-raised) 0 4px, var(--pt-border-strong) 4px 5px); }

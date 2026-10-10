@@ -8,8 +8,9 @@
  *
  * The bed, bottom to top: a tank layer as high as the pipes (the pipes full of
  * water, the gaps between them packed with substrate, which is the wick), then
- * the substrate the plants root in. A worm box takes the bed's far end; the
- * pipes run under it too, to catch its liquid.
+ * the substrate the plants root in. A worm box takes the bed's far end, as two
+ * bins: the lower one, as high as the soil, catches the liquid (the sump); the
+ * upper one, above the soil, holds the worms. The pipes run under it too.
  */
 import type { Bed, SubstrateKind } from "./habitatModel.js";
 
@@ -23,8 +24,10 @@ export const DEFAULT_SUBSTRATE: SubstrateKind = "LightweightRoofSubstrate";
 export const DEFAULT_DEPTH_CM = 15;
 /** A pipe's bore is a little under its outer diameter (wall about 3 % each side). */
 const BORE = 0.94;
-/** The worm box: bedding, food and castings, moist; this high, this full. */
-const WORM_BIN_HEIGHT_M = 0.35;
+/** The worm box's upper bin: bedding, food and castings, moist; this high, this full. */
+const WORM_BIN_HEIGHT_M = 0.30;
+/** Its lower bin (the sump) holds liquid up to this depth before the rest runs on to the tank. */
+const SUMP_DEPTH_M = 0.03;
 const WORM_BIN_FILL = 0.7;
 const WORM_BIN_DENSITY = 800;
 /** Frame boards (30 mm softwood) and a liner. */
@@ -40,7 +43,10 @@ export interface BedLoad {
   substrateKg: number;
   /** Water the tank pipes hold when full, litres (= kg). */
   tankLitres: number;
+  /** The worm box: the upper bin's contents and a full sump. */
   wormBinKg: number;
+  /** Liquid the worm box's sump holds when full, litres (= kg). */
+  sumpLitres: number;
   frameKg: number;
   gantryKg: number;
   totalKg: number;
@@ -49,6 +55,12 @@ export interface BedLoad {
 }
 
 const round = (x: number) => Math.round(x);
+
+/** What the worm box's sump holds: its footprint times a shallow depth. The twin edge uses the same rule. */
+export function sumpLitres(bed: Bed): number {
+  const bin = Math.min(bed.lengthCm, bed.wormBinCm ?? 0) / 100;
+  return Math.round(bin * (bed.widthCm / 100) * SUMP_DEPTH_M * 1000);
+}
 
 export function bedLoad(bed: Bed, withGantry = true): BedLoad {
   const length = bed.lengthCm / 100, width = bed.widthCm / 100;
@@ -64,13 +76,14 @@ export function bedLoad(bed: Bed, withGantry = true): BedLoad {
   const wick = Math.max(0, area * pipeD - pipeOuter);                            // substrate between the pipes
   const rooted = (length - bin) * width * depth;
   const substrateKg = (rooted + wick) * density;
-  const wormBinKg = bin * width * WORM_BIN_HEIGHT_M * WORM_BIN_FILL * WORM_BIN_DENSITY;
+  const sump = sumpLitres(bed);
+  const wormBinKg = bin * width * WORM_BIN_HEIGHT_M * WORM_BIN_FILL * WORM_BIN_DENSITY + sump;
   const frameKg = 2 * (length + width) * (depth + pipeD + 0.03) * BOARD_M * WOOD_DENSITY + area * LINER_KG_M2;
   const gantryKg = withGantry ? GANTRY_KG : 0;
   const totalKg = substrateKg + tankLitres + wormBinKg + frameKg + gantryKg;
   return {
     areaM2: Math.round(area * 100) / 100,
-    substrateKg: round(substrateKg), tankLitres: round(tankLitres), wormBinKg: round(wormBinKg),
+    substrateKg: round(substrateKg), tankLitres: round(tankLitres), wormBinKg: round(wormBinKg), sumpLitres: sump,
     frameKg: round(frameKg), gantryKg, totalKg: round(totalKg),
     kgPerM2: round(totalKg / area), kNPerM2: Math.round((totalKg / area) * 9.81 / 10) / 100,
   };

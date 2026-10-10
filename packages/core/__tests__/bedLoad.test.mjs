@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { test } from "node:test";
 
-import { bedLoad, checkHabitat, habitatFromTtl, habitatToTtl, loadClass, wormBinCols } from "../dist/index.js";
+import { bedLoad, checkHabitat, guildForBed, habitatFromTtl, habitatToTtl, loadClass, sumpLitres, wormBinCols } from "../dist/index.js";
 
 // docs/specs/roofbed-system.md: how heavy a wet bed is. Estimates, to compare designs.
 const bed = (o = {}) => ({ id: "b", name: "b", zoneId: "z", lengthCm: 300, widthCm: 100, cellCm: 10, ...o });
@@ -29,7 +29,7 @@ test("the reference beds: a plain 15 cm bed, and the same as a wicking bed", () 
   const plain = bedLoad(bed({ depthCm: 15, wormBinCm: 40 }));
   assert.deepEqual([plain.totalKg, plain.kgPerM2, plain.tankLitres], [574, 191, 0]);
   const wicking = bedLoad(bed({ depthCm: 15, tankPipes: 10, tankPipeMm: 75, wormBinCm: 40 }));
-  assert.deepEqual([wicking.totalKg, wicking.kgPerM2, wicking.tankLitres, wicking.kNPerM2], [801, 267, 117, 2.62]);
+  assert.deepEqual([wicking.totalKg, wicking.kgPerM2, wicking.tankLitres, wicking.kNPerM2], [802, 267, 117, 2.62]);
   assert.ok(Math.abs(wicking.substrateKg + wicking.tankLitres + wicking.wormBinKg + wicking.frameKg + wicking.gantryKg - wicking.totalKg) <= 2);
   assert.equal(bedLoad(bed({ depthCm: 15 }), false).gantryKg, 0);
 });
@@ -73,4 +73,27 @@ test("the worm box takes the bed's last columns, and nothing is planted there", 
   h.cells.push({ ...h.cells[0], id: "x", row: 0, col: 26 });
   assert.deepEqual(checkHabitat(h).map((p) => p.code), ["cellInBin"]);
   assert.equal(wormBinCols({ ...b, wormBinCm: undefined }), 0);
+});
+
+test("the worm box is two bins: the upper one's contents and a full sump", () => {
+  const b = bed({ depthCm: 15, wormBinCm: 40 });
+  assert.equal(sumpLitres(b), 12);                      // 0.4 m x 1 m x 3 cm
+  const load = bedLoad(b);
+  assert.equal(load.sumpLitres, 12);
+  assert.equal(load.wormBinKg, 79);                     // 0.4 x 1 x 0.30 m, 70 % full, 800 kg/m³, plus the sump
+  assert.equal(sumpLitres(bed({ depthCm: 15 })), 0);
+});
+
+test("an existing bed becomes a WormBed5 guild with the parts that type has; what the map says is kept", () => {
+  const zone = { id: "z", name: "Roof", kind: "RoofZone", exposure: [] };
+  const plain = bed({ depthCm: 25 });
+  const made = guildForBed(plain, zone, "Roof guild");
+  assert.equal(made.guild.type, "WormBed5");
+  assert.deepEqual([made.bed.guildId, made.bed.wormBinCm, made.bed.tankPipes, made.bed.tankPipeMm, made.bed.depthCm],
+    [made.guild.id, 40, 8, 110, 25]);
+  assert.deepEqual(checkHabitat({ zones: [zone], guilds: [made.guild], beds: [made.bed], cells: [], plants: [] }), []);
+  const own = guildForBed(bed({ wormBinCm: 60, tankPipes: 6, tankPipeMm: 75 }), zone, "g").bed;
+  assert.deepEqual([own.wormBinCm, own.tankPipes, own.tankPipeMm], [60, 6, 75]);
+  const planted = guildForBed(plain, zone, "g", [{ id: "c", bedId: "b", row: 0, col: 28, cropId: "crop-lettuce", status: "CellPlanned" }]).bed;
+  assert.equal(planted.wormBinCm, undefined, "no box over a planted cell");
 });

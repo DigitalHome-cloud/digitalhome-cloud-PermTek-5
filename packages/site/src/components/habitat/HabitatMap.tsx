@@ -1,6 +1,6 @@
 import * as React from "react";
 import {
-  CITYDEMO_TTL, EXPOSURES, ROBOT_NAME, SUBSTRATE_KINDS, ZONE_KINDS, bedGrid, bedLoad, loadClass, newGuild, wormBinCols, cropById, cropName, defaultOffset, footprint, habitatFromTtl, newId, sowingJob,
+  CITYDEMO_TTL, EXPOSURES, ROBOT_NAME, SUBSTRATE_KINDS, ZONE_KINDS, bedGrid, bedLoad, loadClass, newGuild, guildForBed, wormBinCols, cropById, cropName, defaultOffset, footprint, habitatFromTtl, newId, sowingJob,
 } from "@dlab5/permtek5-core";
 import type { Bed, Cell, CellStatus, Exposure, GardenPlant, Guild, Habitat, SubstrateKind, Zone, ZoneKind } from "@dlab5/permtek5-core";
 import { CELL_STATUSES } from "@dlab5/permtek5-core";
@@ -172,6 +172,7 @@ function BedEditor({ bed, habitat, edit, canEdit }: { bed: Bed; habitat: Habitat
   const setBed = (patch: Partial<Bed>) => edit((h) => ({ ...h, beds: h.beds.map((b) => (b.id === bed.id ? { ...b, ...patch } : b)) }));
   const setCell = (id: string, patch: Partial<Cell>) => edit((h) => ({ ...h, cells: h.cells.map((c) => (c.id === id ? { ...c, ...patch } : c)) }));
   const binFrom = cols - wormBinCols(bed);          // the worm box takes the last columns
+  const zone = habitat.zones.find((z) => z.id === bed.zoneId);
   const load = bedLoad(bed);
   // what a roof carries matters on a roof or a balcony, not on the ground
   const onRoof = ["RoofZone", "BalconyZone"].includes(habitat.zones.find((z) => z.id === bed.zoneId)?.kind ?? "");
@@ -288,6 +289,14 @@ function BedEditor({ bed, habitat, edit, canEdit }: { bed: Bed; habitat: Habitat
             </button>
           )}
         </div>
+      )}
+      {canEdit && !bed.guildId && zone && (
+        <button className="pt-button pt-button--ghost" title={t("hab.make.guild.hint")} onClick={() => edit((h) => {
+          const made = guildForBed(bed, zone, t("hab.guild.default", { area: zone.name }), h.cells);
+          return { ...h, guilds: [...(h.guilds ?? []), made.guild], beds: h.beds.map((b) => (b.id === bed.id ? made.bed : b)) };
+        })}>
+          {t("hab.make.guild")}
+        </button>
       )}
       {canEdit && cells.length === 0 && !bed.guildId && (
         <button className="pt-button pt-button--ghost" onClick={() => edit((h) => ({ ...h, beds: h.beds.filter((b) => b.id !== bed.id) }))}>

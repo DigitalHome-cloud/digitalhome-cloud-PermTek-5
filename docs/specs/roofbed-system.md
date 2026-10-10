@@ -23,11 +23,11 @@ box.
 |---|---|---|---|
 | 10 cm, no tank | 0 l | 390 kg · 130 kg/m² | 600 kg · 200 kg/m² |
 | 15 cm, no tank, worm box | 0 l | 574 kg · 191 kg/m² | 847 kg · 282 kg/m² |
-| 15 cm, 14 × 50 mm pipes, worm box | 73 l | 727 kg · 242 kg/m² | 1047 kg · 349 kg/m² |
-| 15 cm, 10 × 75 mm pipes, worm box | 117 l | 801 kg · 267 kg/m² | 1139 kg · 380 kg/m² |
-| 15 cm, 6 × 110 mm pipes, worm box | 151 l | 913 kg · 304 kg/m² | 1297 kg · 432 kg/m² |
-| 25 cm, 6 × 110 mm pipes, worm box | 151 l | 1211 kg · 404 kg/m² | 1777 kg · 592 kg/m² |
-| 35 cm, 6 × 110 mm pipes, worm box | 151 l | 1509 kg · 503 kg/m² | 2257 kg · 752 kg/m² |
+| 15 cm, 14 × 50 mm pipes, worm box | 73 l | 727 kg · 242 kg/m² | 1048 kg · 349 kg/m² |
+| 15 cm, 10 × 75 mm pipes, worm box | 117 l | 802 kg · 267 kg/m² | 1140 kg · 380 kg/m² |
+| 15 cm, 6 × 110 mm pipes, worm box | 151 l | 913 kg · 304 kg/m² | 1298 kg · 433 kg/m² |
+| 25 cm, 6 × 110 mm pipes, worm box | 151 l | 1211 kg · 404 kg/m² | 1778 kg · 593 kg/m² |
+| 35 cm, 6 × 110 mm pipes, worm box | 151 l | 1509 kg · 503 kg/m² | 2258 kg · 753 kg/m² |
 <!-- weights:end -->
 
 How to read it:
@@ -53,7 +53,8 @@ How to read it:
 
 Assumed: saturated density 1100 kg/m³ (lightweight roof substrate), 1800
 (garden soil), 900 (potting compost); a pipe's bore is 94 % of its outer
-diameter; worm box 35 cm high, 70 % full, 800 kg/m³; 30 mm softwood frame.
+diameter; worm box upper bin 30 cm high, 70 % full, 800 kg/m³, over a sump
+full to 3 cm; 30 mm softwood frame.
 
 ## 2. How deep
 
@@ -103,8 +104,25 @@ In the model a bed says which it is: `perma:tankPipeCount` 0 (A) or more (B),
 At the bed's far end, across its width (`perma:wormBinCm`, 40 cm in the
 reference). No cells are planted there.
 
-- **Box**: insulated walls and lid, shaded, about 35 cm high. A perforated
-  base lets liquid drain down and lets worms move into the bed's soil and back.
+The box is **two bins, one on the other**, and it stands higher than the bed:
+
+```
+   [ LID ]      vent holes; a small feed hatch the robot's tool opens
+ ┌─────────┐
+ │  BIN 1  │    about 30 cm, above the soil. Bedding, worms and scraps.
+ │░░░░░░░░░│    Drilled bottom (drainage), air holes high on the sides,
+ ├─────────┤    worm passages low on the wall that faces the bed.
+ │  BIN 2  │    as high as the soil beside it. Solid bottom: it catches the
+ └─────────┘    liquid (the sump). A tap leads on to the tank pipes.
+```
+
+- **Bin 1** is the working bin: insulated walls, shaded. Its top is about
+  35 cm above the soil, so the gantry's parked tool has to clear it.
+- **Bin 2** is the sump. It holds a few litres (the footprint times 3 cm;
+  12 l for a 40 cm box on a 1 m bed). A float or level probe reads it. A full
+  sump backs up into bin 1 and soaks it, so it is drained in time.
+- **Worm passages** at soil level let worms move into the bed and back, when
+  the guild allows it (ADR 0020). Closed with a slide, the box is contained.
 - **Worms**: compost worms (*Eisenia fetida*). They work between roughly 5 and
   30 °C and best around 15 to 25 °C.
 - **In**: raw fruit and vegetable scraps, coffee grounds, tea leaves, torn
@@ -121,15 +139,18 @@ reference). No cells are planted there.
 ## 5. The liquid loop
 
 ```
-kitchen scraps -> hopper -> (gantry) -> worm box
-                                          | liquid drains down
-                              A: sump -> buried line -> root zone
+kitchen scraps -> hopper -> (gantry) -> worm box, bin 1
+                                          | liquid drips through the drilled bottom
+                                       bin 2, the sump
+                                          | the tap, opened when the sump is half full
+                              A: buried line -> root zone
                               B: tank pipes -> wick -> root zone
                                           | too much (rain)
                                        overflow -> roof drain
 ```
 
-- **From below, by gravity.** No pump in the loop. The liquid mixes with the
+- **From below, by gravity.** No pump in the loop; the tap is the only moving
+  part, and it can be a valve the edge opens. The liquid mixes with the
   tank's water (B) or soaks in along the buried line (A).
 - **Never on leaves.** The liquid is drainage from fresh compost, not a
   finished product: it stays below the surface and never touches salad that

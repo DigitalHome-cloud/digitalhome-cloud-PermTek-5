@@ -41,3 +41,13 @@ water is lighter than wet substrate, so the layer should be packed with pipes.
 - Sensor readings are described but not yet stored in the cloud.
 - The worm box is the part most exposed to the roof's climate: it needs
   shade and insulation, and may have to move indoors in winter.
+
+## Addendum: the worm box is two bins (2026-10-10)
+
+The box is built as two stacked bins and stands higher than the bed: an upper
+working bin above the soil (drilled bottom, air holes, a lid with vent holes
+and a feed hatch) on a lower bin with a solid bottom that catches the liquid.
+A tap lets the liquid on to the tank pipes. Reasons: the liquid is caught and
+measured before it reaches the tank, a soaked box can be seen and drained,
+and the working bin is easier to insulate and to reach. `bedLoad()` counts
+the upper bin's contents and a full sump; the weights change by a kilogram.

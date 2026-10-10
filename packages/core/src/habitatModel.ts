@@ -96,6 +96,28 @@ export function newGuild(zone: Zone, name: string, bedName: string, type: GuildT
   return { guild, bed };
 }
 
+/**
+ * Make an existing bed a WormBed5 guild: the guild, and the bed with the parts that type always has.
+ * Sizes the map already gives are kept. A worm box is not put over planted cells: those stay, and
+ * the bed is reported by checkHabitat only if a box is set by hand later.
+ */
+export function guildForBed(bed: Bed, zone: Zone, name: string, cells: Cell[] = []): { guild: Guild; bed: Bed } {
+  const guild: Guild = { id: newId("guild"), name, zoneId: zone.id, type: "WormBed5", robot: GUILD_ROBOT.WormBed5, wormsMayLeave: true };
+  const cols = bedGrid(bed).cols - Math.ceil(WORMBED5.wormBinCm / bed.cellCm);
+  const free = !cells.some((c) => c.bedId === bed.id && c.col >= cols);
+  return {
+    guild,
+    bed: {
+      ...bed, guildId: guild.id,
+      ...(!bed.wormBinCm && free && { wormBinCm: WORMBED5.wormBinCm }),
+      ...(!bed.tankPipes && { tankPipes: WORMBED5.tankPipes, tankPipeMm: WORMBED5.tankPipeMm }),
+    },
+  };
+}
+
+/** What a WormBed5 guild has when nothing else is said (docs/specs/roofbed-system.md, the reference bed). */
+export const WORMBED5 = { wormBinCm: 40, tankPipes: 8, tankPipeMm: 110 } as const;
+
 /** The columns at the bed's far end that the worm box takes: no cells there. */
 export function wormBinCols(b: Bed): number {
   return b.wormBinCm ? Math.min(bedGrid(b).cols, Math.ceil(b.wormBinCm / b.cellCm)) : 0;

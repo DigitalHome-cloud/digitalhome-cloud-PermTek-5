@@ -107,6 +107,8 @@
   "hab.exp.Shade": "Schatten",
   "hab.exp.Windy": "Windig",
   "hab.exposure": "Lage",
+  "hab.make.guild": "Zu einer WormBed5-Gilde machen",
+  "hab.make.guild.hint": "Ergänzt Wurmkiste und Tankrohre einer WormBed5, wo sie dem Beet fehlen, und stellt das Beet in eine Perma5Guild. Bepflanzte Zellen bleiben.",
   "hab.guild.default": "Gilde {area}",
   "hab.guild.robot": "bearbeitet von {robot}",
   "hab.guild.worms": "Die Würmer können die Kiste in die Beeterde verlassen (ein Rückzugsort, wenn die Kiste zu heiß, kalt oder sauer wird)",

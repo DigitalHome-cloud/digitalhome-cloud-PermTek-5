@@ -107,6 +107,8 @@
   "hab.exp.Shade": "Shade",
   "hab.exp.Windy": "Windy",
   "hab.exposure": "Exposure",
+  "hab.make.guild": "Make this a WormBed5 guild",
+  "hab.make.guild.hint": "Adds the worm box and tank pipes a WormBed5 has, where the bed lacks them, and puts the bed in a Perma5Guild. Planted cells stay.",
   "hab.guild.default": "{area} guild",
   "hab.guild.robot": "worked by {robot}",
   "hab.guild.worms": "The worms can leave the box into the bed's soil (a refuge when the box turns too hot, cold or sour)",

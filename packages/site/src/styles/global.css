@@ -1117,3 +1117,11 @@ a {
 .pt-guild .pt-bedbox { border-top: 0; padding-top: 0; }
 .pt-guild__robot { font-size: 0.8125rem; }
 .pt-guild__check { display: inline-flex; align-items: center; gap: var(--pt-space-2); font-size: 0.875rem; color: var(--pt-text-muted); }
+
+/* the feeding guide under a WormBed5 guild */
+.pt-guide { font-size: 0.875rem; }
+.pt-guide > summary { cursor: pointer; color: var(--pt-text-muted); }
+.pt-guide__kinds { display: grid; grid-template-columns: max-content 1fr; gap: var(--pt-space-1) var(--pt-space-3); margin: var(--pt-space-2) 0; }
+.pt-guide__kinds dd { margin: 0; }
+.pt-guide__class { font-weight: 600; }
+.pt-guide__class--never { color: var(--pt-danger, #b3261e); }

@@ -109,6 +109,7 @@
   "hab.exposure": "Exposition",
   "hab.make.guild": "En faire une guilde WormBed5",
   "hab.make.guild.hint": "Ajoute le lombricomposteur et les tuyaux-réservoir d'une WormBed5 là où ils manquent, et place la planche dans une Perma5Guild. Les cellules plantées restent.",
+  "hab.guide.title": "Guide d'alimentation des vers (le robot le fait respecter)",
   "hab.guild.default": "Guilde {area}",
   "hab.guild.robot": "travaillée par {robot}",
   "hab.guild.worms": "Les vers peuvent quitter le bac vers la terre de la planche (un refuge quand le bac devient trop chaud, froid ou acide)",

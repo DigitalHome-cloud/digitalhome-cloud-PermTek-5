@@ -44,6 +44,7 @@ export type {
 } from "./habitatModel.js";
 export { habitatFromTtl, habitatToTtl } from "./habitatGraph.js";
 export { whatNow } from "./now.js";
+export { FEEDING_GUIDE } from "./feedingGuide.generated.js";
 export type { NowItem } from "./now.js";
 export { CITYDEMO_TTL } from "./example.generated.js";
 export {

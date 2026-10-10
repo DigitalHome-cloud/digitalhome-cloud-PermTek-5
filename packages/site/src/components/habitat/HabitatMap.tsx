@@ -6,6 +6,7 @@ import type { Bed, Cell, CellStatus, Exposure, GardenPlant, Guild, Habitat, Subs
 import { CELL_STATUSES } from "@dlab5/permtek5-core";
 import { useT } from "../../lib/i18n";
 import { CropSelect, cropColor, num } from "./common";
+import { FeedingGuide } from "./FeedingGuide";
 
 type Edit = (f: (h: Habitat) => Habitat) => void;
 
@@ -143,6 +144,7 @@ function GuildCard({ guild, habitat, edit, canEdit }: { guild: Guild; habitat: H
         {t("hab.guild.worms")}
       </label>
       {beds.map((b) => <BedEditor key={b.id} bed={b} habitat={habitat} edit={edit} canEdit={canEdit} />)}
+      {guild.type === "WormBed5" && <FeedingGuide />}
       {canEdit && !planted && (
         <p className="pt-habitat__actions">
           <button className="pt-button pt-button--ghost" onClick={() => edit((h) => ({

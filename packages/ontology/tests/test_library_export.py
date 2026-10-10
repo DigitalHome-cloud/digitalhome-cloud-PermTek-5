@@ -15,6 +15,23 @@ def test_the_generated_library_has_not_drifted():
         assert fh.read() == expected, "run: packages/ontology/.venv/bin/python packages/ontology/tools/export_library.py"
     with open(export_library.EXAMPLE_OUT) as fh:
         assert fh.read() == export_library.render_example(), "run: packages/ontology/tools/export_library.py"
+    with open(export_library.GUIDE_OUT) as fh:
+        assert fh.read() == export_library.render_guide(), "run: packages/ontology/tools/export_library.py"
+
+
+def test_the_feeding_guide_is_complete_in_three_languages():
+    import json
+    with open(export_library.GUIDE) as fh:
+        guide = json.load(fh)
+    langs = {"en", "de", "fr"}
+    assert set(guide["about"]) == langs
+    for key, kind in guide["kinds"].items():
+        assert kind["class"] in guide["classes"] and set(kind["label"]) == langs, key
+        assert (kind["class"] == "limited") == ("weeklySharePct" in kind), key
+    for key, text in guide["ruleTexts"].items():
+        assert set(text) == langs, key
+    assert all(set(p) == langs for p in guide["preparation"])
+    assert {"brownsPerScraps", "maxDaysOfFoodInBox", "maxGramsPerSpot", "minHoursBetweenFeedings", "minCoreC"} <= guide["rules"].keys()
 
 
 def test_trees_have_windows_and_annuals_have_needs():

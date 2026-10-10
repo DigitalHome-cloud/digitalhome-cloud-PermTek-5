@@ -1110,3 +1110,10 @@ a {
 .pt-bedload--terrace { border-left-color: var(--pt-warning); }
 .pt-bedload--heavy { border-left-color: var(--pt-danger); }
 .pt-bed__cell--bin { cursor: default; background: repeating-linear-gradient(90deg, var(--pt-surface-raised) 0 4px, var(--pt-border-strong) 4px 5px); }
+
+/* a Perma5Guild: the area's working unit, with its bed inside (docs/adr/0020) */
+.pt-guild { display: grid; gap: var(--pt-space-3); border: 1px solid var(--pt-border-strong); border-left: 3px solid var(--pt-accent);
+  border-radius: var(--pt-radius-sm); padding: var(--pt-space-4); background: var(--pt-bg-sunken); }
+.pt-guild .pt-bedbox { border-top: 0; padding-top: 0; }
+.pt-guild__robot { font-size: 0.8125rem; }
+.pt-guild__check { display: inline-flex; align-items: center; gap: var(--pt-space-2); font-size: 0.875rem; color: var(--pt-text-muted); }

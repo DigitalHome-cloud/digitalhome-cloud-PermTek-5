@@ -1,6 +1,6 @@
-# The roof bed as a system: soil, water, worms, sensors
+# WormBed5: the roof bed as a system (soil, water, worms, sensors)
 
-Status: **design, nothing built** · ADR 0019 · model: ADR 0016 · robot: `roofbed-robot.md`
+Status: **design, nothing built** · ADR 0019 · the first Perma5Guild type (ADR 0020, `perma5guild.md`) · model: ADR 0016 · robot: `roofbed-robot.md`
 
 A growing bed that stands flat on a roof, feeds itself from a worm compost
 box at one end, and is worked by the gantry. This document says how it is

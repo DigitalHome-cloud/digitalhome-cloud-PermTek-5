@@ -5,51 +5,358 @@
     "title": "How PermTek-5 works",
     "locale": "en",
     "quality_profile": "showcase",
-    "viewBox": [1240, 660],
+    "viewBox": [
+      1240,
+      660
+    ],
     "views": [
-      {"id": "start", "label": "Start from a home", "focus": ["portal", "home", "site"],
-       "note": "The Portal opens PermTek-5 for a home. Only the home's owners can start its site; they become its admins, with two-step sign-in."},
-      {"id": "map", "label": "Map the site", "focus": ["site", "map", "abox", "library"],
-       "note": "A site has areas: the roof, the garden. An area has beds of cells and long-lived plants. Crops come from one shared library."},
-      {"id": "calendar", "label": "A calendar from the climate", "focus": ["weather", "library", "abox", "calendar"],
-       "note": "What each crop needs meets the monthly normals of the home's postal area, shifted per area. Every month is a suggestion to confirm."},
-      {"id": "edges", "label": "Twin and robot", "focus": ["abox", "edgeapi", "twin", "robot"],
-       "note": "An edge pairs by a code an admin approves, syncs the site's knowledge, simulates the gantry, and writes back what was sown."}
+      {
+        "id": "start",
+        "label": "Start from a home",
+        "focus": [
+          "portal",
+          "home",
+          "site"
+        ],
+        "note": "The Portal opens PermTek-5 for a home. Only the home's owners can start its site; they become its admins, with two-step sign-in."
+      },
+      {
+        "id": "map",
+        "label": "Map the site",
+        "focus": [
+          "site",
+          "map",
+          "abox",
+          "library"
+        ],
+        "note": "A site has areas. An area holds Perma5Guilds: a bed with its worm box, tank and robot. Crops come from one library."
+      },
+      {
+        "id": "calendar",
+        "label": "A calendar from the climate",
+        "focus": [
+          "weather",
+          "library",
+          "abox",
+          "calendar"
+        ],
+        "note": "What each crop needs meets the monthly normals of the home's postal area, shifted per area. Every month is a suggestion to confirm."
+      },
+      {
+        "id": "edges",
+        "label": "Twin and robot",
+        "focus": [
+          "abox",
+          "edgeapi",
+          "twin",
+          "robot"
+        ],
+        "note": "An edge pairs by a code an admin approves, syncs the site's knowledge, simulates the gantry, and writes back what was sown."
+      }
     ]
   },
   "components": [
-    {"id": "portal", "type": "frontend", "label": "Portal", "sublabel": "your homes", "pos": [60, 60], "size": [140, 64]},
-    {"id": "home", "type": "database", "label": "Home", "sublabel": "owners · postal code", "pos": [60, 300], "size": [140, 64]},
-    {"id": "weather", "type": "database", "label": "Weather normals", "sublabel": "per postal area", "pos": [60, 520], "size": [140, 64]},
-    {"id": "site", "type": "security", "label": "Site", "sublabel": "admins · members", "pos": [300, 60], "size": [140, 64], "tag": "one per home"},
-    {"id": "map", "type": "frontend", "label": "Map", "sublabel": "areas · beds · cells", "pos": [520, 60], "size": [140, 64]},
-    {"id": "library", "type": "database", "label": "Crop library", "sublabel": "needs · windows", "pos": [300, 300], "size": [140, 64]},
-    {"id": "abox", "type": "database", "label": "Site knowledge", "sublabel": "A-Box · versioned", "pos": [520, 300], "size": [140, 64]},
-    {"id": "calendar", "type": "frontend", "label": "Calendar & Now", "sublabel": "derived · to confirm", "pos": [520, 520], "size": [140, 64]},
-    {"id": "edgeapi", "type": "security", "label": "Edge API", "sublabel": "device token", "pos": [780, 300], "size": [140, 64]},
-    {"id": "twin", "type": "backend", "label": "Twin edge", "sublabel": "Webots · ROS 2", "pos": [1010, 300], "size": [140, 64]},
-    {"id": "robot", "type": "external", "label": "Gantry robot", "sublabel": "planned", "pos": [1010, 520], "size": [140, 64]}
+    {
+      "id": "portal",
+      "type": "frontend",
+      "label": "Portal",
+      "sublabel": "your homes",
+      "pos": [
+        60,
+        60
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "home",
+      "type": "database",
+      "label": "Home",
+      "sublabel": "owners · postal code",
+      "pos": [
+        60,
+        300
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "weather",
+      "type": "database",
+      "label": "Weather normals",
+      "sublabel": "per postal area",
+      "pos": [
+        60,
+        520
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "site",
+      "type": "security",
+      "label": "Site",
+      "sublabel": "admins · members",
+      "pos": [
+        300,
+        60
+      ],
+      "size": [
+        140,
+        64
+      ],
+      "tag": "one per home"
+    },
+    {
+      "id": "map",
+      "type": "frontend",
+      "label": "Map",
+      "sublabel": "areas · guilds · cells",
+      "pos": [
+        520,
+        60
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "library",
+      "type": "database",
+      "label": "Crop library",
+      "sublabel": "needs · windows",
+      "pos": [
+        300,
+        300
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "abox",
+      "type": "database",
+      "label": "Site knowledge",
+      "sublabel": "A-Box · versioned",
+      "pos": [
+        520,
+        300
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "calendar",
+      "type": "frontend",
+      "label": "Calendar & Now",
+      "sublabel": "derived · to confirm",
+      "pos": [
+        520,
+        520
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "edgeapi",
+      "type": "security",
+      "label": "Edge API",
+      "sublabel": "device token",
+      "pos": [
+        780,
+        300
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "twin",
+      "type": "backend",
+      "label": "Twin edge",
+      "sublabel": "one per guild",
+      "pos": [
+        1010,
+        300
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "robot",
+      "type": "external",
+      "label": "Gantry5-gen1",
+      "sublabel": "planned",
+      "pos": [
+        1010,
+        520
+      ],
+      "size": [
+        140,
+        64
+      ]
+    }
   ],
   "boundaries": [
-    {"kind": "region", "label": "DigitalHome.Cloud", "wraps": ["portal", "home", "weather"]},
-    {"kind": "region", "label": "PermTek-5", "wraps": ["site", "map", "library", "abox", "calendar", "edgeapi"]},
-    {"kind": "region", "label": "At home", "wraps": ["twin", "robot"]}
+    {
+      "kind": "region",
+      "label": "DigitalHome.Cloud",
+      "wraps": [
+        "portal",
+        "home",
+        "weather"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "PermTek-5",
+      "wraps": [
+        "site",
+        "map",
+        "library",
+        "abox",
+        "calendar",
+        "edgeapi"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "At home",
+      "wraps": [
+        "twin",
+        "robot"
+      ]
+    }
   ],
   "connections": [
-    {"id": "open", "from": "portal", "to": "site", "label": "?home=", "variant": "emphasis"},
-    {"id": "owner", "from": "home", "to": "site", "label": "owner?", "variant": "security", "fromSide": "right", "toSide": "bottom"},
-    {"id": "edit", "from": "site", "to": "map", "label": "admins edit"},
-    {"id": "save", "from": "map", "to": "abox", "label": "save", "fromSide": "bottom", "toSide": "top", "labelAt": [590, 212]},
-    {"id": "crops", "from": "library", "to": "abox", "label": "crops"},
-    {"id": "grows", "from": "abox", "to": "calendar", "label": "what grows", "fromSide": "bottom", "toSide": "top", "labelAt": [590, 442]},
-    {"id": "normals", "from": "weather", "to": "calendar", "label": "monthly normals", "variant": "emphasis"},
-    {"id": "sync", "from": "abox", "to": "edgeapi", "label": "sync"},
-    {"id": "token", "from": "edgeapi", "to": "twin", "label": "paired", "variant": "security"},
-    {"id": "same", "from": "twin", "to": "robot", "label": "same jobs", "variant": "dashed", "fromSide": "bottom", "toSide": "top", "labelAt": [1080, 442]}
+    {
+      "id": "open",
+      "from": "portal",
+      "to": "site",
+      "label": "?home=",
+      "variant": "emphasis"
+    },
+    {
+      "id": "owner",
+      "from": "home",
+      "to": "site",
+      "label": "owner?",
+      "variant": "security",
+      "fromSide": "right",
+      "toSide": "bottom"
+    },
+    {
+      "id": "edit",
+      "from": "site",
+      "to": "map",
+      "label": "admins edit"
+    },
+    {
+      "id": "save",
+      "from": "map",
+      "to": "abox",
+      "label": "save",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        590,
+        212
+      ]
+    },
+    {
+      "id": "crops",
+      "from": "library",
+      "to": "abox",
+      "label": "crops"
+    },
+    {
+      "id": "grows",
+      "from": "abox",
+      "to": "calendar",
+      "label": "what grows",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        590,
+        442
+      ]
+    },
+    {
+      "id": "normals",
+      "from": "weather",
+      "to": "calendar",
+      "label": "monthly normals",
+      "variant": "emphasis"
+    },
+    {
+      "id": "sync",
+      "from": "abox",
+      "to": "edgeapi",
+      "label": "sync"
+    },
+    {
+      "id": "token",
+      "from": "edgeapi",
+      "to": "twin",
+      "label": "paired",
+      "variant": "security"
+    },
+    {
+      "id": "same",
+      "from": "twin",
+      "to": "robot",
+      "label": "same jobs",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        1080,
+        442
+      ]
+    }
   ],
   "cards": [
-    {"dot": "emerald", "title": "A site is a home's habitat", "items": ["Started from the Portal by the home's owners", "Areas: roof, garden; beds of cells; trees", "Climate read from the home's postal area, never copied"]},
-    {"dot": "cyan", "title": "Suggestions, you decide", "items": ["Calendar months are general practice, to confirm", "Late frost at blossom is flagged", "A robot proposes jobs; a person confirms"]},
-    {"dot": "rose", "title": "Private", "items": ["Only people you add to the site read its map", "Operators see site names, never content", "Admins sign in with two steps"]}
+    {
+      "dot": "emerald",
+      "title": "A site is a home's habitat",
+      "items": [
+        "Started from the Portal by the home's owners",
+        "Areas hold Perma5Guilds: bed, worm box, tank, robot",
+        "Climate read from the home's postal area, never copied"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Suggestions, you decide",
+      "items": [
+        "Calendar months are general practice, to confirm",
+        "Late frost at blossom is flagged",
+        "A robot proposes jobs; a person confirms"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Private",
+      "items": [
+        "Only people you add to the site read its map",
+        "Operators see site names, never content",
+        "Admins sign in with two steps"
+      ]
+    }
   ]
 }

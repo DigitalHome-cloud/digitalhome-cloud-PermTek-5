@@ -22,8 +22,29 @@ export interface Zone { id: string; name: string; kind: ZoneKind; exposure: Expo
 export type SubstrateKind = "LightweightRoofSubstrate" | "GardenSoil" | "PottingCompost";
 export const SUBSTRATE_KINDS: SubstrateKind[] = ["LightweightRoofSubstrate", "GardenSoil", "PottingCompost"];
 
+export type GuildType = "WormBed5";
+export const GUILD_TYPES: GuildType[] = ["WormBed5"];
+export type RobotModel = "Gantry5Gen1";
+/** What each guild type is worked by, unless the guild says otherwise. */
+export const GUILD_ROBOT: Record<GuildType, RobotModel> = { WormBed5: "Gantry5Gen1" };
+/** A robot model's name as people write it. */
+export const ROBOT_NAME: Record<RobotModel, string> = { Gantry5Gen1: "Gantry5-gen1" };
+
+/**
+ * A Perma5Guild (docs/adr/0020): an area's working unit of bed, worm box, tank,
+ * sensors and robot(s). Its type fixes the structure; the instance sets sizes
+ * and settings. One edge runs one guild.
+ */
+export interface Guild {
+  id: string; name: string; zoneId: string; type: GuildType; robot?: RobotModel;
+  /** The worm box has exits into the bed's soil (a refuge), or is closed. */
+  wormsMayLeave?: boolean;
+}
+
 export interface Bed {
   id: string; name: string; zoneId: string; lengthCm: number; widthCm: number; depthCm?: number; cellCm: number;
+  /** The guild this bed belongs to; none for a plain bed worked by hand. */
+  guildId?: string;
   /** A wicking bed (docs/specs/roofbed-system.md): what the substrate is, the drain pipes under it that
    *  hold the water, and how much of the bed's far end a worm box takes. */
   substrate?: SubstrateKind; tankPipes?: number; tankPipeMm?: number; wormBinCm?: number;
@@ -40,6 +61,7 @@ export interface GardenPlant {
 
 export interface Habitat {
   zones: Zone[];
+  guilds: Guild[];
   beds: Bed[];
   cells: Cell[];
   plants: GardenPlant[];
@@ -47,9 +69,9 @@ export interface Habitat {
   rest: string;
 }
 
-export const emptyHabitat = (): Habitat => ({ zones: [], beds: [], cells: [], plants: [], rest: "" });
+export const emptyHabitat = (): Habitat => ({ zones: [], guilds: [], beds: [], cells: [], plants: [], rest: "" });
 
-export const newId = (kind: "zone" | "bed" | "cell" | "plant") =>
+export const newId = (kind: "zone" | "guild" | "bed" | "cell" | "plant") =>
   `${HABITAT_IRI}${kind}-${mintId(kind[0])}`;
 
 /** A roof is about a degree warmer than the street; elsewhere start at 0. */
@@ -64,6 +86,16 @@ export function footprint(cropId: string, b: Bed): number {
   return spacing ? Math.max(1, Math.round(spacing / b.cellCm)) : 1;
 }
 
+/** A new guild of a type, with the bed that type starts with (docs/specs/roofbed-system.md for WormBed5). */
+export function newGuild(zone: Zone, name: string, bedName: string, type: GuildType = "WormBed5"): { guild: Guild; bed: Bed } {
+  const guild: Guild = { id: newId("guild"), name, zoneId: zone.id, type, robot: GUILD_ROBOT[type], wormsMayLeave: true };
+  const bed: Bed = {
+    id: newId("bed"), name: bedName, zoneId: zone.id, guildId: guild.id, lengthCm: 300, widthCm: 100, depthCm: 15, cellCm: 10,
+    substrate: zone.kind === "GroundZone" ? "GardenSoil" : "LightweightRoofSubstrate", tankPipes: 0, wormBinCm: 40,
+  };
+  return { guild, bed };
+}
+
 /** The columns at the bed's far end that the worm box takes: no cells there. */
 export function wormBinCols(b: Bed): number {
   return b.wormBinCm ? Math.min(bedGrid(b).cols, Math.ceil(b.wormBinCm / b.cellCm)) : 0;
@@ -71,14 +103,26 @@ export function wormBinCols(b: Bed): number {
 
 export const zoneOffset = (h: Habitat, zoneId: string) => h.zones.find((z) => z.id === zoneId)?.offsetC ?? 0;
 
-export interface Problem { code: "cellOutside" | "cellTwice" | "cellInBin" | "noZone" | "noBed" | "unknownCrop"; id: string }
+export interface Problem {
+  code: "cellOutside" | "cellTwice" | "cellInBin" | "noZone" | "noBed" | "noGuild" | "guildBeds" | "unknownCrop";
+  id: string;
+}
 
 /** What SHACL cannot check, reported all at once. */
 export function checkHabitat(h: Habitat): Problem[] {
   const problems: Problem[] = [];
   const zones = new Set(h.zones.map((z) => z.id));
   const beds = new Map(h.beds.map((b) => [b.id, b]));
-  for (const b of h.beds) if (!zones.has(b.zoneId)) problems.push({ code: "noZone", id: b.id });
+  const guilds = new Map((h.guilds ?? []).map((g) => [g.id, g]));
+  for (const g of guilds.values()) {
+    if (!zones.has(g.zoneId)) problems.push({ code: "noZone", id: g.id });
+    // a WormBed5 is one bed with its worm box: not none, not two
+    if (g.type === "WormBed5" && h.beds.filter((b) => b.guildId === g.id).length !== 1) problems.push({ code: "guildBeds", id: g.id });
+  }
+  for (const b of h.beds) {
+    if (!zones.has(b.zoneId)) problems.push({ code: "noZone", id: b.id });
+    if (b.guildId && guilds.get(b.guildId)?.zoneId !== b.zoneId) problems.push({ code: "noGuild", id: b.id });
+  }
   for (const p of h.plants) {
     if (!zones.has(p.zoneId)) problems.push({ code: "noZone", id: p.id });
     if (!cropById(p.cropId)) problems.push({ code: "unknownCrop", id: p.id });

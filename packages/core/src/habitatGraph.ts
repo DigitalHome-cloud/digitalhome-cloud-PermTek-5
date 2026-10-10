@@ -9,8 +9,8 @@ import N3 from "n3";
 import type { Quad, Term } from "n3";
 import { CROP_IRI } from "./library.js";
 import {
-  CELL_STATUSES, EXPOSURES, SUBSTRATE_KINDS, ZONE_KINDS,
-  type Bed, type Cell, type CellStatus, type Exposure, type GardenPlant, type Habitat, type SubstrateKind, type Zone, type ZoneKind,
+  CELL_STATUSES, EXPOSURES, GUILD_TYPES, SUBSTRATE_KINDS, ZONE_KINDS,
+  type Bed, type Cell, type CellStatus, type Exposure, type GardenPlant, type Guild, type GuildType, type Habitat, type RobotModel, type SubstrateKind, type Zone, type ZoneKind,
 } from "./habitatModel.js";
 
 const { namedNode, literal, quad } = N3.DataFactory;
@@ -42,9 +42,17 @@ export function habitatToTtl(h: Habitat): Promise<string> {
     if (z.areaM2 !== undefined) add(z.id, "areaM2", dec(z.areaM2));
     if (z.offsetC !== undefined) add(z.id, "microclimateOffsetC", dec(z.offsetC));
   }
+  for (const g of h.guilds ?? []) {
+    add(g.id, "a", p("Guild")); name(g.id, g.name);
+    add(g.id, "inZone", namedNode(g.zoneId));
+    add(g.id, "guildType", p(g.type));
+    if (g.robot) add(g.id, "robotModel", p(g.robot));
+    if (g.wormsMayLeave !== undefined) add(g.id, "wormsMayLeave", literal(String(g.wormsMayLeave), namedNode(XSD + "boolean")));
+  }
   for (const b of h.beds) {
     add(b.id, "a", p("GrowingBed")); name(b.id, b.name);
     add(b.id, "inZone", namedNode(b.zoneId));
+    if (b.guildId) add(b.id, "inGuild", namedNode(b.guildId));
     add(b.id, "lengthCm", int(b.lengthCm)); add(b.id, "widthCm", int(b.widthCm));
     if (b.depthCm !== undefined) add(b.id, "substrateDepthCm", int(b.depthCm));
     add(b.id, "cellSizeCm", int(b.cellCm));
@@ -80,7 +88,7 @@ export function habitatToTtl(h: Habitat): Promise<string> {
   });
 }
 
-const CLASSES = ["GardenZone", "GrowingBed", "PlantingCell", "GardenPlant"].map((c) => PERMA + c);
+const CLASSES = ["GardenZone", "Guild", "GrowingBed", "PlantingCell", "GardenPlant"].map((c) => PERMA + c);
 
 export function habitatFromTtl(ttl: string): Habitat {
   const store = new N3.Store(ttl.trim() ? new N3.Parser().parse(ttl) : []);
@@ -100,8 +108,15 @@ export function habitatFromTtl(ttl: string): Habitat {
     ...(num(id, "areaM2") !== undefined && { areaM2: num(id, "areaM2") }),
     ...(num(id, "microclimateOffsetC") !== undefined && { offsetC: num(id, "microclimateOffsetC") }),
   }));
+  const guilds: Guild[] = ofType("Guild").map((id) => ({
+    id, name: label(id), zoneId: str(id, "inZone") ?? "",
+    type: (GUILD_TYPES as string[]).includes(local(one(id, "guildType")) ?? "") ? (local(one(id, "guildType")) as GuildType) : "WormBed5",
+    ...(local(one(id, "robotModel")) === "Gantry5Gen1" && { robot: "Gantry5Gen1" as RobotModel }),
+    ...(str(id, "wormsMayLeave") !== undefined && { wormsMayLeave: str(id, "wormsMayLeave") === "true" }),
+  }));
   const beds: Bed[] = ofType("GrowingBed").map((id) => ({
     id, name: label(id), zoneId: str(id, "inZone") ?? "",
+    ...(str(id, "inGuild") && { guildId: str(id, "inGuild") }),
     lengthCm: num(id, "lengthCm") ?? 0, widthCm: num(id, "widthCm") ?? 0,
     ...(num(id, "substrateDepthCm") !== undefined && { depthCm: num(id, "substrateDepthCm") }),
     cellCm: num(id, "cellSizeCm") ?? 10,
@@ -129,5 +144,5 @@ export function habitatFromTtl(ttl: string): Habitat {
   const mine = new Set(CLASSES.flatMap((c) => store.getSubjects(namedNode(RDF_TYPE), namedNode(c), null).map((x) => x.value)));
   const rest = store.getQuads(null, null, null, null).filter((q) => !mine.has(q.subject.value));
   const writer = new N3.Writer({ format: "N-Triples" });
-  return { zones, beds, cells, plants, rest: rest.length ? writer.quadsToString(rest) : "" };
+  return { zones, guilds, beds, cells, plants, rest: rest.length ? writer.quadsToString(rest) : "" };
 }

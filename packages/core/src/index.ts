@@ -36,10 +36,12 @@ export type { Activity, CropNeeds, LibraryCrop, TypicalWindow } from "./library.
 export { FROST_RISK_MIN_C, activitiesIn, deriveWindows } from "./calendar.js";
 export type { CropCalendar } from "./calendar.js";
 export {
-  CELL_STATUSES, EXPOSURES, HABITAT_IRI, SUBSTRATE_KINDS, ZONE_KINDS,
-  bedGrid, checkHabitat, defaultOffset, emptyHabitat, footprint, newId, sowingJob, wormBinCols, zoneOffset,
+  CELL_STATUSES, EXPOSURES, GUILD_ROBOT, GUILD_TYPES, HABITAT_IRI, ROBOT_NAME, SUBSTRATE_KINDS, ZONE_KINDS,
+  bedGrid, checkHabitat, defaultOffset, emptyHabitat, footprint, newGuild, newId, sowingJob, wormBinCols, zoneOffset,
 } from "./habitatModel.js";
-export type { Bed, Cell, CellStatus, Exposure, GardenPlant, Habitat, Problem, SowingJob, SubstrateKind, Zone, ZoneKind } from "./habitatModel.js";
+export type {
+  Bed, Cell, CellStatus, Exposure, GardenPlant, Guild, GuildType, Habitat, Problem, RobotModel, SowingJob, SubstrateKind, Zone, ZoneKind,
+} from "./habitatModel.js";
 export { habitatFromTtl, habitatToTtl } from "./habitatGraph.js";
 export { whatNow } from "./now.js";
 export type { NowItem } from "./now.js";

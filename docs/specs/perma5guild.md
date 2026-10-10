@@ -68,6 +68,43 @@ propose; it never removes a lower rung's safety reaction.
    at the same spot; mould against food.
 7. **The chat agent.** It explains and proposes. It never acts alone.
 
+### The worm box model the twin tries these against
+
+The twin plays the worm box with a small model (`wormbox.py` in the twin
+edge). Its numbers are rules of thumb from composting practice, not
+measurements of a real box. They are written here so they can be corrected
+when a real box says otherwise.
+
+| Rule of thumb | Value in the twin |
+|---|---|
+| Worms eat, at their best | half their own weight a day |
+| They work best at | 15 to 25 °C in the core, 65 to 85 % moisture |
+| They stop | under 4 °C and over 32 °C |
+| Of what is eaten | 40 % stays as castings, 30 % drains as liquid, 30 % leaves as gas and vapour |
+| So the box loses | 0.6 g for every gram eaten (what the feeder measures) |
+| Uneaten food heats the core | about 2.5 °C per kg |
+| The box follows the air | with a delay of about 3 hours; wrapped, about 15 |
+| The air in the box runs short | from 1.5 kg of uneaten food, or above 85 % moisture |
+| Stress that wears the worms down | core under 5 °C or over 30 °C, moisture under 45 % or over 92 %, no air |
+| Worms that may leave | dodge half the harm and come back; in a closed box what is lost stays lost |
+
+The last row is a simplification. A closed box does recover in reality, from
+cocoons, over weeks.
+
+**The feeder (rung 2), step by step.** It takes the box's weight at every
+look, minus what the robot has fed. It fits a straight line through the last
+day of that series, so the load cells' noise averages out; the slope divided
+by 0.6 is what the worms eat per day. It scales that rate to the box's
+temperature now, keeps count of what was fed and eaten since, and proposes
+what brings the uneaten food up to one day's eating. With less than six hours
+of readings it is learning and gives small portions only. When the weight
+jumps for a reason it does not know (bedding added, food taken out) it starts
+over. Without a weight or temperature reading it proposes nothing.
+
+What it cannot know: food that was in the box before it started counting.
+The keeper's own rules (core much hotter than edge, the gas sensor) guard
+that side.
+
 ## 4. Chaos monkeys
 
 A guild lives outdoors. The twin injects disturbances, and each has a
@@ -83,6 +120,8 @@ reaction the guild owes. A chaos run is a test with a score.
 | Tank leak | level falls without use | tell the person at once |
 | Sensor stuck or dead | a reading freezes or disappears | distrust it, say so, fall back to the safe side |
 | Hopper jam | the scoop comes back empty | stop feeding; tell the person |
+| Overfeeding | far more food than the worms eat | stop feeding; tell the person to take food out and add dry bedding |
+| Lid left open | the box dries, cools faster, rain gets in | tell the person |
 | Network loss | no link to the cloud | keep working; queue what is to be written back |
 | Weeds | green off the planted points | scan; stamp the small ones; flag the large |
 

@@ -34,7 +34,31 @@ permash:CropShape a sh:NodeShape ;
     sh:property [ sh:path dwc:scientificName ; sh:minCount 1 ; sh:maxCount 1 ;
                   sh:message "A crop names its taxon (dwc:scientificName) until perma-bio links the IRI."@en ] ;
     sh:property [ sh:path perma:yields ; sh:minCount 1 ; sh:node permash:HarvestPartShape ;
-                  sh:message "A crop yields at least one harvested part."@en ] .
+                  sh:message "A crop yields at least one harvested part."@en ] ;
+    sh:property [ sh:path perma:sowMinTempC ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minInclusive -5 ; sh:maxInclusive 35 ] ;
+    sh:property [ sh:path perma:plantOutMinNightC ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minInclusive -5 ; sh:maxInclusive 25 ] ;
+    sh:property [ sh:path perma:boltAboveC ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minInclusive 5 ; sh:maxInclusive 45 ] ;
+    sh:property [ sh:path perma:frostTender ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path perma:daysToHarvest ; sh:maxCount 1 ; sh:datatype xsd:integer ; sh:minInclusive 1 ; sh:maxInclusive 730 ] ;
+    sh:property [ sh:path perma:spacingCm ; sh:maxCount 1 ; sh:datatype xsd:integer ; sh:minInclusive 1 ; sh:maxInclusive 2000 ] ;
+    sh:property [ sh:path perma:sowingDepthMm ; sh:maxCount 1 ; sh:datatype xsd:integer ; sh:minInclusive 0 ; sh:maxInclusive 150 ] ;
+    sh:property [ sh:path perma:seedsPerPoint ; sh:maxCount 1 ; sh:datatype xsd:integer ; sh:minInclusive 1 ; sh:maxInclusive 20 ] ;
+    sh:property [ sh:path perma:germinationDays ; sh:maxCount 1 ; sh:datatype xsd:integer ; sh:minInclusive 1 ; sh:maxInclusive 120 ] ;
+    sh:property [ sh:path perma:waterMmPerWeek ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minInclusive 0 ; sh:maxInclusive 100 ] ;
+    sh:property [ sh:path perma:growthForm ; sh:maxCount 1 ; sh:in ( perma:Tree perma:Shrub ) ;
+                  sh:message "A crop's growth form is perma:Tree or perma:Shrub (or none, for herbaceous crops)."@en ] ;
+    sh:property [ sh:path perma:typicalWindow ; sh:node permash:TypicalWindowShape ] .
+
+permash:TypicalWindowShape a sh:NodeShape ;
+    sh:property [ sh:path perma:activity ; sh:minCount 1 ; sh:maxCount 1 ; sh:node permash:InGardenActivities ;
+                  sh:message "A typical window is for one activity from perma:GardenActivities."@en ] ;
+    sh:property [ sh:path perma:part ; sh:maxCount 1 ; sh:node permash:InPlantParts ] ;
+    sh:property [ sh:path perma:fromMonth ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:integer ;
+                  sh:minInclusive 1 ; sh:maxInclusive 12 ; sh:message "fromMonth is 1..12."@en ] ;
+    sh:property [ sh:path perma:toMonth ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:integer ;
+                  sh:minInclusive 1 ; sh:maxInclusive 12 ; sh:message "toMonth is 1..12."@en ] ;
+    sh:property [ sh:path perma:confirmation ; sh:minCount 1 ; sh:maxCount 1 ; sh:node permash:InMapStatusesFood ] ;
+    sh:property [ sh:path perma:basis ; sh:minCount 1 ; sh:message "Say for which climate the window is typical (perma:basis)."@en ] .
 
 permash:HarvestPartShape a sh:NodeShape ;
     sh:property [ sh:path perma:part ; sh:minCount 1 ; sh:maxCount 1 ; sh:node permash:InPlantParts ;

@@ -1,8 +1,15 @@
 import * as React from "react";
 import type { HeadFC, PageProps } from "gatsby";
 import { Shell } from "../components/Shell";
+import { useSession } from "../components/AuthGate";
+import { HabitatMap } from "../components/habitat/HabitatMap";
+import { HabitatCalendar, HabitatNow } from "../components/habitat/HabitatCalendar";
+import { HabitatTransfer } from "../components/habitat/HabitatTransfer";
+import { SaveBar } from "../components/habitat/common";
 import { getSpace } from "../lib/data";
 import type { Space } from "../lib/data";
+import { useAreaMonths, useHabitat } from "../lib/useHabitat";
+import { useT } from "../lib/i18n";
 
 /**
  * Every route under /w/.
@@ -12,7 +19,7 @@ import type { Space } from "../lib/data";
  * authenticated per-group data in S3, so there is nothing to statically
  * render. The id and the view come out of the URL at runtime.
  *
- * ONE page component for all five views rather than five matchPath routes.
+ * ONE page component for all the views rather than five matchPath routes.
  * The alternative needs a hosting rewrite per route (constraint 11 in the dlab5-cloud-template skill)
  * — configuration that lives outside this repository and that nobody will
  * remember to add.
@@ -25,8 +32,8 @@ import type { Space } from "../lib/data";
 
 const VIEWS = [
   "overview",
-  "items",
-  "reports",
+  "calendar",
+  "now",
   "import",
   "export",
 ] as const;
@@ -34,7 +41,7 @@ const VIEWS = [
 type View = (typeof VIEWS)[number];
 
 /**
- * `/w/s-4k9mqhtx2p/items/` → `{ id, view }`.
+ * `/w/s-4k9mqhtx2p/calendar/` → `{ id, view }`.
  *
  * A missing or unrecognised trailing segment resolves to "overview" rather
  * than 404: /w/<id>/ is the space's home, and a typo in a view name is
@@ -52,6 +59,7 @@ function parse(pathname: string): { id?: string; view: View } {
 
 const SpacePage: React.FC<PageProps> = ({ location }) => {
   const { id, view } = parse(location.pathname);
+  const { t } = useT();
 
   const [space, setSpace] = React.useState<Space | null>(null);
   const [state, setState] = React.useState<"loading" | "ready" | "denied">(
@@ -109,7 +117,7 @@ const SpacePage: React.FC<PageProps> = ({ location }) => {
   return (
     <Shell space={{ id, name: space.name, active: view }}>
       <div className="pt-pagehead">
-        <h1>{LABELS[view]}</h1>
+        <h1>{t(`view.${view}`)}</h1>
         <span className="pt-muted">{space.tenantName ? `${space.tenantName} · ` : ""}{space.name}</span>
       </div>
       <ViewBody view={view} space={space} />
@@ -117,102 +125,34 @@ const SpacePage: React.FC<PageProps> = ({ location }) => {
   );
 };
 
-const LABELS: Record<View, string> = {
-  overview: "Overview",
-  items: "Items",
-  reports: "Reports",
-  import: "Import",
-  export: "Export",
-};
-
 /**
- * The placeholders.
- *
- * Each one names what belongs there rather than saying "TODO". A placeholder
- * with no content is a placeholder that gets deleted and reinvented.
+ * The habitat's views (docs/adr/0016). The map lives in the space's A-Box;
+ * the calendar and "now" are derived from it and the area's climate. Tenant
+ * admins edit; readers see the same screens read-only.
  */
 function ViewBody({ view, space }: { view: View; space: Space }) {
-  switch (view) {
-    case "overview":
-      return (
-        <div className="pt-panel">
-          <h2 className="pt-panel__title">This space at a glance</h2>
-          <dl className="pt-stats">
-            <div className="pt-stat">
-              <dt>{space.kind}</dt>
-              <dd>Kind</dd>
-            </div>
-            <div className="pt-stat">
-              <dt>{space.tenantName ?? "—"}</dt>
-              <dd>Tenant</dd>
-            </div>
-          </dl>
-          <p className="pt-panel__hint">
-            The space&rsquo;s object lives in S3 at <code>spaces/{space.id}/data.json</code>{" "}
-            and is read through <code>loadObject()</code> in{" "}
-            <code>src/lib/data.ts</code>, which returns the content and the ETag
-            a later save must present. What the tenant <em>knows</em> about the
-            space is its A-Box: <code>loadGraph(space.id)</code>, synced with
-            the tenant&rsquo;s edges. Build the real screen on those.
-          </p>
-        </div>
-      );
+  const { t } = useT();
+  const session = useSession();
+  const canEdit = session.tenants.includes(space.tenantId);
+  const hab = useHabitat(space.id);
+  const area = useAreaMonths(space.tenantId);
 
-    case "items":
-      return (
-        <div className="pt-panel">
-          <h2 className="pt-panel__title">Whatever this app is about</h2>
-          <p className="pt-panel__hint">
-            The space&rsquo;s own content: the list, the board, the canvas.
-            It comes from <code>loadObject()</code>, is edited in memory, and
-            goes back through <code>saveObject(id, value, etag)</code>. Handle
-            the rejected save — objectProxy throws a message that already tells
-            the reader to reload — because that is the case a demo never hits
-            and a second user hits on their first afternoon.
-          </p>
-        </div>
-      );
+  if (hab.error) return <p className="pt-error" role="alert">{hab.error}</p>;
+  if (!hab.habitat) return <p className="pt-muted">{t("lib.loading")}</p>;
+  const h = hab.habitat;
 
-    case "reports":
-      return (
-        <div className="pt-panel">
-          <h2 className="pt-panel__title">Derived views</h2>
-          <p className="pt-panel__hint">
-            Anything computed from the space rather than stored in it.
-            Compute it in <code>@dlab5/permtek5-core</code> rather than in the
-            component: it is then testable with <code>node --test</code>, and a
-            future Lambda or CLI can produce the same answer.
-          </p>
-        </div>
-      );
-
-    case "import":
-      return (
-        <div className="pt-panel">
-          <h2 className="pt-panel__title">Getting things in</h2>
-          <p className="pt-panel__hint">
-            Parse in <code>@dlab5/permtek5-core</code>, validate at the boundary with{" "}
-            <code>assertSpace</code>-style checks that report every problem
-            at once, and only then write — a parser that reports one problem
-            per attempt turns a bad file into a sequence of guesses.
-          </p>
-        </div>
-      );
-
-    case "export":
-      return (
-        <div className="pt-panel">
-          <h2 className="pt-panel__title">Getting things out</h2>
-          <p className="pt-panel__hint">
-            A round trip that is only ever tested against itself proves nothing.
-            Export, re-import under a fresh id, export THAT and compare byte for
-            byte — going back out through storage is the point.
-          </p>
-        </div>
-      );
-  }
+  return (
+    <>
+      {canEdit && <SaveBar dirty={hab.dirty} saving={hab.saving} onSave={() => hab.save()} onDiscard={hab.discard} />}
+      {!canEdit && <p className="pt-muted">{t("hab.readonly")}</p>}
+      {view === "overview" && <HabitatMap habitat={h} edit={hab.edit} canEdit={canEdit} replace={hab.replace} />}
+      {view === "calendar" && <HabitatCalendar habitat={h} months={area.months} areaName={area.areaName} />}
+      {view === "now" && <HabitatNow habitat={h} months={area.months} areaName={area.areaName} />}
+      {(view === "import" || view === "export") && <HabitatTransfer habitat={h} canEdit={canEdit} replace={hab.replace} mode={view} />}
+    </>
+  );
 }
 
 export default SpacePage;
 
-export const Head: HeadFC = () => <title>Space · permtek5.dlab5</title>;
+export const Head: HeadFC = () => <title>Habitat · PermTek-5</title>;

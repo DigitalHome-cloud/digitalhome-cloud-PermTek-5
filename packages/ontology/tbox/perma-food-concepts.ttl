@@ -26,7 +26,8 @@ perma:Flower a skos:Concept ; skos:inScheme perma:PlantParts ; skos:topConceptOf
 
 perma:GardenActivities a skos:ConceptScheme ;
     skos:prefLabel "Garden activities"@en , "Gartenarbeiten"@de , "Travaux du jardin"@fr ;
-    skos:hasTopConcept perma:SowIndoors , perma:SowOutdoors , perma:PlantOut , perma:Harvest , perma:SaveSeed .
+    skos:hasTopConcept perma:SowIndoors , perma:SowOutdoors , perma:PlantOut , perma:Harvest , perma:SaveSeed ,
+                       perma:Flowering , perma:WinterPrune , perma:SummerPrune .
 
 perma:SowIndoors a skos:Concept ; skos:inScheme perma:GardenActivities ; skos:topConceptOf perma:GardenActivities ;
     skos:prefLabel "Sow under cover"@en , "Vorziehen"@de , "Semis sous abri"@fr .
@@ -99,3 +100,12 @@ perma:ByDivision a skos:Concept ; skos:inScheme perma:PropagationMethods ; skos:
     skos:prefLabel "By division"@en , "Durch Teilung"@de , "Par division"@fr .
 perma:ByGrafting a skos:Concept ; skos:inScheme perma:PropagationMethods ; skos:topConceptOf perma:PropagationMethods ;
     skos:prefLabel "By grafting"@en , "Durch Veredelung"@de , "Par greffage"@fr .
+
+perma:Flowering a skos:Concept ; skos:inScheme perma:GardenActivities ; skos:topConceptOf perma:GardenActivities ;
+    skos:prefLabel "Flowering"@en , "Blüte"@de , "Floraison"@fr ;
+    skos:definition "Not work but a time to watch: a late frost now costs the year's fruit."@en .
+perma:WinterPrune a skos:Concept ; skos:inScheme perma:GardenActivities ; skos:topConceptOf perma:GardenActivities ;
+    skos:prefLabel "Winter pruning"@en , "Winterschnitt"@de , "Taille d'hiver"@fr .
+perma:SummerPrune a skos:Concept ; skos:inScheme perma:GardenActivities ; skos:topConceptOf perma:GardenActivities ;
+    skos:prefLabel "Summer pruning"@en , "Sommerschnitt"@de , "Taille d'été"@fr ;
+    skos:definition "Stone fruit (plum, cherry) is pruned in summer only: winter cuts let in silver leaf and canker."@en .

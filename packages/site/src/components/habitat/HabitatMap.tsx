@@ -10,7 +10,7 @@ import { CropSelect, cropColor, num } from "./common";
 type Edit = (f: (h: Habitat) => Habitat) => void;
 
 
-/** The habitat's zones, with each zone's beds and garden plants. */
+/** The site's areas (roof, garden …; perma:GardenZone), with each area's beds and garden plants. */
 export function HabitatMap({ habitat, edit, canEdit, replace }: {
   habitat: Habitat; edit: Edit; canEdit: boolean; replace: (h: Habitat) => void;
 }) {
@@ -25,8 +25,9 @@ export function HabitatMap({ habitat, edit, canEdit, replace }: {
           <p>{t("hab.empty")}</p>
           {canEdit && (
             <p className="pt-habitat__actions">
-              <button className="pt-button" onClick={() => addZone("RoofZone")}>{t("hab.add.roof")}</button>
-              <button className="pt-button" onClick={() => addZone("GroundZone")}>{t("hab.add.garden")}</button>
+              {ZONE_KINDS.map((k) => (
+                <button key={k} className="pt-button" onClick={() => addZone(k)}>+ {t(`hab.kind.${k}`)}</button>
+              ))}
               <button className="pt-button pt-button--ghost" onClick={() => replace({ ...habitatFromTtl(CITYDEMO_TTL), rest: habitat.rest })}>
                 {t("hab.example")}
               </button>
@@ -37,6 +38,7 @@ export function HabitatMap({ habitat, edit, canEdit, replace }: {
       {habitat.zones.map((z) => <ZoneCard key={z.id} zone={z} habitat={habitat} edit={edit} canEdit={canEdit} />)}
       {canEdit && habitat.zones.length > 0 && (
         <p className="pt-habitat__actions">
+          <span className="pt-muted">{t("hab.add.area")}</span>
           {ZONE_KINDS.map((k) => (
             <button key={k} className="pt-button pt-button--ghost" onClick={() => addZone(k)}>+ {t(`hab.kind.${k}`)}</button>
           ))}

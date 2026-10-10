@@ -6,7 +6,7 @@ import { HabitatMap } from "../components/habitat/HabitatMap";
 import { HabitatCalendar, HabitatNow } from "../components/habitat/HabitatCalendar";
 import { HabitatTransfer } from "../components/habitat/HabitatTransfer";
 import { SaveBar } from "../components/habitat/common";
-import { getSpace } from "../lib/data";
+import { getSpace, spaceTitle } from "../lib/data";
 import type { Space } from "../lib/data";
 import { useAreaMonths, useHabitat } from "../lib/useHabitat";
 import { useT } from "../lib/i18n";
@@ -115,10 +115,10 @@ const SpacePage: React.FC<PageProps> = ({ location }) => {
   }
 
   return (
-    <Shell space={{ id, name: space.name, active: view }}>
+    <Shell space={{ id, name: spaceTitle(space), active: view }}>
       <div className="pt-pagehead">
         <h1>{t(`view.${view}`)}</h1>
-        <span className="pt-muted">{space.tenantName ? `${space.tenantName} · ` : ""}{space.name}</span>
+        <span className="pt-muted">{spaceTitle(space)}</span>
       </div>
       <ViewBody view={view} space={space} />
     </Shell>

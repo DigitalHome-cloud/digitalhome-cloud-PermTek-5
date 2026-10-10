@@ -2,7 +2,7 @@ import * as React from "react";
 import { Link } from "gatsby";
 import { signOutAndReload, useSession } from "./AuthGate";
 import { ThemeSegments } from "./ThemeSegments";
-import { listSpaces } from "../lib/data";
+import { listSpaces, spaceTitle } from "../lib/data";
 import type { Space } from "../lib/data";
 import { LangPicker, useT } from "../lib/i18n";
 
@@ -158,7 +158,6 @@ function SpaceSwitcher({ id }: { id?: string }) {
   }, []);
 
   const empty = spaces !== null && spaces.length === 0;
-  const manyTenants = new Set(spaces?.map((s) => s.tenantId)).size > 1;
 
   return (
     <div className="pt-rail__switcher">
@@ -191,7 +190,7 @@ function SpaceSwitcher({ id }: { id?: string }) {
         )}
         {spaces?.map((s) => (
           <option key={s.id} value={s.id}>
-            {manyTenants && s.tenantName ? `${s.tenantName} · ` : ""}{s.name}
+            {spaceTitle(s)}
           </option>
         ))}
       </select>
@@ -333,6 +332,20 @@ export function Shell({ children, space, active, title }: ShellProps) {
                 {t("nav.about")}
               </Link>
             </li>
+            {/* Two drawings, plain static pages (packages/site/static/how, /model),
+                made with Archify from docs/*.architecture.json. */}
+            <li>
+              <a className="pt-rail__item" href="/how/" target="_blank" rel="noopener">
+                {icon(<><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z" /><path d="M9 4v14M15 6v14" /></>)}
+                {t("nav.how")}
+              </a>
+            </li>
+            <li>
+              <a className="pt-rail__item" href="/model/" target="_blank" rel="noopener">
+                {icon(<><ellipse cx="12" cy="5" rx="8" ry="3" /><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5" /><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" /></>)}
+                {t("nav.model")}
+              </a>
+            </li>
             <li>
               <a
                 className="pt-rail__item"
@@ -383,7 +396,6 @@ export function Shell({ children, space, active, title }: ShellProps) {
           <span className="pt-shell__title">
             {space ? (space.name ?? space.id) : (title ?? t("nav.spaces"))}
           </span>
-          <span className="pt-shell__meta">/ internal · admin-provisioned</span>
           <span className="pt-shell__spacer" />
         </header>
 

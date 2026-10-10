@@ -4,7 +4,7 @@ import { Link } from "gatsby";
 import { Shell } from "../components/Shell";
 import { useSession } from "../components/AuthGate";
 import { HabitatPanel, HomeEntry } from "../components/Habitat";
-import { listSpaces, listTenants } from "../lib/data";
+import { listSpaces, listTenants, spaceTitle } from "../lib/data";
 import type { Space, Tenant } from "../lib/data";
 import { useT } from "../lib/i18n";
 
@@ -44,7 +44,6 @@ const IndexPage: React.FC<PageProps> = ({ location }) => {
 
   const habitats = (myTenants ?? []).filter((x) => x.smartHomeId);
 
-  const tenants = [...new Set((spaces ?? []).map((s) => s.tenantName ?? s.tenantId))];
 
   return (
     <Shell title={t("nav.spaces")}>
@@ -93,10 +92,7 @@ const IndexPage: React.FC<PageProps> = ({ location }) => {
           {spaces.map((space) => (
             <li key={space.id}>
               <a className="pt-card" href={`/w/${space.id}/`}>
-                <span className="pt-card__title">{space.kind === "private" ? "🔒 " : ""}{space.name}</span>
-                {/* The id, deliberately not shown. ADR-0003: never render an id
-                    where a name belongs. */}
-                {tenants.length > 1 && space.tenantName && <span className="pt-card__meta">{space.tenantName}</span>}
+                <span className="pt-card__title">{spaceTitle(space)}</span>
               </a>
             </li>
           ))}

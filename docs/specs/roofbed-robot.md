@@ -1,6 +1,6 @@
 # Roof-bed gantry robot: design
 
-Status: **design, nothing built** · ADR 0017 · model: ADR 0016
+Status: **design; the twin exists (ADR 0018), no hardware yet** · ADR 0017 · model: ADR 0016
 
 A FarmBot-like gantry over one growing bed on a flat roof. It sows, waters,
 probes and photographs the bed's cells, from the habitat's A-Box, offline,
@@ -112,12 +112,17 @@ when the edge is generated.)
 
 ## 7. Steps
 
-1. A Webots twin: a gantry over CityDemo's bed running `bed_actions`
-   (ADR 0014's ROS 2 setup). The same nodes drive the real axes later.
-2. Generate the robot edge from template-dlab5-edge; link it to a sandbox;
-   sync CityDemo; propose and confirm jobs against the twin.
+1. **Done (twin):** a Webots twin, the gantry over a bed generated from the
+   habitat, running `bed_actions` on ROS 2, in the `permtek5-twin-edge`
+   repository (ADR 0018). Its self-test sows, waters, probes and
+   photographs cells of CityDemo end to end.
+2. **Done locally, not yet against the cloud:** the edge proposes jobs, a
+   person confirms them on its page, and a sown cell is written into the
+   area's A-Box. Still to do: pair it with stage, sync a real habitat, and
+   see the sown cell on the PermTek-5 map.
 3. Hardware: frame and axes, homing and limits, e-stop. Then the watering
    nozzle (the most useful tool), then the probe, the camera, the seeder.
+   The real driver offers the topics the twin's driver offers.
 4. First season on the real bed, with every job confirmed by hand before any
    standing rule.
 

@@ -62,9 +62,9 @@ plant is all there is room for.
 - The companion attributes are **traditional guidance**. Evidence for single
   pairings is mixed, and every statement is "to confirm". The app says so
   beside each suggestion. The weights in `planting.ts` are a first guess.
-- The suggestion does not know the season: whether each crop can be sown now
-  is the calendar's. It does not yet plan a succession through the year, nor
-  a rotation from one year to the next; the family attribute is there for it.
+- The suggestion did not know the season. [ADR 0022](0022-a-year-in-the-bed.md)
+  joins it with the calendar and adds a succession; a rotation from one year
+  to the next is still open, and the family attribute is there for it.
 - About a tenth of the bed stays unplanted and tends to lie together at one
   end. Cover crops for those gaps come with the soil-cover work.
 - Seven crops (onion, garlic, cabbage and others) gained sowing and spacing

@@ -6,6 +6,7 @@
  */
 import { mintId } from "./identity.js";
 import { cropById } from "./library.js";
+import type { Recipe } from "./recipes.js";
 
 export const HABITAT_IRI = "https://permtek-5.digitalhome.cloud/id/";
 
@@ -65,13 +66,15 @@ export interface Habitat {
   beds: Bed[];
   cells: Cell[];
   plants: GardenPlant[];
+  /** The household's own recipes (recipes.ts): what it wants to eat, and so what it plants. Absent when it has none. */
+  recipes?: Recipe[];
   /** Triples about anything else in the graph, as N-Triples: kept as they are on every save. */
   rest: string;
 }
 
 export const emptyHabitat = (): Habitat => ({ zones: [], guilds: [], beds: [], cells: [], plants: [], rest: "" });
 
-export const newId = (kind: "zone" | "guild" | "bed" | "cell" | "plant") =>
+export const newId = (kind: "zone" | "guild" | "bed" | "cell" | "plant" | "recipe") =>
   `${HABITAT_IRI}${kind}-${mintId(kind[0])}`;
 
 /** A roof is about a degree warmer than the street; elsewhere start at 0. */

@@ -64,7 +64,20 @@ export const LIBRARY: LibraryCrop[] = [
       "germinationDays": 12,
       "waterMmPerWeek": 30.0
     },
-    "windows": []
+    "windows": [],
+    "mix": {
+      "family": "Solanaceae",
+      "feeding": "HeavyFeeder",
+      "rootDepth": "MediumRoot",
+      "heightCm": 80,
+      "gives": [],
+      "good": [
+        "crop-basil",
+        "crop-bush-bean",
+        "crop-thyme"
+      ],
+      "bad": []
+    }
   },
   {
     "id": "crop-basil",
@@ -90,7 +103,23 @@ export const LIBRARY: LibraryCrop[] = [
       "germinationDays": 8,
       "waterMmPerWeek": 25.0
     },
-    "windows": []
+    "windows": [],
+    "mix": {
+      "family": "Lamiaceae",
+      "feeding": "MediumFeeder",
+      "rootDepth": "ShallowRoot",
+      "heightCm": 40,
+      "gives": [
+        "ConfusesPests",
+        "FeedsPollinators"
+      ],
+      "good": [
+        "crop-aubergine",
+        "crop-sweet-pepper",
+        "crop-tomato"
+      ],
+      "bad": []
+    }
   },
   {
     "id": "crop-bay-laurel",
@@ -125,6 +154,58 @@ export const LIBRARY: LibraryCrop[] = [
     "windows": []
   },
   {
+    "id": "crop-bush-bean",
+    "names": {
+      "de": "Buschbohne",
+      "en": "Bush bean",
+      "fr": "Haricot nain",
+      "la": "Phaseolus vulgaris"
+    },
+    "lifeCycle": "Annual",
+    "growthForm": null,
+    "parts": [
+      "Fruit"
+    ],
+    "needs": {
+      "sowMinTempC": 12.0,
+      "plantOutMinNightC": 8.0,
+      "frostTender": true,
+      "daysToHarvest": 60,
+      "spacingCm": 15,
+      "sowingDepthMm": 30,
+      "seedsPerPoint": 2,
+      "germinationDays": 8,
+      "waterMmPerWeek": 25.0
+    },
+    "windows": [],
+    "mix": {
+      "family": "Fabaceae",
+      "feeding": "SoilBuilder",
+      "rootDepth": "MediumRoot",
+      "heightCm": 45,
+      "gives": [
+        "FixesNitrogen"
+      ],
+      "good": [
+        "crop-aubergine",
+        "crop-courgette",
+        "crop-cucumber",
+        "crop-lettuce",
+        "crop-radish",
+        "crop-rocket",
+        "crop-rosemary",
+        "crop-spinach",
+        "crop-swiss-chard"
+      ],
+      "bad": [
+        "crop-chives",
+        "crop-garlic",
+        "crop-onion",
+        "crop-spring-onion"
+      ]
+    }
+  },
+  {
     "id": "crop-caraway",
     "names": {
       "de": "Kümmel",
@@ -137,8 +218,79 @@ export const LIBRARY: LibraryCrop[] = [
     "parts": [
       "Seed"
     ],
-    "needs": {},
-    "windows": []
+    "needs": {
+      "sowMinTempC": 8.0,
+      "frostTender": false,
+      "daysToHarvest": 400,
+      "spacingCm": 20,
+      "sowingDepthMm": 10,
+      "seedsPerPoint": 3,
+      "germinationDays": 14,
+      "waterMmPerWeek": 20.0
+    },
+    "windows": [],
+    "mix": {
+      "family": "Apiaceae",
+      "feeding": "LightFeeder",
+      "rootDepth": "DeepRoot",
+      "heightCm": 60,
+      "gives": [
+        "FeedsPollinators",
+        "LoosensSoil"
+      ],
+      "good": [],
+      "bad": [
+        "crop-dill"
+      ]
+    }
+  },
+  {
+    "id": "crop-carrot",
+    "names": {
+      "de": "Möhre",
+      "en": "Carrot",
+      "fr": "Carotte",
+      "la": "Daucus carota"
+    },
+    "lifeCycle": "Biennial",
+    "growthForm": null,
+    "parts": [
+      "Root"
+    ],
+    "needs": {
+      "sowMinTempC": 7.0,
+      "frostTender": false,
+      "daysToHarvest": 75,
+      "spacingCm": 5,
+      "sowingDepthMm": 10,
+      "seedsPerPoint": 3,
+      "germinationDays": 14,
+      "waterMmPerWeek": 25.0
+    },
+    "windows": [],
+    "mix": {
+      "family": "Apiaceae",
+      "feeding": "LightFeeder",
+      "rootDepth": "DeepRoot",
+      "heightCm": 30,
+      "gives": [
+        "LoosensSoil"
+      ],
+      "good": [
+        "crop-chives",
+        "crop-garlic",
+        "crop-lettuce",
+        "crop-onion",
+        "crop-radish",
+        "crop-rosemary",
+        "crop-spring-onion",
+        "crop-sweet-pepper",
+        "crop-tomato"
+      ],
+      "bad": [
+        "crop-dill"
+      ]
+    }
   },
   {
     "id": "crop-chives",
@@ -163,7 +315,26 @@ export const LIBRARY: LibraryCrop[] = [
       "germinationDays": 14,
       "waterMmPerWeek": 20.0
     },
-    "windows": []
+    "windows": [],
+    "mix": {
+      "family": "Amaryllidaceae",
+      "feeding": "LightFeeder",
+      "rootDepth": "ShallowRoot",
+      "heightCm": 30,
+      "gives": [
+        "ConfusesPests",
+        "FeedsPollinators"
+      ],
+      "good": [
+        "crop-carrot",
+        "crop-lettuce",
+        "crop-parsley",
+        "crop-tomato"
+      ],
+      "bad": [
+        "crop-bush-bean"
+      ]
+    }
   },
   {
     "id": "crop-courgette",
@@ -189,7 +360,65 @@ export const LIBRARY: LibraryCrop[] = [
       "germinationDays": 7,
       "waterMmPerWeek": 30.0
     },
-    "windows": []
+    "windows": [],
+    "mix": {
+      "family": "Cucurbitaceae",
+      "feeding": "HeavyFeeder",
+      "rootDepth": "MediumRoot",
+      "heightCm": 60,
+      "gives": [
+        "CoversSoil"
+      ],
+      "good": [
+        "crop-bush-bean",
+        "crop-marigold",
+        "crop-onion"
+      ],
+      "bad": []
+    }
+  },
+  {
+    "id": "crop-cucumber",
+    "names": {
+      "de": "Gurke",
+      "en": "Cucumber",
+      "fr": "Concombre",
+      "la": "Cucumis sativus"
+    },
+    "lifeCycle": "Annual",
+    "growthForm": null,
+    "parts": [
+      "Fruit"
+    ],
+    "needs": {
+      "sowMinTempC": 15.0,
+      "plantOutMinNightC": 10.0,
+      "frostTender": true,
+      "daysToHarvest": 60,
+      "spacingCm": 40,
+      "sowingDepthMm": 20,
+      "seedsPerPoint": 2,
+      "germinationDays": 7,
+      "waterMmPerWeek": 35.0
+    },
+    "windows": [],
+    "mix": {
+      "family": "Cucurbitaceae",
+      "feeding": "HeavyFeeder",
+      "rootDepth": "ShallowRoot",
+      "heightCm": 40,
+      "gives": [
+        "CoversSoil"
+      ],
+      "good": [
+        "crop-bush-bean",
+        "crop-dill",
+        "crop-lettuce",
+        "crop-marigold",
+        "crop-radish"
+      ],
+      "bad": []
+    }
   },
   {
     "id": "crop-dill",
@@ -216,7 +445,25 @@ export const LIBRARY: LibraryCrop[] = [
       "germinationDays": 14,
       "waterMmPerWeek": 15.0
     },
-    "windows": []
+    "windows": [],
+    "mix": {
+      "family": "Apiaceae",
+      "feeding": "LightFeeder",
+      "rootDepth": "MediumRoot",
+      "heightCm": 90,
+      "gives": [
+        "FeedsPollinators"
+      ],
+      "good": [
+        "crop-cucumber",
+        "crop-lettuce",
+        "crop-white-cabbage"
+      ],
+      "bad": [
+        "crop-caraway",
+        "crop-carrot"
+      ]
+    }
   },
   {
     "id": "crop-garlic",
@@ -231,8 +478,35 @@ export const LIBRARY: LibraryCrop[] = [
     "parts": [
       "Bulb"
     ],
-    "needs": {},
-    "windows": []
+    "needs": {
+      "sowMinTempC": 5.0,
+      "frostTender": false,
+      "daysToHarvest": 240,
+      "spacingCm": 12,
+      "sowingDepthMm": 40,
+      "seedsPerPoint": 1,
+      "germinationDays": 14,
+      "waterMmPerWeek": 15.0
+    },
+    "windows": [],
+    "mix": {
+      "family": "Amaryllidaceae",
+      "feeding": "LightFeeder",
+      "rootDepth": "ShallowRoot",
+      "heightCm": 50,
+      "gives": [
+        "ConfusesPests"
+      ],
+      "good": [
+        "crop-carrot",
+        "crop-lettuce",
+        "crop-swiss-chard",
+        "crop-tomato"
+      ],
+      "bad": [
+        "crop-bush-bean"
+      ]
+    }
   },
   {
     "id": "crop-lettuce",
@@ -258,7 +532,75 @@ export const LIBRARY: LibraryCrop[] = [
       "germinationDays": 7,
       "waterMmPerWeek": 25.0
     },
-    "windows": []
+    "windows": [],
+    "mix": {
+      "family": "Asteraceae",
+      "feeding": "LightFeeder",
+      "rootDepth": "ShallowRoot",
+      "heightCm": 25,
+      "gives": [],
+      "good": [
+        "crop-bush-bean",
+        "crop-carrot",
+        "crop-chives",
+        "crop-cucumber",
+        "crop-dill",
+        "crop-garlic",
+        "crop-onion",
+        "crop-radish",
+        "crop-rocket",
+        "crop-spinach",
+        "crop-spring-onion",
+        "crop-tomato"
+      ],
+      "bad": [
+        "crop-parsley"
+      ]
+    }
+  },
+  {
+    "id": "crop-marigold",
+    "names": {
+      "de": "Studentenblume",
+      "en": "French marigold",
+      "fr": "Œillet d'Inde",
+      "la": "Tagetes patula"
+    },
+    "lifeCycle": "Annual",
+    "growthForm": null,
+    "parts": [
+      "Flower"
+    ],
+    "needs": {
+      "sowMinTempC": 12.0,
+      "plantOutMinNightC": 8.0,
+      "frostTender": true,
+      "daysToHarvest": 60,
+      "spacingCm": 20,
+      "sowingDepthMm": 5,
+      "seedsPerPoint": 2,
+      "germinationDays": 7,
+      "waterMmPerWeek": 20.0
+    },
+    "windows": [],
+    "mix": {
+      "family": "Asteraceae",
+      "feeding": "LightFeeder",
+      "rootDepth": "ShallowRoot",
+      "heightCm": 30,
+      "gives": [
+        "ConfusesPests",
+        "FeedsPollinators"
+      ],
+      "good": [
+        "crop-courgette",
+        "crop-cucumber",
+        "crop-sweet-pepper",
+        "crop-tomato",
+        "crop-white-cabbage"
+      ],
+      "bad": []
+    }
   },
   {
     "id": "crop-onion",
@@ -273,8 +615,38 @@ export const LIBRARY: LibraryCrop[] = [
     "parts": [
       "Bulb"
     ],
-    "needs": {},
-    "windows": []
+    "needs": {
+      "sowMinTempC": 7.0,
+      "frostTender": false,
+      "daysToHarvest": 120,
+      "spacingCm": 10,
+      "sowingDepthMm": 10,
+      "seedsPerPoint": 1,
+      "germinationDays": 12,
+      "waterMmPerWeek": 20.0
+    },
+    "windows": [],
+    "mix": {
+      "family": "Amaryllidaceae",
+      "feeding": "LightFeeder",
+      "rootDepth": "ShallowRoot",
+      "heightCm": 40,
+      "gives": [
+        "ConfusesPests"
+      ],
+      "good": [
+        "crop-carrot",
+        "crop-courgette",
+        "crop-lettuce",
+        "crop-sweet-pepper",
+        "crop-swiss-chard",
+        "crop-tomato",
+        "crop-white-cabbage"
+      ],
+      "bad": [
+        "crop-bush-bean"
+      ]
+    }
   },
   {
     "id": "crop-parsley",
@@ -299,7 +671,24 @@ export const LIBRARY: LibraryCrop[] = [
       "germinationDays": 21,
       "waterMmPerWeek": 20.0
     },
-    "windows": []
+    "windows": [],
+    "mix": {
+      "family": "Apiaceae",
+      "feeding": "MediumFeeder",
+      "rootDepth": "DeepRoot",
+      "heightCm": 30,
+      "gives": [
+        "FeedsPollinators"
+      ],
+      "good": [
+        "crop-chives",
+        "crop-radish",
+        "crop-tomato"
+      ],
+      "bad": [
+        "crop-lettuce"
+      ]
+    }
   },
   {
     "id": "crop-pear",
@@ -396,7 +785,25 @@ export const LIBRARY: LibraryCrop[] = [
       "germinationDays": 5,
       "waterMmPerWeek": 20.0
     },
-    "windows": []
+    "windows": [],
+    "mix": {
+      "family": "Brassicaceae",
+      "feeding": "LightFeeder",
+      "rootDepth": "ShallowRoot",
+      "heightCm": 15,
+      "gives": [
+        "LoosensSoil"
+      ],
+      "good": [
+        "crop-bush-bean",
+        "crop-carrot",
+        "crop-cucumber",
+        "crop-lettuce",
+        "crop-parsley",
+        "crop-spinach"
+      ],
+      "bad": []
+    }
   },
   {
     "id": "crop-rocket",
@@ -422,7 +829,19 @@ export const LIBRARY: LibraryCrop[] = [
       "germinationDays": 6,
       "waterMmPerWeek": 20.0
     },
-    "windows": []
+    "windows": [],
+    "mix": {
+      "family": "Brassicaceae",
+      "feeding": "LightFeeder",
+      "rootDepth": "ShallowRoot",
+      "heightCm": 25,
+      "gives": [],
+      "good": [
+        "crop-bush-bean",
+        "crop-lettuce"
+      ],
+      "bad": []
+    }
   },
   {
     "id": "crop-rosemary",
@@ -437,8 +856,33 @@ export const LIBRARY: LibraryCrop[] = [
     "parts": [
       "Leaf"
     ],
-    "needs": {},
-    "windows": []
+    "needs": {
+      "sowMinTempC": 15.0,
+      "frostTender": false,
+      "daysToHarvest": 365,
+      "spacingCm": 60,
+      "sowingDepthMm": 2,
+      "seedsPerPoint": 3,
+      "germinationDays": 21,
+      "waterMmPerWeek": 10.0
+    },
+    "windows": [],
+    "mix": {
+      "family": "Lamiaceae",
+      "feeding": "LightFeeder",
+      "rootDepth": "DeepRoot",
+      "heightCm": 100,
+      "gives": [
+        "ConfusesPests",
+        "FeedsPollinators"
+      ],
+      "good": [
+        "crop-bush-bean",
+        "crop-carrot",
+        "crop-white-cabbage"
+      ],
+      "bad": []
+    }
   },
   {
     "id": "crop-sour-cherry",
@@ -497,7 +941,21 @@ export const LIBRARY: LibraryCrop[] = [
       "germinationDays": 10,
       "waterMmPerWeek": 25.0
     },
-    "windows": []
+    "windows": [],
+    "mix": {
+      "family": "Amaranthaceae",
+      "feeding": "MediumFeeder",
+      "rootDepth": "MediumRoot",
+      "heightCm": 25,
+      "gives": [],
+      "good": [
+        "crop-bush-bean",
+        "crop-lettuce",
+        "crop-radish",
+        "crop-white-cabbage"
+      ],
+      "bad": []
+    }
   },
   {
     "id": "crop-spring-onion",
@@ -522,7 +980,23 @@ export const LIBRARY: LibraryCrop[] = [
       "germinationDays": 12,
       "waterMmPerWeek": 20.0
     },
-    "windows": []
+    "windows": [],
+    "mix": {
+      "family": "Amaryllidaceae",
+      "feeding": "LightFeeder",
+      "rootDepth": "ShallowRoot",
+      "heightCm": 35,
+      "gives": [
+        "ConfusesPests"
+      ],
+      "good": [
+        "crop-carrot",
+        "crop-lettuce"
+      ],
+      "bad": [
+        "crop-bush-bean"
+      ]
+    }
   },
   {
     "id": "crop-sweet-cherry",
@@ -581,7 +1055,21 @@ export const LIBRARY: LibraryCrop[] = [
       "germinationDays": 12,
       "waterMmPerWeek": 25.0
     },
-    "windows": []
+    "windows": [],
+    "mix": {
+      "family": "Solanaceae",
+      "feeding": "HeavyFeeder",
+      "rootDepth": "MediumRoot",
+      "heightCm": 70,
+      "gives": [],
+      "good": [
+        "crop-basil",
+        "crop-carrot",
+        "crop-marigold",
+        "crop-onion"
+      ],
+      "bad": []
+    }
   },
   {
     "id": "crop-swiss-chard",
@@ -606,7 +1094,21 @@ export const LIBRARY: LibraryCrop[] = [
       "germinationDays": 10,
       "waterMmPerWeek": 25.0
     },
-    "windows": []
+    "windows": [],
+    "mix": {
+      "family": "Amaranthaceae",
+      "feeding": "MediumFeeder",
+      "rootDepth": "DeepRoot",
+      "heightCm": 50,
+      "gives": [],
+      "good": [
+        "crop-bush-bean",
+        "crop-garlic",
+        "crop-onion",
+        "crop-white-cabbage"
+      ],
+      "bad": []
+    }
   },
   {
     "id": "crop-thyme",
@@ -621,8 +1123,34 @@ export const LIBRARY: LibraryCrop[] = [
     "parts": [
       "Leaf"
     ],
-    "needs": {},
-    "windows": []
+    "needs": {
+      "sowMinTempC": 13.0,
+      "frostTender": false,
+      "daysToHarvest": 120,
+      "spacingCm": 25,
+      "sowingDepthMm": 1,
+      "seedsPerPoint": 4,
+      "germinationDays": 14,
+      "waterMmPerWeek": 10.0
+    },
+    "windows": [],
+    "mix": {
+      "family": "Lamiaceae",
+      "feeding": "LightFeeder",
+      "rootDepth": "ShallowRoot",
+      "heightCm": 25,
+      "gives": [
+        "ConfusesPests",
+        "CoversSoil",
+        "FeedsPollinators"
+      ],
+      "good": [
+        "crop-aubergine",
+        "crop-tomato",
+        "crop-white-cabbage"
+      ],
+      "bad": []
+    }
   },
   {
     "id": "crop-tomato",
@@ -648,7 +1176,28 @@ export const LIBRARY: LibraryCrop[] = [
       "germinationDays": 8,
       "waterMmPerWeek": 30.0
     },
-    "windows": []
+    "windows": [],
+    "mix": {
+      "family": "Solanaceae",
+      "feeding": "HeavyFeeder",
+      "rootDepth": "DeepRoot",
+      "heightCm": 150,
+      "gives": [],
+      "good": [
+        "crop-basil",
+        "crop-carrot",
+        "crop-chives",
+        "crop-garlic",
+        "crop-lettuce",
+        "crop-marigold",
+        "crop-onion",
+        "crop-parsley",
+        "crop-thyme"
+      ],
+      "bad": [
+        "crop-white-cabbage"
+      ]
+    }
   },
   {
     "id": "crop-walnut",
@@ -697,8 +1246,36 @@ export const LIBRARY: LibraryCrop[] = [
     "parts": [
       "Leaf"
     ],
-    "needs": {},
-    "windows": []
+    "needs": {
+      "sowMinTempC": 7.0,
+      "frostTender": false,
+      "daysToHarvest": 120,
+      "spacingCm": 50,
+      "sowingDepthMm": 10,
+      "seedsPerPoint": 2,
+      "germinationDays": 7,
+      "waterMmPerWeek": 30.0
+    },
+    "windows": [],
+    "mix": {
+      "family": "Brassicaceae",
+      "feeding": "HeavyFeeder",
+      "rootDepth": "MediumRoot",
+      "heightCm": 40,
+      "gives": [],
+      "good": [
+        "crop-dill",
+        "crop-marigold",
+        "crop-onion",
+        "crop-rosemary",
+        "crop-spinach",
+        "crop-swiss-chard",
+        "crop-thyme"
+      ],
+      "bad": [
+        "crop-tomato"
+      ]
+    }
   },
   {
     "id": "crop-white-mustard",
@@ -713,7 +1290,28 @@ export const LIBRARY: LibraryCrop[] = [
     "parts": [
       "Seed"
     ],
-    "needs": {},
-    "windows": []
+    "needs": {
+      "sowMinTempC": 5.0,
+      "frostTender": false,
+      "daysToHarvest": 90,
+      "spacingCm": 10,
+      "sowingDepthMm": 10,
+      "seedsPerPoint": 3,
+      "germinationDays": 5,
+      "waterMmPerWeek": 20.0
+    },
+    "windows": [],
+    "mix": {
+      "family": "Brassicaceae",
+      "feeding": "LightFeeder",
+      "rootDepth": "DeepRoot",
+      "heightCm": 60,
+      "gives": [
+        "CoversSoil",
+        "LoosensSoil"
+      ],
+      "good": [],
+      "bad": []
+    }
   }
 ];

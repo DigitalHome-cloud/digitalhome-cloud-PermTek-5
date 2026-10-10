@@ -6,7 +6,7 @@
 import N3 from "n3";
 import rdf from "@zazuko/env-node";
 import SHACLValidator from "rdf-validate-shacl";
-import { CONCEPTS, SHAPES } from "./ontology.generated";
+import { CONCEPTS, LIBRARY, SHAPES } from "./ontology.generated";
 
 /** DynamoDB holds an item up to 400 KB; keep a margin for the other fields. */
 export const MAX_TTL_BYTES = 350_000;
@@ -19,6 +19,7 @@ const parse = (ttl: string) => new N3.Parser().parse(ttl);
 
 let shapes: ReturnType<typeof rdf.dataset> | undefined;
 let concepts: N3.Quad[] | undefined;
+let library: N3.Quad[] | undefined;
 
 export interface Verdict {
   ok: boolean;
@@ -49,6 +50,9 @@ export async function validateAbox(ttl: string): Promise<Verdict> {
   const data = rdf.dataset();
   data.addAll(quads);
   data.addAll(concepts);
+  // The crops a recipe or a cell points at are the shared library's: known, never part of the A-Box.
+  library ??= parse(LIBRARY);
+  data.addAll(library);
   // The libraries' typings disagree about the environment type; at runtime
   // this is exactly what packages/ontology's tests do.
   const report = await new SHACLValidator(shapes, { factory: rdf as any }).validate(data);

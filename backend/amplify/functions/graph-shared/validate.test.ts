@@ -53,3 +53,21 @@ test("the CityDemo habitat is accepted; a cell with no bed is refused", async ()
   assert.equal(bad.ok, false);
   assert.ok(bad.problems.some((p) => /belongs to one bed/.test(p)), bad.problems.join("; "));
 });
+
+// A household's own recipes live in its space's A-Box too (docs/adr/0021).
+test("a household's recipe is accepted; a line that names something that is not a crop is refused", async () => {
+  const P2 = `@prefix perma: <https://permaculture.digitalhome.cloud/ontology#> . @prefix schema: <https://schema.org/> .
+@prefix id: <https://permtek-5.digitalhome.cloud/id/> . @prefix crop: <https://permaculture.digitalhome.cloud/id/> .\n`;
+  const good = await validateAbox(`${P2}id:recipe-r1 a schema:Recipe ; schema:name "Burger aux carottes"@fr ;
+  perma:usesIngredient <https://permtek-5.digitalhome.cloud/id/recipe-r1/line-1> , <https://permtek-5.digitalhome.cloud/id/recipe-r1/line-2> .
+<https://permtek-5.digitalhome.cloud/id/recipe-r1/line-1> schema:name "3 carottes" ; perma:crop crop:crop-carrot ; perma:part perma:Root ; perma:acceptsMethod perma:Fresh .
+<https://permtek-5.digitalhome.cloud/id/recipe-r1/line-2> schema:name "1 œuf" .`);
+  assert.equal(good.ok, true, good.problems.join("; "));
+  const bad = await validateAbox(`${P2}id:recipe-r2 a schema:Recipe ; schema:name "x" ;
+  perma:usesIngredient <https://permtek-5.digitalhome.cloud/id/recipe-r2/line-1> .
+<https://permtek-5.digitalhome.cloud/id/recipe-r2/line-1> schema:name "tofu" ; perma:crop crop:crop-tofu ; perma:part perma:Root .`);
+  assert.equal(bad.ok, false);
+  const nameless = await validateAbox(`${P2}id:recipe-r3 a schema:Recipe ; perma:usesIngredient <https://permtek-5.digitalhome.cloud/id/recipe-r3/line-1> .
+<https://permtek-5.digitalhome.cloud/id/recipe-r3/line-1> schema:name "sel" .`);
+  assert.ok(nameless.problems.some((p) => /needs a name/.test(p)), nameless.problems.join("; "));
+});

@@ -3,6 +3,7 @@ import type { HeadFC, PageProps } from "gatsby";
 import { Shell } from "../components/Shell";
 import { useSession } from "../components/AuthGate";
 import { HabitatMap } from "../components/habitat/HabitatMap";
+import { HabitatRecipes } from "../components/habitat/HabitatRecipes";
 import { HabitatCalendar, HabitatNow } from "../components/habitat/HabitatCalendar";
 import { HabitatTransfer } from "../components/habitat/HabitatTransfer";
 import { SaveBar } from "../components/habitat/common";
@@ -34,6 +35,7 @@ const VIEWS = [
   "overview",
   "calendar",
   "now",
+  "recipes",
   "import",
   "export",
 ] as const;
@@ -148,6 +150,7 @@ function ViewBody({ view, space }: { view: View; space: Space }) {
       {view === "overview" && <HabitatMap habitat={h} edit={hab.edit} canEdit={canEdit} replace={hab.replace} />}
       {view === "calendar" && <HabitatCalendar habitat={h} months={area.months} areaName={area.areaName} />}
       {view === "now" && <HabitatNow habitat={h} months={area.months} areaName={area.areaName} />}
+      {view === "recipes" && <HabitatRecipes habitat={h} edit={hab.edit} canEdit={canEdit} />}
       {(view === "import" || view === "export") && <HabitatTransfer habitat={h} canEdit={canEdit} replace={hab.replace} mode={view} />}
     </>
   );

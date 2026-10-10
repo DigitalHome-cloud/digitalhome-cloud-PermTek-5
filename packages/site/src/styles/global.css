@@ -1125,3 +1125,17 @@ a {
 .pt-guide__kinds dd { margin: 0; }
 .pt-guide__class { font-weight: 600; }
 .pt-guide__class--never { color: var(--pt-danger, #b3261e); }
+
+/* recipes, and the mixed planting they ask for */
+.pt-recipes { display: grid; gap: var(--pt-space-4); }
+.pt-recipe { border-top: 1px solid var(--pt-border); padding: var(--pt-space-2) 0; }
+.pt-recipe > summary { cursor: pointer; }
+.pt-recipe__lines { list-style: none; padding: 0; margin: var(--pt-space-2) 0; display: grid; gap: var(--pt-space-1); font-size: 0.875rem; }
+.pt-recipe__lines--edit li { display: flex; justify-content: space-between; gap: var(--pt-space-3); align-items: center; }
+.pt-recipe__steps { font-size: 0.875rem; }
+.pt-recipe__dot { display: inline-block; width: 0.7rem; height: 0.7rem; border-radius: 2px; margin-right: var(--pt-space-2); vertical-align: baseline; }
+.pt-recipes__paste { width: 100%; font-family: inherit; }
+.pt-recipes__controls { display: flex; flex-wrap: wrap; gap: var(--pt-space-3); align-items: center; margin: var(--pt-space-3) 0; }
+.pt-recipes__legend { display: flex; flex-wrap: wrap; gap: var(--pt-space-2) var(--pt-space-4); font-size: 0.8125rem; }
+.pt-bed--preview .pt-bed__cell { cursor: default; }
+.pt-bed__cell--old { outline: 1px solid var(--pt-text); outline-offset: -1px; }

@@ -17,17 +17,25 @@
 
 <https://permaculture.digitalhome.cloud/id/crop-black-pepper> perma:taxon <https://www.gbif.org/species/3086357> .
 
+<https://permaculture.digitalhome.cloud/id/crop-bush-bean> perma:taxon <https://www.gbif.org/species/5350452> .
+
 <https://permaculture.digitalhome.cloud/id/crop-caraway> perma:taxon <https://www.gbif.org/species/3034714> .
+
+<https://permaculture.digitalhome.cloud/id/crop-carrot> perma:taxon <https://www.gbif.org/species/3034742> .
 
 <https://permaculture.digitalhome.cloud/id/crop-chives> perma:taxon <https://www.gbif.org/species/2855860> .
 
 <https://permaculture.digitalhome.cloud/id/crop-courgette> perma:taxon <https://www.gbif.org/species/2874508> .
+
+<https://permaculture.digitalhome.cloud/id/crop-cucumber> perma:taxon <https://www.gbif.org/species/2874569> .
 
 <https://permaculture.digitalhome.cloud/id/crop-dill> perma:taxon <https://www.gbif.org/species/3034646> .
 
 <https://permaculture.digitalhome.cloud/id/crop-garlic> perma:taxon <https://www.gbif.org/species/2856681> .
 
 <https://permaculture.digitalhome.cloud/id/crop-lettuce> perma:taxon <https://www.gbif.org/species/7403263> .
+
+<https://permaculture.digitalhome.cloud/id/crop-marigold> perma:taxon <https://www.gbif.org/species/3088488> .
 
 <https://permaculture.digitalhome.cloud/id/crop-onion> perma:taxon <https://www.gbif.org/species/2857697> .
 
@@ -66,7 +74,7 @@
 <https://permaculture.digitalhome.cloud/id/crop-white-mustard> perma:taxon <https://www.gbif.org/species/3047621> .
 
 <https://www.gbif.org/species/10902460> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Lamiaceae" ;
     dwc:genus "Salvia" ;
@@ -82,7 +90,7 @@
         "Sauge romarin"@fr .
 
 <https://www.gbif.org/species/2855860> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Amaryllidaceae" ;
     dwc:genus "Allium" ;
@@ -109,7 +117,7 @@
         "brûlotte"@fr .
 
 <https://www.gbif.org/species/2856504> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Amaryllidaceae" ;
     dwc:genus "Allium" ;
@@ -138,7 +146,7 @@
         "Oignon d'hiver"@fr .
 
 <https://www.gbif.org/species/2856681> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Amaryllidaceae" ;
     dwc:genus "Allium" ;
@@ -159,7 +167,7 @@
         "ail blanc"@fr .
 
 <https://www.gbif.org/species/2857697> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Amaryllidaceae" ;
     dwc:genus "Allium" ;
@@ -188,7 +196,7 @@
         "Échalote"@fr .
 
 <https://www.gbif.org/species/2874508> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Cucurbitaceae" ;
     dwc:genus "Cucurbita" ;
@@ -217,8 +225,29 @@
         "Giraumon"@fr,
         "Pâtisson"@fr .
 
+<https://www.gbif.org/species/2874569> a dwc:Taxon ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
+    dcterms:source "GBIF Backbone Taxonomy" ;
+    dwc:family "Cucurbitaceae" ;
+    dwc:genus "Cucumis" ;
+    dwc:kingdom "Plantae" ;
+    dwc:scientificName "Cucumis sativus L." ;
+    dwc:scientificNameAuthorship "L." ;
+    dwc:taxonID "gbif:2874569" ;
+    dwc:taxonRank "species" ;
+    dwc:taxonomicStatus "accepted" ;
+    skos:altLabel "Gurke"@de,
+        "Cucumber"@en,
+        "cowcumber"@en,
+        "garden cucumber"@en,
+        "Concombre"@fr,
+        "Concombre cultivé"@fr,
+        "Cornichon"@fr,
+        "Cornichon cultivé"@fr,
+        "Courgette"@fr .
+
 <https://www.gbif.org/species/2927096> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Lamiaceae" ;
     dwc:genus "Ocimum" ;
@@ -242,7 +271,7 @@
         "Ocime basilic"@fr .
 
 <https://www.gbif.org/species/2930137> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Solanaceae" ;
     dwc:genus "Solanum" ;
@@ -262,7 +291,7 @@
         "lyciet"@fr .
 
 <https://www.gbif.org/species/2930617> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Solanaceae" ;
     dwc:genus "Solanum" ;
@@ -289,7 +318,7 @@
         "mélongène"@fr .
 
 <https://www.gbif.org/species/2932944> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Solanaceae" ;
     dwc:genus "Capsicum" ;
@@ -318,7 +347,7 @@
         "Poivron"@fr .
 
 <https://www.gbif.org/species/3001244> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Rosaceae" ;
     dwc:genus "Malus" ;
@@ -348,7 +377,7 @@
         "Pommier nain"@fr .
 
 <https://www.gbif.org/species/3020791> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Rosaceae" ;
     dwc:genus "Prunus" ;
@@ -378,7 +407,7 @@
         "Prunier merisier"@fr .
 
 <https://www.gbif.org/species/3021922> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Rosaceae" ;
     dwc:genus "Prunus" ;
@@ -408,7 +437,7 @@
         "cerisier commun"@fr .
 
 <https://www.gbif.org/species/3034015> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Lauraceae" ;
     dwc:genus "Laurus" ;
@@ -436,7 +465,7 @@
         "laurier"@fr .
 
 <https://www.gbif.org/species/3034646> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Apiaceae" ;
     dwc:genus "Anethum" ;
@@ -460,7 +489,7 @@
         "Fenouil bâtard"@fr .
 
 <https://www.gbif.org/species/3034714> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Apiaceae" ;
     dwc:genus "Carum" ;
@@ -486,8 +515,36 @@
         "Cumin des pres"@fr,
         "Cumin des prés"@fr .
 
+<https://www.gbif.org/species/3034742> a dwc:Taxon ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
+    dcterms:source "GBIF Backbone Taxonomy" ;
+    dwc:family "Apiaceae" ;
+    dwc:genus "Daucus" ;
+    dwc:kingdom "Plantae" ;
+    dwc:scientificName "Daucus carota L." ;
+    dwc:scientificNameAuthorship "L." ;
+    dwc:taxonID "gbif:3034742" ;
+    dwc:taxonRank "species" ;
+    dwc:taxonomicStatus "accepted" ;
+    skos:altLabel "Karotte"@de,
+        "Möhre"@de,
+        "Rueebli"@de,
+        "Rüebli"@de,
+        "Wilde Moehre"@de,
+        "Wilde Möhre"@de,
+        "Carrot"@en,
+        "Queen Anne's Lace"@en,
+        "bishop's lace"@en,
+        "wild carrot"@en,
+        "Carotte"@fr,
+        "Carotte commune"@fr,
+        "Carotte sauvage"@fr,
+        "Carottes"@fr,
+        "Carottes communes"@fr,
+        "Daucus carotte"@fr .
+
 <https://www.gbif.org/species/3042845> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Brassicaceae" ;
     dwc:genus "Brassica" ;
@@ -516,7 +573,7 @@
         "Chou-fleur"@fr .
 
 <https://www.gbif.org/species/3047621> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Brassicaceae" ;
     dwc:genus "Sinapis" ;
@@ -537,7 +594,7 @@
         "moutarde rude"@fr .
 
 <https://www.gbif.org/species/3054368> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Juglandaceae" ;
     dwc:genus "Juglans" ;
@@ -565,7 +622,7 @@
         "Noyer royal"@fr .
 
 <https://www.gbif.org/species/3083647> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Amaranthaceae" ;
     dwc:genus "Spinacia" ;
@@ -587,7 +644,7 @@
         "Épinard potager"@fr .
 
 <https://www.gbif.org/species/3086357> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Piperaceae" ;
     dwc:genus "Piper" ;
@@ -608,8 +665,37 @@
         "Poivrier"@fr,
         "Poivrier noir"@fr .
 
+<https://www.gbif.org/species/3088488> a dwc:Taxon ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
+    dcterms:source "GBIF Backbone Taxonomy" ;
+    dwc:family "Asteraceae" ;
+    dwc:genus "Tagetes" ;
+    dwc:kingdom "Plantae" ;
+    dwc:scientificName "Tagetes erecta L." ;
+    dwc:scientificNameAuthorship "L." ;
+    dwc:taxonID "gbif:3088488" ;
+    dwc:taxonRank "species" ;
+    dwc:taxonomicStatus "accepted" ;
+    skos:altLabel "Aufrechte Samtblume"@de,
+        "Aufrechte Studentenblume"@de,
+        "Ausgebreitete Studentenblume"@de,
+        "Studentenblume"@de,
+        "hohe Studentenblume"@de,
+        "African Marigold"@en,
+        "American marigold"@en,
+        "Aztec marigold"@en,
+        "French marigold"@en,
+        "Mexican Marigold"@en,
+        "big marigold"@en,
+        "Rose d'Inde"@fr,
+        "Tagète dressé"@fr,
+        "oeillet d'Inde"@fr,
+        "tagète rose d'Inde"@fr,
+        "Œillet d'Inde"@fr,
+        "Œillet malbar"@fr .
+
 <https://www.gbif.org/species/5341442> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Lamiaceae" ;
     dwc:genus "Thymus" ;
@@ -637,8 +723,33 @@
         "Thym des jardins"@fr,
         "thym cultivé"@fr .
 
+<https://www.gbif.org/species/5350452> a dwc:Taxon ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
+    dcterms:source "GBIF Backbone Taxonomy" ;
+    dwc:family "Fabaceae" ;
+    dwc:genus "Phaseolus" ;
+    dwc:kingdom "Plantae" ;
+    dwc:scientificName "Phaseolus vulgaris L." ;
+    dwc:scientificNameAuthorship "L." ;
+    dwc:taxonID "gbif:5350452" ;
+    dwc:taxonRank "species" ;
+    dwc:taxonomicStatus "accepted" ;
+    skos:altLabel "Bohne"@de,
+        "Garten-Bohne"@de,
+        "Gewöhnliche Bohne"@de,
+        "Gewöhnliche Gartenbohne"@de,
+        "Common Bean"@en,
+        "French Bean"@en,
+        "Royal burgundy bean"@en,
+        "bean"@en,
+        "bush bean"@en,
+        "cranberry bean"@en,
+        "Haricot"@fr,
+        "Haricot commun"@fr,
+        "Haricot cultive"@fr .
+
 <https://www.gbif.org/species/5362573> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Rosaceae" ;
     dwc:genus "Pyrus" ;
@@ -666,7 +777,7 @@
         "Poirier domestique"@fr .
 
 <https://www.gbif.org/species/5375920> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Brassicaceae" ;
     dwc:genus "Eruca" ;
@@ -689,7 +800,7 @@
         "roquette"@fr .
 
 <https://www.gbif.org/species/7403263> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Asteraceae" ;
     dwc:genus "Lactuca" ;
@@ -716,7 +827,7 @@
         "Salade"@fr .
 
 <https://www.gbif.org/species/7678610> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Brassicaceae" ;
     dwc:genus "Raphanus" ;
@@ -738,7 +849,7 @@
         "radis"@fr .
 
 <https://www.gbif.org/species/7828157> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Apiaceae" ;
     dwc:genus "Petroselinum" ;
@@ -758,7 +869,7 @@
         "persil"@fr .
 
 <https://www.gbif.org/species/7931731> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Rosaceae" ;
     dwc:genus "Prunus" ;
@@ -788,7 +899,7 @@
         "Prunier domestique"@fr .
 
 <https://www.gbif.org/species/8971274> a dwc:Taxon ;
-    dcterms:modified "2026-10-09"^^xsd:date ;
+    dcterms:modified "2026-10-10"^^xsd:date ;
     dcterms:source "GBIF Backbone Taxonomy" ;
     dwc:family "Amaranthaceae" ;
     dwc:genus "Beta" ;

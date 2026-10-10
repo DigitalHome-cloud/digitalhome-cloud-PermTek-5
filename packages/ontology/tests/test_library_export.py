@@ -13,6 +13,8 @@ def test_the_generated_library_has_not_drifted():
     expected = export_library.render(export_library.export(Graph().parse(export_library.LIBRARY)))
     with open(export_library.OUT) as fh:
         assert fh.read() == expected, "run: packages/ontology/.venv/bin/python packages/ontology/tools/export_library.py"
+    with open(export_library.EXAMPLE_OUT) as fh:
+        assert fh.read() == export_library.render_example(), "run: packages/ontology/tools/export_library.py"
 
 
 def test_trees_have_windows_and_annuals_have_needs():

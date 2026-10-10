@@ -8,6 +8,7 @@
 import N3 from "n3";
 import type { Quad, Term } from "n3";
 import { CROP_IRI } from "./library.js";
+import type { Recipe, RecipeLine } from "./recipes.js";
 import {
   CELL_STATUSES, EXPOSURES, GUILD_TYPES, SUBSTRATE_KINDS, ZONE_KINDS,
   type Bed, type Cell, type CellStatus, type Exposure, type GardenPlant, type Guild, type GuildType, type Habitat, type RobotModel, type SubstrateKind, type Zone, type ZoneKind,
@@ -15,6 +16,7 @@ import {
 
 const { namedNode, literal, quad } = N3.DataFactory;
 const PERMA = "https://permaculture.digitalhome.cloud/ontology#";
+const SCHEMA = "https://schema.org/";
 const RDF_TYPE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 const LABEL = "http://www.w3.org/2000/01/rdf-schema#label";
 const XSD = "http://www.w3.org/2001/XMLSchema#";
@@ -24,6 +26,7 @@ const PREFIXES = {
   perma: PERMA,
   rdfs: "http://www.w3.org/2000/01/rdf-schema#",
   xsd: XSD,
+  schema: SCHEMA,
   id: "https://permtek-5.digitalhome.cloud/id/",
   crop: CROP_IRI,
 };
@@ -79,6 +82,25 @@ export function habitatToTtl(h: Habitat): Promise<string> {
     if (g.rootstock) add(g.id, "rootstock", literal(g.rootstock));
     if (g.xM !== undefined) add(g.id, "xM", dec(g.xM));
     if (g.yM !== undefined) add(g.id, "yM", dec(g.yM));
+  }
+  // The household's own recipes: schema:Recipe, each line a node of its own under the recipe's IRI.
+  const S = (local: string) => namedNode(SCHEMA + local);
+  for (const r of h.recipes ?? []) {
+    const id = namedNode(r.id);
+    qs.push(quad(id, namedNode(RDF_TYPE), S("Recipe")));
+    for (const [lang, text] of Object.entries(r.names)) if (text) qs.push(quad(id, S("name"), literal(text, lang)));
+    if (r.yield) qs.push(quad(id, S("recipeYield"), literal(r.yield)));
+    if (r.description) qs.push(quad(id, S("description"), literal(r.description)));
+    if (r.steps?.length) qs.push(quad(id, S("recipeInstructions"), literal(r.steps.join("\n"))));
+    if (r.keepsAs) qs.push(quad(id, p("preservesAs"), p(r.keepsAs)));
+    r.lines.forEach((l, i) => {
+      const line = namedNode(`${r.id}/line-${i + 1}`);
+      qs.push(quad(id, p("usesIngredient"), line), quad(line, S("name"), literal(l.text)));
+      if (l.cropId) {
+        qs.push(quad(line, p("crop"), namedNode(CROP_IRI + l.cropId)), quad(line, p("part"), p(l.part ?? "Leaf")));
+        for (const m of l.methods ?? []) qs.push(quad(line, p("acceptsMethod"), p(m)));
+      }
+    });
   }
   if (h.rest.trim()) qs.push(...new N3.Parser({ format: "N-Triples" }).parse(h.rest));
   return new Promise((resolve, reject) => {
@@ -140,9 +162,43 @@ export function habitatFromTtl(ttl: string): Habitat {
     ...(num(id, "yM") !== undefined && { yM: num(id, "yM") }),
   }));
 
+  const S = (local: string) => namedNode(SCHEMA + local);
+  const recipeIds = store.getSubjects(namedNode(RDF_TYPE), S("Recipe"), null).filter((s) => s.termType === "NamedNode").map((s) => s.value).sort();
+  const lineIds = new Set<string>();
+  const recipes: Recipe[] = recipeIds.map((id) => {
+    const node = namedNode(id);
+    const text = (pr: string) => store.getObjects(node, S(pr), null)[0]?.value;
+    const names: Recipe["names"] = {};
+    for (const n of store.getObjects(node, S("name"), null)) {
+      const lang = ((n as { language?: string }).language || "en") as keyof Recipe["names"];
+      names[lang] = n.value;
+    }
+    const lines: RecipeLine[] = store.getObjects(node, p("usesIngredient"), null)
+      .filter((l) => l.termType === "NamedNode").map((l) => l.value)
+      .sort((a, b) => Number(a.split("/line-")[1] ?? 0) - Number(b.split("/line-")[1] ?? 0))
+      .map((line) => {
+        lineIds.add(line);
+        const cropIri = one(line, "crop")?.value;
+        return {
+          text: store.getObjects(namedNode(line), S("name"), null)[0]?.value ?? "",
+          ...(cropIri && {
+            cropId: cropIri.slice(CROP_IRI.length), part: local(one(line, "part")),
+            methods: store.getObjects(namedNode(line), p("acceptsMethod"), null).map(local).filter((m): m is string => !!m).sort(),
+          }),
+        };
+      });
+    return {
+      id, names, lines,
+      ...(text("recipeYield") && { yield: text("recipeYield") }),
+      ...(text("description") && { description: text("description") }),
+      ...(text("recipeInstructions") && { steps: text("recipeInstructions")!.split("\n") }),
+      ...(local(one(id, "preservesAs")) && { keepsAs: local(one(id, "preservesAs")) }),
+    };
+  });
+
   // Everything not about these subjects stays as it was.
-  const mine = new Set(CLASSES.flatMap((c) => store.getSubjects(namedNode(RDF_TYPE), namedNode(c), null).map((x) => x.value)));
+  const mine = new Set([...CLASSES.flatMap((c) => store.getSubjects(namedNode(RDF_TYPE), namedNode(c), null).map((x) => x.value)), ...recipeIds, ...lineIds]);
   const rest = store.getQuads(null, null, null, null).filter((q) => !mine.has(q.subject.value));
   const writer = new N3.Writer({ format: "N-Triples" });
-  return { zones, guilds, beds, cells, plants, rest: rest.length ? writer.quadsToString(rest) : "" };
+  return { zones, guilds, beds, cells, plants, ...(recipes.length > 0 && { recipes }), rest: rest.length ? writer.quadsToString(rest) : "" };
 }

@@ -77,6 +77,13 @@ export function railItems(id: string, t: (key: string) => string): RailItem[] {
       // a sprout
       icon: icon(<><path d="M12 20v-8" /><path d="M12 13c0-4-3-6-7-6 0 4 3 6 7 6z" /><path d="M12 11c0-4 3-6 7-6 0 4-3 6-7 6z" /></>),
     },
+    {
+      key: "recipes",
+      label: t("view.recipes"),
+      href: `/w/${id}/recipes/`,
+      // a bowl
+      icon: icon(<><path d="M3 11h18a9 9 0 0 1-18 0z" /><path d="M8 7c0-1.5 1-2 1-3.5M12 7c0-1.5 1-2 1-3.5M16 7c0-1.5 1-2 1-3.5" /></>),
+    },
   ];
 }
 

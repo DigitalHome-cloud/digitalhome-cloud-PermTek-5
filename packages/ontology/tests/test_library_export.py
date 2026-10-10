@@ -15,6 +15,8 @@ def test_the_generated_library_has_not_drifted():
         assert fh.read() == expected, "run: packages/ontology/.venv/bin/python packages/ontology/tools/export_library.py"
     with open(export_library.EXAMPLE_OUT) as fh:
         assert fh.read() == export_library.render_example(), "run: packages/ontology/tools/export_library.py"
+    with open(export_library.RECIPES_OUT) as fh:
+        assert fh.read() == export_library.render_recipes(), "run: packages/ontology/tools/export_library.py"
     with open(export_library.GUIDE_OUT) as fh:
         assert fh.read() == export_library.render_guide(), "run: packages/ontology/tools/export_library.py"
 
@@ -42,3 +44,21 @@ def test_trees_have_windows_and_annuals_have_needs():
         assert {"sowMinTempC", "daysToHarvest", "spacingCm"} <= crops[a]["needs"].keys(), a
     assert crops["crop-tomato"]["needs"]["frostTender"] is True
     assert set(crops["crop-lettuce"]["names"]) == {"en", "fr", "de", "la"}
+
+
+def test_mixed_planting_attributes_hold_both_ways_and_recipes_link_to_crops():
+    crops = {c["id"]: c for c in export_library.export(Graph().parse(export_library.LIBRARY))}
+    assert crops["crop-carrot"]["mix"]["feeding"] == "LightFeeder" and crops["crop-carrot"]["mix"]["rootDepth"] == "DeepRoot"
+    assert "crop-onion" in crops["crop-carrot"]["mix"]["good"] and "crop-carrot" in crops["crop-onion"]["mix"]["good"]
+    assert "crop-bush-bean" in crops["crop-onion"]["mix"]["bad"] and "crop-onion" in crops["crop-bush-bean"]["mix"]["bad"]
+    assert crops["crop-bush-bean"]["mix"]["gives"] == ["FixesNitrogen"] and "mix" not in crops["crop-pear"]
+    for c in crops.values():
+        for other in c.get("mix", {}).get("good", []) + c.get("mix", {}).get("bad", []):
+            assert other in crops, (c["id"], other)
+        assert not set(c.get("mix", {}).get("good", [])) & set(c.get("mix", {}).get("bad", [])), c["id"]
+    recipes = {r["id"]: r for r in export_library.export_recipes()}
+    assert len(recipes) == 12
+    burger = recipes["recipe-burger-aux-carottes"]
+    assert {l.get("cropId") for l in burger["lines"]} >= {"crop-carrot", "crop-chives", "crop-onion", "crop-rocket", "crop-cucumber"}
+    assert any("cropId" not in l for l in burger["lines"]), "what is bought stays a line of text"
+    assert recipes["recipe-ratatouille"]["steps"] and recipes["recipe-ratatouille"]["keepsAs"] == "Frozen"

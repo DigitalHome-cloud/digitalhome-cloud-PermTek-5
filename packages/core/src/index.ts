@@ -32,7 +32,7 @@ export { areaOfHomeId, climateMonths, frostFreeMonths, goldPath, portalUrl } fro
 export type { ClimateMonth, GoldClimate, GoldSolar, GoldWind, GoldWindow } from "./habitat.js";
 
 export { CROP_IRI, cropById, cropName, crops, isWoody, monthSpan } from "./library.js";
-export type { Activity, CropNeeds, LibraryCrop, TypicalWindow } from "./library.js";
+export type { Activity, CropMix, CropNeeds, LibraryCrop, TypicalWindow } from "./library.js";
 export { FROST_RISK_MIN_C, activitiesIn, deriveWindows } from "./calendar.js";
 export type { CropCalendar } from "./calendar.js";
 export {
@@ -51,3 +51,7 @@ export {
   DEFAULT_DEPTH_CM, DEFAULT_SUBSTRATE, GANTRY_KG, LIGHT_ROOF_KG_M2, SATURATED_DENSITY, TERRACE_KG_M2, bedLoad, loadClass, sumpLitres,
 } from "./bedLoad.js";
 export type { BedLoad, LoadClass } from "./bedLoad.js";
+export { cropsWanted, matchCrop, parseIngredients, recipeName, sharedRecipes } from "./recipes.js";
+export type { Recipe, RecipeLine } from "./recipes.js";
+export { plantCounts, scorePlanting, suggestPlanting } from "./planting.js";
+export type { Placement, PlantingOptions, PlantingScore, PlantingSuggestion } from "./planting.js";

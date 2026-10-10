@@ -31,6 +31,20 @@ export interface CropNeeds {
   waterMmPerWeek?: number;
 }
 
+/** What a crop takes from the bed and gives to it: for planting mixed (planting.ts). Traditional guidance, to confirm. */
+export interface CropMix {
+  /** Botanical family, e.g. "Apiaceae": relatives share pests and take the same things. */
+  family: string;
+  feeding: "HeavyFeeder" | "MediumFeeder" | "LightFeeder" | "SoilBuilder";
+  rootDepth: "ShallowRoot" | "MediumRoot" | "DeepRoot";
+  heightCm: number;
+  /** FixesNitrogen, ConfusesPests, CoversSoil, FeedsPollinators, LoosensSoil. */
+  gives: string[];
+  /** Crop ids traditionally planted beside it, and kept apart from it. Both hold both ways. */
+  good: string[];
+  bad: string[];
+}
+
 export interface TypicalWindow { activity: string; from: number; to: number; part?: string }
 
 export interface LibraryCrop {
@@ -42,6 +56,8 @@ export interface LibraryCrop {
   parts: string[];
   needs: CropNeeds;
   windows: TypicalWindow[];
+  /** Herbaceous crops only. */
+  mix?: CropMix;
 }
 
 export const CROP_IRI = "https://permaculture.digitalhome.cloud/id/";

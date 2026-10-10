@@ -1,8 +1,8 @@
 import * as React from "react";
 import {
-  CITYDEMO_TTL, EXPOSURES, ZONE_KINDS, bedGrid, cropById, cropName, defaultOffset, footprint, habitatFromTtl, newId, sowingJob,
+  CITYDEMO_TTL, EXPOSURES, SUBSTRATE_KINDS, ZONE_KINDS, bedGrid, bedLoad, loadClass, wormBinCols, cropById, cropName, defaultOffset, footprint, habitatFromTtl, newId, sowingJob,
 } from "@dlab5/permtek5-core";
-import type { Bed, Cell, CellStatus, Exposure, GardenPlant, Habitat, Zone, ZoneKind } from "@dlab5/permtek5-core";
+import type { Bed, Cell, CellStatus, Exposure, GardenPlant, Habitat, SubstrateKind, Zone, ZoneKind } from "@dlab5/permtek5-core";
 import { CELL_STATUSES } from "@dlab5/permtek5-core";
 import { useT } from "../../lib/i18n";
 import { CropSelect, cropColor, num } from "./common";
@@ -56,7 +56,8 @@ function ZoneCard({ zone, habitat, edit, canEdit }: { zone: Zone; habitat: Habit
   const empty = !beds.length && !plants.length;
   const toggle = (e: Exposure) => set({ exposure: zone.exposure.includes(e) ? zone.exposure.filter((x) => x !== e) : [...zone.exposure, e].sort() });
   const addBed = () => edit((h) => ({
-    ...h, beds: [...h.beds, { id: newId("bed"), name: t("hab.bed.default"), zoneId: zone.id, lengthCm: 300, widthCm: 100, depthCm: 25, cellCm: 10 }],
+    ...h, beds: [...h.beds, { id: newId("bed"), name: t("hab.bed.default"), zoneId: zone.id, lengthCm: 300, widthCm: 100, depthCm: 15, cellCm: 10,
+      substrate: zone.kind === "GroundZone" ? "GardenSoil" as SubstrateKind : "LightweightRoofSubstrate" as SubstrateKind }],
   }));
   const addPlant = () => edit((h) => ({
     ...h, plants: [...h.plants, { id: newId("plant"), name: t("hab.plant.default"), zoneId: zone.id, cropId: "crop-pear" }],
@@ -127,10 +128,14 @@ function BedEditor({ bed, habitat, edit, canEdit }: { bed: Bed; habitat: Habitat
   }
   const setBed = (patch: Partial<Bed>) => edit((h) => ({ ...h, beds: h.beds.map((b) => (b.id === bed.id ? { ...b, ...patch } : b)) }));
   const setCell = (id: string, patch: Partial<Cell>) => edit((h) => ({ ...h, cells: h.cells.map((c) => (c.id === id ? { ...c, ...patch } : c)) }));
+  const binFrom = cols - wormBinCols(bed);          // the worm box takes the last columns
+  const load = bedLoad(bed);
+  // what a roof carries matters on a roof or a balcony, not on the ground
+  const onRoof = ["RoofZone", "BalconyZone"].includes(habitat.zones.find((z) => z.id === bed.zoneId)?.kind ?? "");
   const click = (row: number, col: number) => {
     const here = at.get(`${row}|${col}`);
     if (here) { setSelected(here.id); return; }
-    if (!canEdit || !brush) return;
+    if (!canEdit || !brush || col >= binFrom) return;
     const id = newId("cell");
     edit((h) => ({ ...h, cells: [...h.cells, { id, bedId: bed.id, row, col, cropId: brush, status: "CellPlanned" as CellStatus }] }));
     setSelected(id);
@@ -157,7 +162,28 @@ function BedEditor({ bed, habitat, edit, canEdit }: { bed: Bed; habitat: Habitat
         <label className="pt-field"><span>{t("hab.bed.cell")}</span>
           <input type="number" min={5} max={100} step={5} disabled={!canEdit} value={bed.cellCm} onChange={(e) => setBed({ cellCm: num(e.target.value) ?? bed.cellCm })} />
         </label>
+        <label className="pt-field"><span>{t("hab.bed.substrate")}</span>
+          <select value={bed.substrate ?? "LightweightRoofSubstrate"} disabled={!canEdit} onChange={(e) => setBed({ substrate: e.target.value as SubstrateKind })}>
+            {SUBSTRATE_KINDS.map((k) => <option key={k} value={k}>{t(`hab.sub.${k}`)}</option>)}
+          </select>
+        </label>
+        <label className="pt-field"><span>{t("hab.bed.pipes")}</span>
+          <input type="number" min={0} max={20} disabled={!canEdit} value={bed.tankPipes ?? 0} onChange={(e) => setBed({ tankPipes: num(e.target.value) ?? 0 })} />
+        </label>
+        <label className="pt-field"><span>{t("hab.bed.pipeMm")}</span>
+          <select value={bed.tankPipeMm ?? 110} disabled={!canEdit || !(bed.tankPipes ?? 0)} onChange={(e) => setBed({ tankPipeMm: Number(e.target.value) })}>
+            {[50, 75, 110, 125, 160].map((d) => <option key={d} value={d}>{d}</option>)}
+          </select>
+        </label>
+        <label className="pt-field"><span>{t("hab.bed.worm")}</span>
+          <input type="number" min={0} step={10} disabled={!canEdit} value={bed.wormBinCm ?? 0} onChange={(e) => setBed({ wormBinCm: num(e.target.value) ?? 0 })} />
+        </label>
       </div>
+      <p className={`pt-bedload${onRoof ? ` pt-bedload--${loadClass(load.kgPerM2)}` : ""}`}>
+        <strong>{t("hab.load", { kg: load.totalKg, m2: load.kgPerM2 })}</strong>
+        {load.tankLitres > 0 && <> · {t("hab.load.tank", { l: load.tankLitres })}</>}
+        {onRoof && <span className="pt-muted"> · {t(`hab.load.${loadClass(load.kgPerM2)}`)} {t("hab.load.check")}</span>}
+      </p>
       <p className="pt-muted pt-bedbox__hint">{t("hab.bed.grid", { rows, cols })}</p>
       {canEdit && (
         <label className="pt-field pt-bedbox__brush"><span>{t("hab.brush")}</span>
@@ -171,6 +197,9 @@ function BedEditor({ bed, habitat, edit, canEdit }: { bed: Bed; habitat: Habitat
             const near = covered.get(`${r}|${c}`);
             const color = here ? cropColor(here.cropId) : near ? cropColor(near.cropId) : undefined;
             const name = here ? cropName(cropById(here.cropId)!, lang) : "";
+            if (c >= binFrom && !here) {
+              return <span key={`${r}|${c}`} role="gridcell" className="pt-bed__cell pt-bed__cell--bin" title={t("hab.bed.wormbox")} />;
+            }
             return (
               <button key={`${r}|${c}`} type="button" role="gridcell"
                 className={"pt-bed__cell" + (here ? ` pt-bed__cell--on pt-bed__cell--${here.status}` : near ? " pt-bed__cell--near" : "") + (here?.id === selected ? " pt-bed__cell--sel" : "")}

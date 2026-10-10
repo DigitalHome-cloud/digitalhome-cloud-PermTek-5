@@ -89,3 +89,15 @@ test("a zone needs a kind; a garden plant a zone and a crop", async () => {
   assert.equal((await validateHabitat(`${H}id:plant-p-1 a perma:GardenPlant ; rdfs:label "Pear" ; perma:grows crop:crop-pear .`)).conforms, false);
   assert.equal((await validateHabitat(`${H}id:zone-z-1 perma:microclimateOffsetC 9.0 .`)).conforms, false);
 });
+
+test("a wicking bed: tank pipes, a substrate from the scheme, a worm box shorter than the bed", async () => {
+  const bed = (extra) => `@prefix perma: <https://permaculture.digitalhome.cloud/ontology#> . @prefix id: <https://permtek-5.digitalhome.cloud/id/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+id:zone-z-1 a perma:GardenZone ; rdfs:label "Roof" ; perma:zoneKind perma:RoofZone .
+id:bed-b-1 a perma:GrowingBed ; rdfs:label "Bed" ; perma:inZone id:zone-z-1 ; perma:lengthCm 300 ; perma:widthCm 100 ; perma:cellSizeCm 10 ; ${extra} .`;
+  const ok = await validateHabitat(bed("perma:substrateKind perma:LightweightRoofSubstrate ; perma:tankPipeCount 3 ; perma:tankPipeMm 110 ; perma:wormBinCm 40"));
+  assert.ok(ok.conforms, messages(ok));
+  for (const bad of ["perma:wormBinCm 300", "perma:wormBinCm 450", "perma:substrateKind perma:RoofZone", "perma:tankPipeCount 40", "perma:tankPipeMm 20"]) {
+    assert.equal((await validateHabitat(bed(bad))).conforms, false, bad);
+  }
+});

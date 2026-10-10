@@ -9,8 +9,8 @@ import N3 from "n3";
 import type { Quad, Term } from "n3";
 import { CROP_IRI } from "./library.js";
 import {
-  CELL_STATUSES, EXPOSURES, ZONE_KINDS,
-  type Bed, type Cell, type CellStatus, type Exposure, type GardenPlant, type Habitat, type Zone, type ZoneKind,
+  CELL_STATUSES, EXPOSURES, SUBSTRATE_KINDS, ZONE_KINDS,
+  type Bed, type Cell, type CellStatus, type Exposure, type GardenPlant, type Habitat, type SubstrateKind, type Zone, type ZoneKind,
 } from "./habitatModel.js";
 
 const { namedNode, literal, quad } = N3.DataFactory;
@@ -48,6 +48,10 @@ export function habitatToTtl(h: Habitat): Promise<string> {
     add(b.id, "lengthCm", int(b.lengthCm)); add(b.id, "widthCm", int(b.widthCm));
     if (b.depthCm !== undefined) add(b.id, "substrateDepthCm", int(b.depthCm));
     add(b.id, "cellSizeCm", int(b.cellCm));
+    if (b.substrate) add(b.id, "substrateKind", p(b.substrate));
+    if (b.tankPipes !== undefined) add(b.id, "tankPipeCount", int(b.tankPipes));
+    if (b.tankPipeMm !== undefined) add(b.id, "tankPipeMm", int(b.tankPipeMm));
+    if (b.wormBinCm !== undefined) add(b.id, "wormBinCm", int(b.wormBinCm));
   }
   for (const c of h.cells) {
     add(c.id, "a", p("PlantingCell"));
@@ -101,6 +105,10 @@ export function habitatFromTtl(ttl: string): Habitat {
     lengthCm: num(id, "lengthCm") ?? 0, widthCm: num(id, "widthCm") ?? 0,
     ...(num(id, "substrateDepthCm") !== undefined && { depthCm: num(id, "substrateDepthCm") }),
     cellCm: num(id, "cellSizeCm") ?? 10,
+    ...((SUBSTRATE_KINDS as string[]).includes(local(one(id, "substrateKind")) ?? "") && { substrate: local(one(id, "substrateKind")) as SubstrateKind }),
+    ...(num(id, "tankPipeCount") !== undefined && { tankPipes: num(id, "tankPipeCount") }),
+    ...(num(id, "tankPipeMm") !== undefined && { tankPipeMm: num(id, "tankPipeMm") }),
+    ...(num(id, "wormBinCm") !== undefined && { wormBinCm: num(id, "wormBinCm") }),
   }));
   const cells: Cell[] = ofType("PlantingCell").map((id) => ({
     id, bedId: str(id, "inBed") ?? "", row: num(id, "row") ?? 0, col: num(id, "col") ?? 0, cropId: crop(id),

@@ -36,15 +36,18 @@ export type { Activity, CropNeeds, LibraryCrop, TypicalWindow } from "./library.
 export { FROST_RISK_MIN_C, activitiesIn, deriveWindows } from "./calendar.js";
 export type { CropCalendar } from "./calendar.js";
 export {
-  CELL_STATUSES, EXPOSURES, HABITAT_IRI, SUBSTRATE_KINDS, ZONE_KINDS,
-  bedGrid, checkHabitat, defaultOffset, emptyHabitat, footprint, newId, sowingJob, wormBinCols, zoneOffset,
+  CELL_STATUSES, EXPOSURES, GUILD_ROBOT, GUILD_TYPES, HABITAT_IRI, ROBOT_NAME, SUBSTRATE_KINDS, ZONE_KINDS,
+  bedGrid, checkHabitat, defaultOffset, emptyHabitat, footprint, newGuild, guildForBed, WORMBED5, newId, sowingJob, wormBinCols, zoneOffset,
 } from "./habitatModel.js";
-export type { Bed, Cell, CellStatus, Exposure, GardenPlant, Habitat, Problem, SowingJob, SubstrateKind, Zone, ZoneKind } from "./habitatModel.js";
+export type {
+  Bed, Cell, CellStatus, Exposure, GardenPlant, Guild, GuildType, Habitat, Problem, RobotModel, SowingJob, SubstrateKind, Zone, ZoneKind,
+} from "./habitatModel.js";
 export { habitatFromTtl, habitatToTtl } from "./habitatGraph.js";
 export { whatNow } from "./now.js";
+export { FEEDING_GUIDE } from "./feedingGuide.generated.js";
 export type { NowItem } from "./now.js";
 export { CITYDEMO_TTL } from "./example.generated.js";
 export {
-  DEFAULT_DEPTH_CM, DEFAULT_SUBSTRATE, GANTRY_KG, LIGHT_ROOF_KG_M2, SATURATED_DENSITY, TERRACE_KG_M2, bedLoad, loadClass,
+  DEFAULT_DEPTH_CM, DEFAULT_SUBSTRATE, GANTRY_KG, LIGHT_ROOF_KG_M2, SATURATED_DENSITY, TERRACE_KG_M2, bedLoad, loadClass, sumpLitres,
 } from "./bedLoad.js";
 export type { BedLoad, LoadClass } from "./bedLoad.js";

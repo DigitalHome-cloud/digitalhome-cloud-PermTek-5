@@ -101,3 +101,22 @@ id:bed-b-1 a perma:GrowingBed ; rdfs:label "Bed" ; perma:inZone id:zone-z-1 ; pe
     assert.equal((await validateHabitat(bed(bad))).conforms, false, bad);
   }
 });
+
+test("a Perma5Guild needs a name, an area and a type; a bed joins at most one guild", async () => {
+  const P = `@prefix perma: <https://permaculture.digitalhome.cloud/ontology#> . @prefix id: <https://permtek-5.digitalhome.cloud/id/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+id:zone-z-1 a perma:GardenZone ; rdfs:label "Roof" ; perma:zoneKind perma:RoofZone .
+`;
+  const guild = `id:guild-g-1 a perma:Guild ; rdfs:label "Roof guild" ; perma:inZone id:zone-z-1 ; perma:guildType perma:WormBed5 ; perma:robotModel perma:Gantry5Gen1 ; perma:wormsMayLeave true .
+`;
+  const bed = (extra) => `id:bed-b-1 a perma:GrowingBed ; rdfs:label "Bed" ; perma:inZone id:zone-z-1 ; perma:lengthCm 300 ; perma:widthCm 100 ; perma:cellSizeCm 10 ${extra} .`;
+  const ok = await validateHabitat(P + guild + bed("; perma:inGuild id:guild-g-1"));
+  assert.ok(ok.conforms, messages(ok));
+  assert.ok((await validateHabitat(P + bed(""))).conforms, "a plain bed needs no guild");
+  for (const bad of [
+    P + `id:guild-g-1 a perma:Guild ; rdfs:label "x" ; perma:inZone id:zone-z-1 .`,
+    P + `id:guild-g-1 a perma:Guild ; rdfs:label "x" ; perma:inZone id:zone-z-1 ; perma:guildType perma:RoofZone .`,
+    P + `id:guild-g-1 a perma:Guild ; rdfs:label "x" ; perma:inZone id:zone-z-1 ; perma:guildType perma:WormBed5 ; perma:robotModel perma:WormBed5 .`,
+    P + guild + bed("; perma:inGuild id:zone-z-1"),
+  ]) assert.equal((await validateHabitat(bad)).conforms, false, bad.slice(-120));
+});

@@ -1,11 +1,12 @@
 import * as React from "react";
 import {
-  CITYDEMO_TTL, EXPOSURES, SUBSTRATE_KINDS, ZONE_KINDS, bedGrid, bedLoad, loadClass, wormBinCols, cropById, cropName, defaultOffset, footprint, habitatFromTtl, newId, sowingJob,
+  CITYDEMO_TTL, EXPOSURES, ROBOT_NAME, SUBSTRATE_KINDS, ZONE_KINDS, bedGrid, bedLoad, loadClass, newGuild, guildForBed, wormBinCols, cropById, cropName, defaultOffset, footprint, habitatFromTtl, newId, sowingJob,
 } from "@dlab5/permtek5-core";
-import type { Bed, Cell, CellStatus, Exposure, GardenPlant, Habitat, SubstrateKind, Zone, ZoneKind } from "@dlab5/permtek5-core";
+import type { Bed, Cell, CellStatus, Exposure, GardenPlant, Guild, Habitat, SubstrateKind, Zone, ZoneKind } from "@dlab5/permtek5-core";
 import { CELL_STATUSES } from "@dlab5/permtek5-core";
 import { useT } from "../../lib/i18n";
 import { CropSelect, cropColor, num } from "./common";
+import { FeedingGuide } from "./FeedingGuide";
 
 type Edit = (f: (h: Habitat) => Habitat) => void;
 
@@ -53,12 +54,18 @@ function ZoneCard({ zone, habitat, edit, canEdit }: { zone: Zone; habitat: Habit
   const set = (patch: Partial<Zone>) => edit((h) => ({ ...h, zones: h.zones.map((z) => (z.id === zone.id ? { ...z, ...patch } : z)) }));
   const beds = habitat.beds.filter((b) => b.zoneId === zone.id);
   const plants = habitat.plants.filter((p) => p.zoneId === zone.id);
-  const empty = !beds.length && !plants.length;
+  const empty = !beds.length && !plants.length && !(habitat.guilds ?? []).some((g) => g.zoneId === zone.id);
   const toggle = (e: Exposure) => set({ exposure: zone.exposure.includes(e) ? zone.exposure.filter((x) => x !== e) : [...zone.exposure, e].sort() });
   const addBed = () => edit((h) => ({
     ...h, beds: [...h.beds, { id: newId("bed"), name: t("hab.bed.default"), zoneId: zone.id, lengthCm: 300, widthCm: 100, depthCm: 15, cellCm: 10,
       substrate: zone.kind === "GroundZone" ? "GardenSoil" as SubstrateKind : "LightweightRoofSubstrate" as SubstrateKind }],
   }));
+  const guilds = (habitat.guilds ?? []).filter((g) => g.zoneId === zone.id);
+  const plainBeds = beds.filter((b) => !b.guildId || !guilds.some((g) => g.id === b.guildId));
+  const addGuild = () => edit((h) => {
+    const made = newGuild(zone, t("hab.guild.default", { area: zone.name }), t("hab.bed.default"));
+    return { ...h, guilds: [...(h.guilds ?? []), made.guild], beds: [...h.beds, made.bed] };
+  });
   const addPlant = () => edit((h) => ({
     ...h, plants: [...h.plants, { id: newId("plant"), name: t("hab.plant.default"), zoneId: zone.id, cropId: "crop-pear" }],
   }));
@@ -93,11 +100,13 @@ function ZoneCard({ zone, habitat, edit, canEdit }: { zone: Zone; habitat: Habit
         ))}
       </div>
 
-      {beds.map((b) => <BedEditor key={b.id} bed={b} habitat={habitat} edit={edit} canEdit={canEdit} />)}
+      {guilds.map((g) => <GuildCard key={g.id} guild={g} habitat={habitat} edit={edit} canEdit={canEdit} />)}
+      {plainBeds.map((b) => <BedEditor key={b.id} bed={b} habitat={habitat} edit={edit} canEdit={canEdit} />)}
       {plants.length > 0 && <GardenPlants zone={zone} plants={plants} edit={edit} canEdit={canEdit} />}
 
       {canEdit && (
         <p className="pt-habitat__actions">
+          <button className="pt-button" onClick={addGuild}>+ {t("hab.add.guild")}</button>
           <button className="pt-button pt-button--ghost" onClick={addBed}>+ {t("hab.add.bed")}</button>
           <button className="pt-button pt-button--ghost" onClick={addPlant}>+ {t("hab.add.plant")}</button>
           {empty && (
@@ -108,6 +117,42 @@ function ZoneCard({ zone, habitat, edit, canEdit }: { zone: Zone; habitat: Habit
         </p>
       )}
     </section>
+  );
+}
+
+/**
+ * A Perma5Guild (docs/adr/0020): the area's working unit. Its type says what it
+ * is made of (WormBed5: one bed with a worm box, worked by a Gantry5-gen1); the
+ * bed editor inside sets the sizes.
+ */
+function GuildCard({ guild, habitat, edit, canEdit }: { guild: Guild; habitat: Habitat; edit: Edit; canEdit: boolean }) {
+  const { t } = useT();
+  const set = (patch: Partial<Guild>) => edit((h) => ({ ...h, guilds: (h.guilds ?? []).map((g) => (g.id === guild.id ? { ...g, ...patch } : g)) }));
+  const beds = habitat.beds.filter((b) => b.guildId === guild.id);
+  const planted = habitat.cells.some((c) => beds.some((b) => b.id === c.bedId));
+  return (
+    <div className="pt-guild">
+      <div className="pt-habitat__zonehead">
+        {canEdit
+          ? <input className="pt-input pt-habitat__name" value={guild.name} onChange={(e) => set({ name: e.target.value })} aria-label={t("hab.name")} />
+          : <strong>{guild.name}</strong>}
+        <span className="pt-badge">Perma5Guild · {guild.type}</span>
+        {guild.robot && <span className="pt-muted pt-guild__robot">{t("hab.guild.robot", { robot: ROBOT_NAME[guild.robot] })}</span>}
+      </div>
+      <label className="pt-guild__check">
+        <input type="checkbox" checked={guild.wormsMayLeave ?? true} disabled={!canEdit} onChange={(e) => set({ wormsMayLeave: e.target.checked })} />
+        {t("hab.guild.worms")}
+      </label>
+      {beds.map((b) => <BedEditor key={b.id} bed={b} habitat={habitat} edit={edit} canEdit={canEdit} />)}
+      {guild.type === "WormBed5" && <FeedingGuide />}
+      {canEdit && !planted && (
+        <p className="pt-habitat__actions">
+          <button className="pt-button pt-button--ghost" onClick={() => edit((h) => ({
+            ...h, guilds: (h.guilds ?? []).filter((g) => g.id !== guild.id), beds: h.beds.filter((b) => b.guildId !== guild.id),
+          }))}>{t("hab.remove.guild")}</button>
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -129,6 +174,7 @@ function BedEditor({ bed, habitat, edit, canEdit }: { bed: Bed; habitat: Habitat
   const setBed = (patch: Partial<Bed>) => edit((h) => ({ ...h, beds: h.beds.map((b) => (b.id === bed.id ? { ...b, ...patch } : b)) }));
   const setCell = (id: string, patch: Partial<Cell>) => edit((h) => ({ ...h, cells: h.cells.map((c) => (c.id === id ? { ...c, ...patch } : c)) }));
   const binFrom = cols - wormBinCols(bed);          // the worm box takes the last columns
+  const zone = habitat.zones.find((z) => z.id === bed.zoneId);
   const load = bedLoad(bed);
   // what a roof carries matters on a roof or a balcony, not on the ground
   const onRoof = ["RoofZone", "BalconyZone"].includes(habitat.zones.find((z) => z.id === bed.zoneId)?.kind ?? "");
@@ -246,7 +292,15 @@ function BedEditor({ bed, habitat, edit, canEdit }: { bed: Bed; habitat: Habitat
           )}
         </div>
       )}
-      {canEdit && cells.length === 0 && (
+      {canEdit && !bed.guildId && zone && (
+        <button className="pt-button pt-button--ghost" title={t("hab.make.guild.hint")} onClick={() => edit((h) => {
+          const made = guildForBed(bed, zone, t("hab.guild.default", { area: zone.name }), h.cells);
+          return { ...h, guilds: [...(h.guilds ?? []), made.guild], beds: h.beds.map((b) => (b.id === bed.id ? made.bed : b)) };
+        })}>
+          {t("hab.make.guild")}
+        </button>
+      )}
+      {canEdit && cells.length === 0 && !bed.guildId && (
         <button className="pt-button pt-button--ghost" onClick={() => edit((h) => ({ ...h, beds: h.beds.filter((b) => b.id !== bed.id) }))}>
           {t("hab.remove.bed")}
         </button>

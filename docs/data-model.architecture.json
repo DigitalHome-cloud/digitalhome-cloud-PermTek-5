@@ -24,15 +24,16 @@
       },
       {
         "id": "map",
-        "label": "Areas, beds, cells, plants",
+        "label": "Areas, guilds, beds, cells",
         "focus": [
           "graph",
           "area",
+          "guild",
           "bed",
           "cell",
           "plant"
         ],
-        "note": "The map is an RDF graph per group. An area (roof, garden) holds growing beds split into cells, and long-lived plants such as fruit trees."
+        "note": "An area holds Perma5Guilds: a bed with its worm box, tank and robot. Beds split into cells; trees stand in the area."
       },
       {
         "id": "crops",
@@ -137,7 +138,7 @@
       "label": "Area",
       "sublabel": "roof · garden · offset °C",
       "pos": [
-        780,
+        540,
         300
       ],
       "size": [
@@ -201,6 +202,21 @@
         150,
         64
       ]
+    },
+    {
+      "id": "guild",
+      "type": "database",
+      "label": "Perma5Guild",
+      "sublabel": "type · robot · worms",
+      "pos": [
+        780,
+        300
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "tag": "one edge each"
     }
   ],
   "boundaries": [
@@ -227,6 +243,7 @@
       "label": "A site's map · RDF, checked by SHACL",
       "wraps": [
         "area",
+        "guild",
         "bed",
         "plant",
         "cell"
@@ -278,6 +295,18 @@
       "label": "one"
     },
     {
+      "id": "pgrows",
+      "from": "plant",
+      "to": "crop",
+      "label": "grows"
+    },
+    {
+      "id": "cgrows",
+      "from": "cell",
+      "to": "crop",
+      "label": "grows"
+    },
+    {
       "id": "holds",
       "from": "graph",
       "to": "area",
@@ -285,15 +314,21 @@
       "fromSide": "bottom",
       "toSide": "top",
       "labelAt": [
-        855,
+        735,
         212
       ]
     },
     {
-      "id": "beds",
+      "id": "guilds",
       "from": "area",
+      "to": "guild",
+      "label": "guilds"
+    },
+    {
+      "id": "beds",
+      "from": "guild",
       "to": "bed",
-      "label": "beds"
+      "label": "bed"
     },
     {
       "id": "cells",
@@ -312,30 +347,22 @@
       "from": "area",
       "to": "plant",
       "label": "plants",
-      "fromSide": "left",
-      "toSide": "top"
-    },
-    {
-      "id": "pgrows",
-      "from": "plant",
-      "to": "crop",
-      "label": "grows"
-    },
-    {
-      "id": "cgrows",
-      "from": "cell",
-      "to": "crop",
-      "label": "grows"
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        615,
+        442
+      ]
     }
   ],
   "cards": [
     {
       "dot": "emerald",
-      "title": "Three levels",
+      "title": "The levels",
       "items": [
         "Site: one per home, its admins and members",
         "Area: the roof, the garden, a balcony",
-        "Bed and cells, or single plants like trees"
+        "Perma5Guild: bed, worm box, tank, robot; one edge each"
       ]
     },
     {

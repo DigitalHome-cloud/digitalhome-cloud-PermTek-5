@@ -22,7 +22,7 @@ def test_concepts_in_en_de_fr():
 
 def test_library_recipe_and_calendar_conform():
     g = seasons.load(RECIPE, DEMO)            # exits on a SHACL violation
-    assert len(set(g.subjects(RDF.type, seasons.PERMA.Crop))) == 33
+    assert len(set(g.subjects(RDF.type, seasons.PERMA.Crop))) == 35
 
 
 def test_span_runs_over_the_new_year():

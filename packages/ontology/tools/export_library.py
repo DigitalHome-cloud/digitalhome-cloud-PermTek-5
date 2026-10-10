@@ -66,6 +66,7 @@ def export(g):
             "needs": needs,
             "windows": windows,
             **({"mix": mix(g, crop)} if g.value(crop, PERMA.feeding) is not None else {}),
+            **({"coverCrop": True} if g.value(crop, PERMA.coverCrop) is not None and g.value(crop, PERMA.coverCrop).toPython() else {}),
         })
     return crops
 

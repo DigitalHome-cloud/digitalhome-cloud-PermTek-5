@@ -40,6 +40,8 @@ export interface PlantingSuggestion extends PlantingScore {
   crops: { cropId: string; wanted: number; placed: number; why?: "tree" | "tooBig" | "noSpacing" | "unknown" | "noRoom" }[];
   /** Share of the plantable cells that are covered, 0..1. */
   cover: number;
+  /** How many of `cells` are the cover crop, sown into the gaps. */
+  coverCells: number;
 }
 
 export interface PlantingOptions {
@@ -48,6 +50,8 @@ export interface PlantingOptions {
   tallSide?: "first" | "last";
   /** How much of the free bed to fill when counting plants, 0..1. */
   fill?: number;
+  /** A cover crop's id: it is sown into every cell the plants leave free, so no soil stays bare. */
+  cover?: string;
 }
 
 const W = {
@@ -292,9 +296,16 @@ export function suggestPlanting(bed: Bed, wants: Record<string, number>, existin
   }
 
   for (const c of crops) if (!c.why && c.placed < c.wanted) c.why = "noRoom";
+  // The score and the neighbours are those of the crops; then what they leave free is sown with a cover crop.
+  const summary = g.summary();
+  let coverCells = 0;
+  if (opts.cover && !unfit(opts.cover, bed)) {
+    const f = footprint(opts.cover, bed);
+    for (let row = 0; row < g.rows; row++) for (let col = 0; col < g.cols; col++) if (g.fits(row, col, f)) { g.add(row, col, opts.cover); coverCells++; }
+  }
   let covered = 0;
   for (const o of g.owner) if (o !== -1) covered++;
   const cells = g.plants.slice(fixed).map((p) => ({ row: p.row, col: p.col, cropId: p.cropId }))
     .sort((a, b) => a.row - b.row || a.col - b.col);
-  return { ...g.summary(), cells, crops, cover: Math.round((covered / Math.max(1, g.owner.length)) * 100) / 100 };
+  return { ...summary, cells, crops, coverCells, cover: Math.round((covered / Math.max(1, g.owner.length)) * 100) / 100 };
 }

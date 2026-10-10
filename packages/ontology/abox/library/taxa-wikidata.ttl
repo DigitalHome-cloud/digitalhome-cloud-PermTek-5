@@ -46,6 +46,11 @@
         <https://taxref.mnhn.fr/taxref-web/taxa/109797> ;
     perma:taxrefId "109797" .
 
+<https://www.gbif.org/species/2928226> dcterms:modified "2026-10-10"^^xsd:date ;
+    skos:exactMatch <http://www.wikidata.org/entity/Q158942>,
+        <https://taxref.mnhn.fr/taxref-web/taxa/112915> ;
+    perma:taxrefId "112915" .
+
 <https://www.gbif.org/species/2930137> dcterms:modified "2026-10-10"^^xsd:date ;
     skos:exactMatch <http://www.wikidata.org/entity/Q23501>,
         <https://taxref.mnhn.fr/taxref-web/taxa/124070> ;
@@ -143,6 +148,11 @@
         <https://taxref.mnhn.fr/taxref-web/taxa/113075> ;
     perma:iucnGlobalStatus <http://www.wikidata.org/entity/Q211005> ;
     perma:taxrefId "113075" .
+
+<https://www.gbif.org/species/5358748> dcterms:modified "2026-10-10"^^xsd:date ;
+    skos:exactMatch <http://www.wikidata.org/entity/Q148675>,
+        <https://taxref.mnhn.fr/taxref-web/taxa/127454> ;
+    perma:taxrefId "127454" .
 
 <https://www.gbif.org/species/5362573> dcterms:modified "2026-10-10"^^xsd:date ;
     skos:exactMatch <http://www.wikidata.org/entity/Q146281> ;

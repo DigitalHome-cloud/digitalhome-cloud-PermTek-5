@@ -1,6 +1,6 @@
 import * as React from "react";
 import {
-  bedGrid, cropById, cropName, cropsWanted, footprint, newId, parseIngredients, plantCounts, recipeName, scorePlanting, sharedRecipes,
+  bedGrid, cropById, cropName, crops, cropsWanted, footprint, newId, parseIngredients, plantCounts, recipeName, scorePlanting, sharedRecipes,
   suggestPlanting, wormBinCols,
 } from "@dlab5/permtek5-core";
 import type { Bed, Habitat, PlantingSuggestion, Recipe, RecipeLine } from "@dlab5/permtek5-core";
@@ -131,6 +131,7 @@ function PlantFor({ habitat, recipes, edit, canEdit }: { habitat: Habitat; recip
   const [seed, setSeed] = React.useState(5);
   const [tallSide, setTallSide] = React.useState<"first" | "last">("first");
   const [shown, setShown] = React.useState(true);
+  const [cover, setCover] = React.useState("crop-white-clover");
   const bed: Bed = habitat.beds.find((b) => b.id === bedId) ?? habitat.beds[0];
   const here = habitat.cells.filter((c) => c.bedId === bed.id);
   const wanted = cropsWanted(recipes);
@@ -139,10 +140,10 @@ function PlantFor({ habitat, recipes, edit, canEdit }: { habitat: Habitat; recip
   const name = (id: string) => (cropById(id) ? cropName(cropById(id)!, lang) : id);
 
   const s: PlantingSuggestion | null = React.useMemo(
-    () => (shown ? suggestPlanting(bed, plantCounts(bed, ids, here, weights), here, { seed, tallSide }) : null),
+    () => (shown ? suggestPlanting(bed, plantCounts(bed, ids, here, weights), here, { seed, tallSide, ...(cover && { cover }) }) : null),
     // the inputs, as plain values: the suggestion is the same for the same ones
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [shown, bed.id, bed.lengthCm, bed.widthCm, bed.cellCm, bed.wormBinCm, ids.join(","), here.length, seed, tallSide],
+    [shown, bed.id, bed.lengthCm, bed.widthCm, bed.cellCm, bed.wormBinCm, ids.join(","), here.length, seed, tallSide, cover],
   );
   const drawn = here.length ? scorePlanting(bed, here, { tallSide }) : null;
   const notHere = wanted.filter((w) => !cropById(w.cropId)?.needs.spacingCm || cropById(w.cropId)?.growthForm);
@@ -169,6 +170,11 @@ function PlantFor({ habitat, recipes, edit, canEdit }: { habitat: Habitat; recip
           {t("rec.plant.helpers", { crops: HELPERS.map(name).join(", ") })}</label>
         <label className="pt-guild__check"><input type="checkbox" checked={tallSide === "last"} onChange={(e) => setTallSide(e.target.checked ? "last" : "first")} />
           {t("rec.plant.tall")}</label>
+        <label className="pt-field"><span>{t("rec.plant.cover")}</span>
+          <select value={cover} onChange={(e) => setCover(e.target.value)}>
+            <option value="">{t("rec.plant.cover.none")}</option>
+            {crops().filter((c) => c.coverCrop).map((c) => <option key={c.id} value={c.id}>{cropName(c, lang)}</option>)}
+          </select></label>
         <button className="pt-button pt-button--ghost" onClick={() => { setShown(true); if (shown) setSeed((n) => n + 1); }}>
           {shown ? t("rec.plant.again") : t("rec.plant.suggest")}
         </button>
@@ -181,10 +187,12 @@ function PlantFor({ habitat, recipes, edit, canEdit }: { habitat: Habitat; recip
             {s.crops.filter((c) => c.placed > 0).map((c) => (
               <span key={c.cropId}><span className="pt-recipe__dot" style={{ background: cropColor(c.cropId) }} />{c.placed} × {name(c.cropId)}</span>
             ))}
+            {s.coverCells > 0 && <span><span className="pt-recipe__dot" style={{ background: cropColor(cover) }} />{s.coverCells} × {name(cover)}</span>}
           </p>
           <p>
             {t("rec.plant.result", { good: s.goodPairs, bad: s.badPairs, same: s.sameCropPairs, cover: Math.round(s.cover * 100) })}
             {s.fedByBuilder > 0 && <> {t("rec.plant.fed", { n: s.fedByBuilder })}</>}
+            {s.coverCells > 0 && <> {t("rec.plant.covered", { n: s.coverCells, crop: name(cover) })}</>}
             {drawn && <> {t("rec.plant.drawn", { good: drawn.goodPairs, bad: drawn.badPairs, same: drawn.sameCropPairs })}</>}
           </p>
           {s.pairs.good.length > 0 && (

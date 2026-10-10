@@ -127,14 +127,24 @@ reaction the guild owes. A chaos run is a test with a score.
 
 ## 5. Soil cover and weeds
 
-- **No bare soil.** Empty cells get a cover crop (clover, phacelia, mustard) or
-  a thin mulch. A thick mulch is avoided on a robot bed: it stops a seeder and
-  hides the soil from the camera.
-- **Small weeds are pressed into the soil** with a stamp tool, where they feed
-  soil life. No gripper is needed.
-- **Larger weeds are flagged for a person.** They may go to the worm box only
-  when they carry no seed and are not creeping roots: a worm box does not get
-  hot enough to kill seeds.
+- **No bare soil.** What the crops leave free is sown with a cover crop
+  (white clover, phacelia, mustard: `perma:coverCrop` in the library); the
+  planting suggestion does that when asked. Or the bed carries a thin mulch
+  (`perma:mulchCm`). A thick mulch is avoided on a robot bed: above about
+  3 cm it stops a seeder and hides the soil from the camera.
+- **The robot looks the bed over** (`scan_weeds`): the tool camera looks
+  straight down from a known height, so a pixel is a place in the bed. Leaf
+  green that is not where something was planted is a weed. No trained model.
+  In the twin a look over a 3 × 1.2 m bed is 27 pictures and takes about a
+  minute; it found every weed within a few millimetres of where it stood.
+- **Small weeds are pressed into the soil** with a stamp tool (`stamp_weeds`),
+  where they feed soil life. No gripper is needed. Small means under 30 mm
+  across; the stamp stays 3 cm away from where any plant reaches.
+- **The others are for a person**: weeds too big to stamp, and small ones too
+  close to a plant. They may go to the worm box only when they carry no seed
+  and are not creeping roots: a worm box does not get hot enough to kill seeds.
+- **What the scan cannot do:** see a weed under a grown plant's leaves, or tell
+  a weed from a crop of the same colour standing at a planted point.
 
 ## 6. Worms: free or contained
 

@@ -729,6 +729,45 @@ export const LIBRARY: LibraryCrop[] = [
     ]
   },
   {
+    "id": "crop-phacelia",
+    "names": {
+      "de": "Phacelia",
+      "en": "Phacelia",
+      "fr": "Phacélie",
+      "la": "Phacelia tanacetifolia"
+    },
+    "lifeCycle": "Annual",
+    "growthForm": null,
+    "parts": [
+      "Flower"
+    ],
+    "needs": {
+      "sowMinTempC": 8.0,
+      "frostTender": true,
+      "daysToHarvest": 50,
+      "spacingCm": 10,
+      "sowingDepthMm": 10,
+      "seedsPerPoint": 4,
+      "germinationDays": 10,
+      "waterMmPerWeek": 15.0
+    },
+    "windows": [],
+    "mix": {
+      "family": "Hydrophyllaceae",
+      "feeding": "LightFeeder",
+      "rootDepth": "MediumRoot",
+      "heightCm": 60,
+      "gives": [
+        "CoversSoil",
+        "FeedsPollinators",
+        "LoosensSoil"
+      ],
+      "good": [],
+      "bad": []
+    },
+    "coverCrop": true
+  },
+  {
     "id": "crop-plum",
     "names": {
       "de": "Pflaume",
@@ -1278,6 +1317,45 @@ export const LIBRARY: LibraryCrop[] = [
     }
   },
   {
+    "id": "crop-white-clover",
+    "names": {
+      "de": "Weißklee",
+      "en": "White clover",
+      "fr": "Trèfle blanc",
+      "la": "Trifolium repens"
+    },
+    "lifeCycle": "Perennial",
+    "growthForm": null,
+    "parts": [
+      "Leaf"
+    ],
+    "needs": {
+      "sowMinTempC": 8.0,
+      "frostTender": false,
+      "daysToHarvest": 60,
+      "spacingCm": 10,
+      "sowingDepthMm": 5,
+      "seedsPerPoint": 6,
+      "germinationDays": 8,
+      "waterMmPerWeek": 20.0
+    },
+    "windows": [],
+    "mix": {
+      "family": "Fabaceae",
+      "feeding": "SoilBuilder",
+      "rootDepth": "ShallowRoot",
+      "heightCm": 15,
+      "gives": [
+        "CoversSoil",
+        "FeedsPollinators",
+        "FixesNitrogen"
+      ],
+      "good": [],
+      "bad": []
+    },
+    "coverCrop": true
+  },
+  {
     "id": "crop-white-mustard",
     "names": {
       "de": "Weißer Senf",
@@ -1312,6 +1390,7 @@ export const LIBRARY: LibraryCrop[] = [
       ],
       "good": [],
       "bad": []
-    }
+    },
+    "coverCrop": true
   }
 ];

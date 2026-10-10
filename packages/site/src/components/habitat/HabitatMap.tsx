@@ -224,12 +224,16 @@ function BedEditor({ bed, habitat, edit, canEdit }: { bed: Bed; habitat: Habitat
         <label className="pt-field"><span>{t("hab.bed.worm")}</span>
           <input type="number" min={0} step={10} disabled={!canEdit} value={bed.wormBinCm ?? 0} onChange={(e) => setBed({ wormBinCm: num(e.target.value) ?? 0 })} />
         </label>
+        <label className="pt-field" title={t("hab.bed.mulch.hint")}><span>{t("hab.bed.mulch")}</span>
+          <input type="number" min={0} max={15} disabled={!canEdit} value={bed.mulchCm ?? 0} onChange={(e) => setBed({ mulchCm: num(e.target.value) ?? 0 })} />
+        </label>
       </div>
       <p className={`pt-bedload${onRoof ? ` pt-bedload--${loadClass(load.kgPerM2)}` : ""}`}>
         <strong>{t("hab.load", { kg: load.totalKg, m2: load.kgPerM2 })}</strong>
         {load.tankLitres > 0 && <> · {t("hab.load.tank", { l: load.tankLitres })}</>}
         {onRoof && <span className="pt-muted"> · {t(`hab.load.${loadClass(load.kgPerM2)}`)} {t("hab.load.check")}</span>}
       </p>
+      {(bed.mulchCm ?? 0) > 3 && bed.guildId && <p className="pt-muted">{t("hab.bed.mulch.thick")}</p>}
       <p className="pt-muted pt-bedbox__hint">{t("hab.bed.grid", { rows, cols })}</p>
       {canEdit && (
         <label className="pt-field pt-bedbox__brush"><span>{t("hab.brush")}</span>

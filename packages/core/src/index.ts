@@ -55,3 +55,5 @@ export { cropsWanted, matchCrop, parseIngredients, recipeName, sharedRecipes } f
 export type { Recipe, RecipeLine } from "./recipes.js";
 export { plantCounts, scorePlanting, suggestPlanting } from "./planting.js";
 export type { Placement, PlantingOptions, PlantingScore, PlantingSuggestion } from "./planting.js";
+export { cropSeasons, givesWay, standingIn, yearPlan } from "./season.js";
+export type { CropSeason, GoesIn, Planting, YearPlan } from "./season.js";

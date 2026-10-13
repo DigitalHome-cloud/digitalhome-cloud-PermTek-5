@@ -1,9 +1,9 @@
 import * as React from "react";
 import {
-  bedGrid, cropById, cropName, crops, cropsWanted, footprint, newId, parseIngredients, plantCounts, recipeName, scorePlanting, sharedRecipes,
-  suggestPlanting, wormBinCols,
+  bedGrid, cropById, cropName, crops, cropsWanted, deriveWindows, footprint, givesWay, newId, parseIngredients, plantCounts, recipeName, scorePlanting, sharedRecipes,
+  standingIn, suggestPlanting, wormBinCols, yearPlan, zoneOffset,
 } from "@dlab5/permtek5-core";
-import type { Bed, Habitat, PlantingSuggestion, Recipe, RecipeLine } from "@dlab5/permtek5-core";
+import type { Bed, ClimateMonth, Habitat, Placement, PlantingSuggestion, Recipe, RecipeLine, YearPlan } from "@dlab5/permtek5-core";
 import { useT } from "../../lib/i18n";
 import { CropSelect, cropColor } from "./common";
 
@@ -17,7 +17,9 @@ const HELPERS = ["crop-bush-bean", "crop-marigold"];
  * planting of the crops they need. A suggestion: nothing is planted until it
  * is accepted, and nothing is saved until Save.
  */
-export function HabitatRecipes({ habitat, edit, canEdit }: { habitat: Habitat; edit: Edit; canEdit: boolean }) {
+export function HabitatRecipes({ habitat, edit, canEdit, months, areaName }: {
+  habitat: Habitat; edit: Edit; canEdit: boolean; months: ClimateMonth[] | null; areaName: string | null;
+}) {
   const { t, lang } = useT();
   const own = habitat.recipes ?? [];
   const setRecipes = (f: (r: Recipe[]) => Recipe[]) => edit((h) => {
@@ -40,7 +42,7 @@ export function HabitatRecipes({ habitat, edit, canEdit }: { habitat: Habitat; e
         ))}
       </section>
 
-      {own.length > 0 && habitat.beds.length > 0 && <PlantFor habitat={habitat} recipes={own} edit={edit} canEdit={canEdit} />}
+      {own.length > 0 && habitat.beds.length > 0 && <PlantFor habitat={habitat} recipes={own} edit={edit} canEdit={canEdit} months={months} areaName={areaName} />}
       {canEdit && <NewRecipe onSave={(r) => setRecipes((all) => [...all, r])} />}
 
       <section className="pt-panel">
@@ -124,7 +126,9 @@ function NewRecipe({ onSave }: { onSave: (r: Recipe) => void }) {
 }
 
 /** The crops the recipes ask for, as a mixed planting of one bed's free cells. */
-function PlantFor({ habitat, recipes, edit, canEdit }: { habitat: Habitat; recipes: Recipe[]; edit: Edit; canEdit: boolean }) {
+function PlantFor({ habitat, recipes, edit, canEdit, months, areaName }: {
+  habitat: Habitat; recipes: Recipe[]; edit: Edit; canEdit: boolean; months: ClimateMonth[] | null; areaName: string | null;
+}) {
   const { t, lang } = useT();
   const [bedId, setBedId] = React.useState(habitat.beds[0].id);
   const [helpers, setHelpers] = React.useState(true);
@@ -147,6 +151,32 @@ function PlantFor({ habitat, recipes, edit, canEdit }: { habitat: Habitat; recip
   );
   const drawn = here.length ? scorePlanting(bed, here, { tallSide }) : null;
   const notHere = wanted.filter((w) => !cropById(w.cropId)?.needs.spacingCm || cropById(w.cropId)?.growthForm);
+  const bedPicker = habitat.beds.length > 1 && (
+    <label className="pt-field"><span>{t("rec.plant.bed")}</span>
+      <select value={bed.id} onChange={(e) => { setBedId(e.target.value); setShown(false); }}>
+        {habitat.beds.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
+      </select></label>
+  );
+  // With the area's climate the planting follows the year; without it, it is a planting for no month in particular.
+  if (months) {
+    return (
+      <section className="pt-panel">
+        <h2>{t("rec.plant")}</h2>
+        <p className="pt-muted">{t("rec.year.hint", { area: areaName ?? "" })}</p>
+        <p>{wanted.map((w) => `${name(w.cropId)}${w.recipes > 1 ? ` ×${w.recipes}` : ""}`).join(", ")}</p>
+        <div className="pt-recipes__controls">
+          {bedPicker}
+          <label className="pt-guild__check"><input type="checkbox" checked={helpers} onChange={(e) => setHelpers(e.target.checked)} />
+            {t("rec.plant.helpers", { crops: HELPERS.map(name).join(", ") })}</label>
+          <label className="pt-guild__check"><input type="checkbox" checked={tallSide === "last"} onChange={(e) => setTallSide(e.target.checked ? "last" : "first")} />
+            {t("rec.plant.tall")}</label>
+          <button className="pt-button pt-button--ghost" onClick={() => setSeed((n) => n + 1)}>{t("rec.plant.again")}</button>
+        </div>
+        <YearInBed key={`${bed.id}|${seed}|${tallSide}|${helpers}`} bed={bed} habitat={habitat} ids={ids} weights={weights} months={months}
+          seed={seed} tallSide={tallSide} edit={edit} canEdit={canEdit} />
+      </section>
+    );
+  }
   const accept = () => {
     if (!s) return;
     edit((h) => ({ ...h, cells: [...h.cells, ...s.cells.map((p) => ({ id: newId("cell"), bedId: bed.id, row: p.row, col: p.col, cropId: p.cropId, status: "CellPlanned" as const }))] }));
@@ -156,16 +186,11 @@ function PlantFor({ habitat, recipes, edit, canEdit }: { habitat: Habitat; recip
   return (
     <section className="pt-panel">
       <h2>{t("rec.plant")}</h2>
-      <p className="pt-muted">{t("rec.plant.hint")}</p>
+      <p className="pt-muted">{t("rec.plant.hint")} {t("rec.year.noClimate")}</p>
       <p>{wanted.map((w) => `${name(w.cropId)}${w.recipes > 1 ? ` ×${w.recipes}` : ""}`).join(", ")}</p>
       {notHere.length > 0 && <p className="pt-muted">{t("rec.plant.elsewhere", { crops: notHere.map((w) => name(w.cropId)).join(", ") })}</p>}
       <div className="pt-recipes__controls">
-        {habitat.beds.length > 1 && (
-          <label className="pt-field"><span>{t("rec.plant.bed")}</span>
-            <select value={bed.id} onChange={(e) => { setBedId(e.target.value); setShown(false); }}>
-              {habitat.beds.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
-            </select></label>
-        )}
+        {bedPicker}
         <label className="pt-guild__check"><input type="checkbox" checked={helpers} onChange={(e) => setHelpers(e.target.checked)} />
           {t("rec.plant.helpers", { crops: HELPERS.map(name).join(", ") })}</label>
         <label className="pt-guild__check"><input type="checkbox" checked={tallSide === "last"} onChange={(e) => setTallSide(e.target.checked ? "last" : "first")} />
@@ -209,7 +234,114 @@ function PlantFor({ habitat, recipes, edit, canEdit }: { habitat: Habitat; recip
   );
 }
 
-function Preview({ bed, suggestion, habitat }: { bed: Bed; suggestion: PlantingSuggestion; habitat: Habitat }) {
+/**
+ * The year in the bed (docs/adr/0022): what goes in this month, what is started under cover, what
+ * follows later, and what follows what. Only this month's plants are something to accept now.
+ */
+function YearInBed({ bed, habitat, ids, weights, months, seed, tallSide, edit, canEdit }: {
+  bed: Bed; habitat: Habitat; ids: string[]; weights: Record<string, number>; months: ClimateMonth[];
+  seed: number; tallSide: "first" | "last"; edit: Edit; canEdit: boolean;
+}) {
+  const { t, lang, locale } = useT();
+  const [month, setMonth] = React.useState(() => new Date().getMonth() + 1);
+  const [at, setAt] = React.useState(0);
+  const [cover, setCover] = React.useState("crop-white-clover");
+  const here = habitat.cells.filter((c) => c.bedId === bed.id);
+  const plan: YearPlan = React.useMemo(
+    () => yearPlan(bed, ids, months, zoneOffset(habitat, bed.zoneId), month, here, weights, { seed, tallSide }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [bed.id, bed.lengthCm, bed.widthCm, bed.cellCm, bed.wormBinCm, ids.join(","), here.length, month, seed, tallSide],
+  );
+  const name = (id: string) => (cropById(id) ? cropName(cropById(id)!, lang) : id);
+  const monthName = (m: number) => new Date(2001, m - 1, 1).toLocaleString(locale, { month: "long" });
+  const list = (r: Record<string, number>) => Object.entries(r).map(([id, n]) => `${n} × ${name(id)}`).join(", ");
+  const now = plan.plantings.filter((p) => p.fromOffset === 0);
+  const view = plan.months[at];
+  const standing = standingIn(plan, at);
+  // What this month leaves bare gets a cover crop, if one can be sown now. It gives way when a crop's month comes.
+  const offset = zoneOffset(habitat, bed.zoneId);
+  const coverNow = !!cover && !!cropById(cover) && deriveWindows(months, cropById(cover)!, offset).sowOutdoors.includes(month);
+  const keeps = here.filter((c) => !givesWay(c.cropId, ids));
+  const coverCells: Placement[] = coverNow
+    ? suggestPlanting(bed, {}, [...keeps, ...standingIn(plan, 0).map((p, i) => ({ id: `n${i}`, bedId: bed.id, row: p.row, col: p.col, cropId: p.cropId, status: "CellPlanned" as const }))], { cover }).cells
+        .filter((p) => !here.some((c) => c.row === p.row && c.col === p.col))
+    : [];
+  const accept = () => edit((h) => {
+    // a cover crop standing where a new plant goes is cut: its cell is the new plant's
+    const under = new Set<string>();
+    for (const p of now) {
+      const f = footprint(p.cropId, bed), r0 = p.row - Math.floor((f - 1) / 2), c0 = p.col - Math.floor((f - 1) / 2);
+      for (let r = r0; r < r0 + f; r++) for (let c = c0; c < c0 + f; c++) under.add(`${r}|${c}`);
+    }
+    const kept = h.cells.filter((c) => !(c.bedId === bed.id && givesWay(c.cropId, ids) && under.has(`${c.row}|${c.col}`)));
+    const add = [...now, ...coverCells].map((p) => ({ id: newId("cell"), bedId: bed.id, row: p.row, col: p.col, cropId: p.cropId, status: "CellPlanned" as const }));
+    return { ...h, cells: [...kept, ...add] };
+  });
+  const later = plan.crops.filter((c) => c.how && (c.fromOffset ?? 0) > 0).sort((a, b) => (a.fromOffset ?? 0) - (b.fromOffset ?? 0));
+  const never = plan.crops.filter((c) => c.why);
+
+  return (
+    <>
+      <div className="pt-recipes__controls">
+        <label className="pt-field"><span>{t("rec.year.from")}</span>
+          <select value={month} onChange={(e) => { setMonth(Number(e.target.value)); setAt(0); }}>
+            {Array.from({ length: 12 }, (_, i) => <option key={i + 1} value={i + 1}>{monthName(i + 1)}</option>)}
+          </select></label>
+        <label className="pt-field"><span>{t("rec.plant.cover")}</span>
+          <select value={cover} onChange={(e) => setCover(e.target.value)}>
+            <option value="">{t("rec.plant.cover.none")}</option>
+            {crops().filter((c) => c.coverCrop).map((c) => <option key={c.id} value={c.id}>{cropName(c, lang)}</option>)}
+          </select></label>
+      </div>
+
+      <h3>{t("rec.year.now", { month: monthName(month) })}</h3>
+      {now.length === 0 && <p className="pt-muted">{t("rec.year.now.nothing")}</p>}
+      {Object.keys(plan.months[0].sow).length > 0 && <p>{t("rec.year.sow")} {list(plan.months[0].sow)}.</p>}
+      {Object.keys(plan.months[0].plantOut).length > 0 && <p>{t("rec.year.plantOut")} {list(plan.months[0].plantOut)}.</p>}
+      {plan.months[0].startIndoors.length > 0 && <p>{t("rec.year.indoors")} {plan.months[0].startIndoors.map(name).join(", ")}.</p>}
+      {coverCells.length > 0 && <p>{t("rec.year.coverNow", { n: coverCells.length, crop: name(cover) })}</p>}
+      {cover && !coverNow && plan.months[0].cover < 0.8 && <p className="pt-muted">{t("rec.year.coverNot", { crop: name(cover), month: monthName(month) })}</p>}
+      {canEdit && now.length + coverCells.length > 0 && <button className="pt-button" onClick={accept}>{t("rec.plant.accept", { n: now.length + coverCells.length })}</button>}
+
+      <h3>{t("rec.year.bed", { month: monthName(view.month) })}</h3>
+      <label className="pt-field pt-recipes__slider"><span>{t("rec.year.slide")}</span>
+        <input type="range" min={0} max={11} value={at} onChange={(e) => setAt(Number(e.target.value))} /></label>
+      <Preview bed={bed} habitat={at === 0 ? { ...habitat, cells: keeps } : { ...habitat, cells: [] }} suggestion={{ cells: at === 0 ? [...standing, ...coverCells] : standing }} />
+      <p className="pt-recipes__legend">
+        {Object.entries(standing.reduce<Record<string, number>>((acc, p) => { acc[p.cropId] = (acc[p.cropId] ?? 0) + 1; return acc; }, {})).map(([id, n]) => (
+          <span key={id}><span className="pt-recipe__dot" style={{ background: cropColor(id) }} />{n} × {name(id)}</span>
+        ))}
+        {at === 0 && coverCells.length > 0 && <span><span className="pt-recipe__dot" style={{ background: cropColor(cover) }} />{coverCells.length} × {name(cover)}</span>}
+      </p>
+      <p className="pt-muted">{t("rec.year.cover", { cover: Math.round(view.cover * 100) })}</p>
+
+      <h3>{t("rec.year.table")}</h3>
+      <div className="pt-bed__scroll">
+        <table className="pt-yeartable">
+          <thead><tr><th>{t("rec.year.col.month")}</th><th>{t("rec.year.col.in")}</th><th>{t("rec.year.col.indoors")}</th><th>{t("rec.year.col.out")}</th><th>%</th></tr></thead>
+          <tbody>
+            {plan.months.map((m) => (
+              <tr key={m.offset} className={m.offset === at ? "pt-yeartable__at" : undefined} onClick={() => setAt(m.offset)}>
+                <th>{monthName(m.month)}</th>
+                <td>{[list(m.sow), list(m.plantOut)].filter(Boolean).join("; ")}</td>
+                <td>{m.startIndoors.map(name).join(", ")}</td>
+                <td>{list(m.cleared)}</td>
+                <td>{Math.round(m.cover * 100)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {later.length > 0 && (
+        <p className="pt-muted">{t("rec.year.later")} {later.map((c) => `${name(c.cropId)} (${monthName(c.from!)})`).join(", ")}.</p>
+      )}
+      {never.map((c) => <p key={c.cropId} className="pt-muted">{name(c.cropId)}: {t(`rec.year.why.${c.why}`)}</p>)}
+      <p className="pt-muted">{t("rec.year.caveat")}</p>
+    </>
+  );
+}
+
+function Preview({ bed, suggestion, habitat }: { bed: Bed; suggestion: { cells: Placement[] }; habitat: Habitat }) {
   const { t, lang } = useT();
   const { rows, cols } = bedGrid(bed);
   const binFrom = cols - wormBinCols(bed);

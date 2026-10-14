@@ -19,7 +19,8 @@ test("CityDemo's roof is a WormBed5 guild worked by a Gantry5-gen1", async () =>
 });
 
 test("a map saved before guilds existed still loads and checks clean", () => {
-  const old = DEMO.replace(/id:guild-g-cityroof a perma:Guild[\s\S]*?\.\n/, "").replace(" perma:inGuild id:guild-g-cityroof ;", "");
+  const old = DEMO.split("# ------------------------------------------------------------ the roof guild's water")[0]   // before water existed too
+    .replace(/id:guild-g-cityroof a perma:Guild[\s\S]*?\.\n/, "").replace(" perma:inGuild id:guild-g-cityroof ;", "");
   const h = habitatFromTtl(old);
   assert.deepEqual([h.guilds.length, h.beds.length, h.beds[0].guildId], [0, 1, undefined]);
   assert.deepEqual(checkHabitat(h), []);

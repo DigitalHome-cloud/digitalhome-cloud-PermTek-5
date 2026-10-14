@@ -9,6 +9,10 @@ season:
 Every number here is a **baseline to be proved wrong**: Check compares the real box against it, and Act changes the
 numbers (and the twin's model) where the box disagrees.
 
+The hypotheses and their measures are also a **starter set** in the app (`packages/ontology/guides/wormbed5-sizing.json`,
+ADR 0026). In the Learn view, a guild adopts it as its first learning cycle: the numbers become editable, the measured
+values are entered as checks, and the verdicts follow the rule in section 3.
+
 The example is the WormBed5 of the CityDemo habitat:
 
 - a bed of 3.0 × 1.2 m (3.6 m²);
@@ -36,6 +40,7 @@ Where the two disagree, the hypothesis takes a middle value and keeps the disagr
 | H4 | Nitrogen out of the box | — | Vegetable scraps ~0.3 % N fresh; vermicompost 1.3–3.3 % N in dry matter; ~70 % kept in castings, ~10 % in the liquid | **~3 g N per kg** of food in: ~2 g in castings, ~0.3 g in the liquid → **~200 g N a year** (110–400) |
 | H5 | What the bed needs | — | Mixed vegetables ~10–11 g N/m² a year; brassicas up to ~24, beans none. Compost 1–5 kg/m² a year | **10–15 g N/m² a year → 31–47 g N** for 3.1 m². At most **~3–16 kg castings a year** |
 | H6 | Who fills the box | — | EU households throw away 72 kg of food per person a year (2022); about half is raw fruit, vegetable peel, coffee and tea that worms may have | **~35 kg per person a year** → the box takes the scraps of **2–3 people** |
+| H7 | Share of the bed's water the rain brings, April–September | The app's water budget (ADR 0025): 8 m² of roof at 0.8 runoff into a 200 l barrel; monthly averages say up to 100 % | The bed uses 9–16 l a day in summer; dry spells of two or three weeks outlast a barrel | **60 %** (30–100) |
 
 ### What follows from them
 
@@ -95,6 +100,7 @@ measurement). Every reading is an observation (`sosa:Observation`) on the edge, 
 | M5 | The liquid's strength | An EC meter in the sump and in the tank; one lab sample for N | monthly; once |
 | M6 | What the bed does with it | Soil test in spring and autumn: mineral N, P, K, EC, organic matter. The robot's weekly photos; harvests weighed | 2 × a year; weekly; each harvest |
 | M7 | Who eats here | The household's size and how much of its scraps go in versus the bin (a two-week tally) | once in summer, once in winter |
+| M8 | Where the bed's water comes from | Each refill of the tank pipes logged with its litres: from the rain barrel's tap or the mains; the barrel's level shows what rain brought | each refill; monthly sum |
 
 ## 3. Check: when a hypothesis holds
 
@@ -110,6 +116,7 @@ Each month the edge sets the measures beside the hypothesis and the twin's predi
 | H3 | 0.15–0.40 kg of castings per kg eaten; lab N 1.3–3.3 % of dry matter |
 | H4 / H5 | Autumn soil test: mineral N, P and EC not rising beyond the spring's when ~5 kg of castings went to the bed; plants not short of N in the photos |
 | H6 | The household's suitable scraps within 25–45 kg per person a year |
+| H7 | Rain brings 30–100 % of what the bed uses from April to September (M8: each refill of the tank pipes logged, from the barrel or the mains) |
 | Tank | EC in the tank under ~1.5 mS/cm (above it, roots of seedlings suffer) |
 
 ## 4. Act: what changes with the answer

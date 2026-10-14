@@ -145,12 +145,19 @@ bed is a hypothesis to be measured: `wormbed5-sizing.md`.
 kitchen scraps -> hopper -> (gantry) -> worm box, bin 1
                                           | liquid drips through the drilled bottom
                                        bin 2, the sump
-                                          | the tap, opened when the sump is half full
-                              A: buried line -> root zone
-                              B: tank pipes -> wick -> root zone
+                                          | valves: one opened at a time, when the sump is half full
+                              ┌───────────┴───────────┐
+              A: buried line / B: tank pipes        garden tank   the surplus, for the trees
+                -> wick -> root zone                (another area of the site)
                                           | too much (rain)
                                        overflow -> roof drain
+
+ roof catchment -gutter-> rain barrel -tap-> tank pipes        clean water: refills the tank
 ```
+
+The parts and flows are data in the habitat's graph (ADR 0025): stores with
+their litres and what they may hold (clean water, worm liquid), and valves
+between them. Worm liquid never flows into a store kept for clean water.
 
 - **From below, by gravity.** No pump in the loop; the tap is the only moving
   part, and it can be a valve the edge opens. The liquid mixes with the

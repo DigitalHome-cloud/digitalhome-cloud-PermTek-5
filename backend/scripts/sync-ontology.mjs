@@ -13,11 +13,13 @@ const src = path.resolve(here, "../../packages/ontology");
 // declared again). The perma modules are what a habitat's A-Box is checked
 // against (docs/adr/0016); app/pt are the template's.
 export const SOURCES = {
-  TBOX: ["tbox/app.ttl", "tbox/perma-vegetation.ttl", "tbox/perma-food.ttl", "tbox/perma-habitat.ttl"],
-  CONCEPTS: ["tbox/pt-concepts.ttl", "tbox/perma-vegetation-concepts.ttl", "tbox/perma-food-concepts.ttl", "tbox/perma-habitat-concepts.ttl"],
+  TBOX: ["tbox/app.ttl", "tbox/perma-vegetation.ttl", "tbox/perma-food.ttl", "tbox/perma-habitat.ttl", "tbox/perma-learning.ttl"],
+  CONCEPTS: ["tbox/pt-concepts.ttl", "tbox/perma-vegetation-concepts.ttl", "tbox/perma-food-concepts.ttl", "tbox/perma-habitat-concepts.ttl",
+             "tbox/perma-learning-concepts.ttl"],
   // the shared crop library: a recipe line or a cell names a crop, and the shapes ask that it is one
   LIBRARY: ["abox/library/crops.ttl"],
-  SHAPES: ["shapes/pt-shapes.ttl", "shapes/perma-vegetation-shapes.ttl", "shapes/perma-food-shapes.ttl", "shapes/perma-habitat-shapes.ttl"],
+  SHAPES: ["shapes/pt-shapes.ttl", "shapes/perma-vegetation-shapes.ttl", "shapes/perma-food-shapes.ttl", "shapes/perma-habitat-shapes.ttl",
+           "shapes/perma-learning-shapes.ttl"],
 };
 export const join = (read) => (files) => files.map(read).join("\n");
 const joined = join((rel) => fs.readFileSync(path.join(src, rel), "utf8"));

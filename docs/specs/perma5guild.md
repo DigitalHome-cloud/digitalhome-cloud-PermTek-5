@@ -13,9 +13,10 @@ Site (one per home)
    └─ Perma5Guild   type WormBed5 · robot Gantry5-gen1 · one edge
       ├─ growing bed (cells: planned → sown → growing → harvested)
       ├─ worm box   (scraps in; castings, liquid, worms, a little heat out)
-      ├─ tank       (clean water and the worm box's liquid, given from below)
+      ├─ water      (rain catchment, barrel, tank pipes, sump, garden tank; valves between them: ADR 0025)
       ├─ sensors    (fixed: over time · on the robot: over space)
-      └─ robot      (sows, waters, probes, photographs, feeds the worms, weeds)
+      ├─ robot      (sows, waters, probes, photographs, feeds the worms, weeds)
+      └─ learning   (plan-do-check-act cycles: hypotheses, measures, checks: ADR 0026)
 ```
 
 ## 1. Type and instance

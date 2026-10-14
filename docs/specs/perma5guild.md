@@ -88,8 +88,49 @@ when a real box says otherwise.
 | Stress that wears the worms down | core under 5 °C or over 30 °C, moisture under 45 % or over 92 %, no air |
 | Worms that may leave | dodge half the harm and come back; in a closed box what is lost stays lost |
 
-The last row is a simplification. A closed box does recover in reality, from
-cocoons, over weeks.
+### The worm population
+
+The worms are red wigglers (*Eisenia fetida*, often its twin species
+*E. andrei* in the trade). The twin keeps them by life stage, in cohorts:
+cocoons, young and adults ([ADR 0023](../adr/0023-worm-population.md)).
+Adults lay cocoons; a cocoon hatches when it has gathered enough warmth; the
+young grow up with warmth and food; all of them die of age, of hard
+conditions and of hunger. Their mass is what eats, so the feeding rate
+follows the population. A closed box now recovers from its cocoons, over
+weeks, as a real one does.
+
+| Life history | Value in the twin | Source |
+|---|---|---|
+| Cocoons an adult lays | one every second day at 25 °C, falling in a straight line to none at 10 °C; none above 32 °C | Reinecke & Kriel 1981 |
+| Hatching | 2.7 young per cocoon after about 23 days at 20-25 °C; counted in warmth above 8 °C, so months when cool | life-cycle study on cattle manure; Reinecke & Kriel 1981 |
+| Hatchlings that live | 80 % of the eggs, then half the young lost in about 30 days | rule of thumb |
+| Grown up | about 45 days at 22 °C (40-60 in the literature), slower when hungry or crowded | life-cycle study on cattle manure |
+| Crowding | laying falls from 2 kg of worms per m² of box to none at 5; more young die | Domínguez & Edwards 1997 (direction); vermiculture stocks 1-2 kg/m² |
+| Age | half the adults of a working box gone in a year (in a lab they live four years and more) | rule of thumb; lab longevity of *Eisenia* |
+| Hunger | after about three days without food they lay less, and die slowly: they live on the bedding a while | rule of thumb |
+| Leaving | worms that may leave go into the bed when the box is bad; there they last about two weeks, longer under a mulch, and come back | rule of thumb |
+
+Fed each day what they eat, the twin's worms nearly double in two months
+(800 g to about 1.5 kg in the live run, at the demo bed's mild weather) and
+then level off at about 3 to 3.5 kg per m² of box. Practice says a well-kept
+box doubles in two to three months.
+
+**No sensor counts worms.** The keeper's two rules about them go by the
+feeder's estimate: worms eat about half their weight a day, so the eating
+rate at the best temperature says how much worm is working.
+
+| Reaction | When | What it says |
+|---|---|---|
+| crowded | the estimate is above 4 kg per m² of box | harvest with some of the worms, or start a second box |
+| dying back | they eat a third less than a week ago, with food lying there | check the food, the moisture and the air |
+
+Sources: J. Johnston et al. (2014), *An energy budget agent-based model of
+earthworm populations*, Ecological Modelling 280: 5-17; Rakel, Preuss & Gergs
+(2020), a DEB model for *E. fetida*, Ecological Modelling 432; Reinecke &
+Kriel (1981), the influence of temperature on the reproduction of
+*E. foetida*; Domínguez & Edwards (1997), Soil Biology and Biochemistry 29:
+743-746. The numbers are rounded from these and marked "to confirm" against a
+real box.
 
 **The feeder (rung 2), step by step.** It takes the box's weight at every
 look, minus what the robot has fed. It fits a straight line through the last
@@ -154,8 +195,26 @@ A guild setting (`perma:wormsMayLeave`), not a verdict.
 |---|---|---|
 | Survival | a refuge when the box turns too hot, cold or sour | they die if the box fails |
 | Measuring | weight and population are less exact | a clean mass balance |
-| Soil | worms carry compost and air into the bed | only the liquid reaches the bed |
+| Soil | worms that left live in the mulch and the castings on top, and bring castings along; they do not dig or aerate the soil below | only the liquid reaches the bed |
 | Fit | compost worms live in rich litter; a mineral roof substrate is poor habitat, so they stay near the box | no such question |
 
 The default is an exit with mulch beside it. Whether the worms use it is for a
 season on a real bed to show; the twin can only simulate both.
+
+**Compost worms are not soil worms.** Earthworms live in three ways. Litter
+dwellers (epigeic, such as the red wiggler) live in rotting matter on top and
+barely burrow. Topsoil dwellers (endogeic, such as *Aporrectodea
+caliginosa*) live in the top 10-30 cm of soil and eat its organic matter.
+Deep burrowers (anecic, such as *Lumbricus terrestris*) dig vertical tunnels
+a metre or two deep. They eat different food at different depths, so they
+can share a garden; competition is mostly within a group.
+
+For a WormBed5 that means:
+
+- The box holds red wigglers only. Topsoil worms do poorly in fresh compost.
+- The bed gets no worms put in. A 15 cm roof bed dries through in summer and
+  freezes through in winter, and a lightweight substrate holds little organic
+  matter: deep burrowers cannot live there, topsoil worms survive in pauses
+  at best. What comes in with garden soil, compost and castings is welcome.
+- The bed is fed with mulch and castings instead.
+- Soil worms matter in the garden, in the ground around the trees.

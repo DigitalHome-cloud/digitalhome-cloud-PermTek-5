@@ -123,6 +123,9 @@ The box is **two bins, one on the other**, and it stands higher than the bed:
   sump backs up into bin 1 and soaks it, so it is drained in time.
 - **Worm passages** at soil level let worms move into the bed and back, when
   the guild allows it (ADR 0020). Closed with a slide, the box is contained.
+
+How much the box turns out (liquid, castings, nitrogen) and whether it fits the
+bed is a hypothesis to be measured: `wormbed5-sizing.md`.
 - **Worms**: compost worms (*Eisenia fetida*). They work between roughly 5 and
   30 °C and best around 15 to 25 °C.
 - **In**: raw fruit and vegetable scraps, coffee grounds, tea leaves, torn

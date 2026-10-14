@@ -152,7 +152,9 @@ kitchen scraps -> hopper -> (gantry) -> worm box, bin 1
                                           | too much (rain)
                                        overflow -> roof drain
 
- roof catchment -gutter-> rain barrel -tap-> tank pipes        clean water: refills the tank
+ roof catchment -gutter-> rain barrel -valve-> tank pipes      clean water: refills the tank
+                                      \-valve-> mist line   clean water: keeps the worm box moist,
+                                                 under the lid     the box closed
 ```
 
 The parts and flows are data in the habitat's graph (ADR 0025): stores with
@@ -167,6 +169,14 @@ between them. Worm liquid never flows into a store kept for clean water.
   is eaten raw. Wash what is harvested.
 - **From above: clean water only**, with the gantry's nozzle, for seeds and
   seedlings whose roots do not reach the moist layer yet.
+- **The worm box is watered from inside**, by a mist line under its lid: a
+  few metres of drip or mist hose fed from the rain barrel through a
+  solenoid valve the edge opens. Rainwater has no chlorine and is never as
+  cold as the mains. Half a litre at a time keeps the bedding as damp as a
+  wrung-out sponge, with the box closed and the worms undisturbed. The
+  care calendar checks it every three days. A dry or hot box brings it
+  forward; frost and a soaked box hold it back. If the barrel is empty,
+  the gantry sprinkles through the feed hatch instead.
 - **Maintenance**: once or twice a year the sump and pipes are flushed
   through their end caps; a foul smell means the tank went airless and is
   emptied and refilled.
@@ -182,7 +192,7 @@ Fixed where a value changes over time; on the gantry where it changes over space
 |---|---|---|---|
 | Tank level | fixed, in the fill pipe (B) or the sump (A) | refill before it is empty; overflow check after rain | person refills; the edge says when |
 | Compost temperature | fixed, two probes in the worm box | too hot, too cold, or heating up (too much food) | edge warns; person shades, insulates, stops feeding |
-| Compost moisture | fixed, in the worm box | too dry (add water) or sodden (add paper) | person |
+| Compost moisture | fixed, in the worm box | too dry (add water) or sodden (add paper) | edge proposes the mist line, or dry bedding from the hopper; person confirms |
 | Soil moisture at depth | fixed, two or three probes along the bed | is the wick working; when to refill | edge proposes top-watering; person refills |
 | Air temperature, wind | fixed, on the frame | frost and heat alerts; no gantry motion in strong wind | edge locks out the gantry |
 | Leak | fixed, under the liner's low corner | water on the roof | person, at once |

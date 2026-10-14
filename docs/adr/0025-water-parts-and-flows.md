@@ -40,6 +40,18 @@ to them. The sizing hypothesis (`docs/specs/wormbed5-sizing.md`) changed that pi
 
    This is the model's number for hypothesis H7. The real bed checks it.
 
+## Addendum, 2026-10-14: the mist line
+
+- **A new store kind, `perma:WormBoxBin`**: the worm box's working bin. It is a place water goes to, not a store,
+  so it has no litres; its moisture probe says when it needs water. It holds clean water only.
+- **The WormBed5 default gains a second edge valve on the barrel**: a mist line under the box's lid, so the box
+  is watered closed.
+- **The barrel's tap to the tank pipes is an edge valve by default.** Low tank pipes become a proposal you
+  confirm instead of a trip to the barrel. A habitat can still say `ManualTap` for a barrel without a valve.
+- **The care calendar gains "Keep the worm box moist"** (`mist`, the robot, every 3 days, brought forward by a dry
+  or hot box), done by the job `valve:mist`.
+- **Nothing opens without a person's confirm.** The edge proposes; there is no standing permission.
+
 ## Consequences
 
 - The edge can open the right valve: to the bed's tank, or to the garden when the bed has had its share.

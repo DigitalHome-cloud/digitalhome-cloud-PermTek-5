@@ -25,7 +25,8 @@ export function GuildWater({ guild, habitat, edit, canEdit, months }: {
   const add = () => bed && edit((h) => {
     const w = defaultWater(guild, bed, {
       roof: t("water.default.roof"), barrel: t("water.default.barrel"), pipes: t("water.default.pipes"), sump: t("water.default.sump"),
-      garden: t("water.default.garden"), barrelTap: t("water.default.barrelTap"), sumpBed: t("water.default.sumpBed"), sumpGarden: t("water.default.sumpGarden"),
+      bin: t("water.default.bin"), garden: t("water.default.garden"), barrelTap: t("water.default.barrelTap"), mist: t("water.default.mist"),
+      sumpBed: t("water.default.sumpBed"), sumpGarden: t("water.default.sumpGarden"),
     });
     return { ...h, catchments: [...(h.catchments ?? []), ...w.catchments], stores: [...(h.stores ?? []), ...w.stores], valves: [...(h.valves ?? []), ...w.valves] };
   });
@@ -84,7 +85,7 @@ export function GuildWater({ guild, habitat, edit, canEdit, months }: {
             <tr key={s.id}>
               <th scope="row">{s.name}</th>
               <td>{t(`water.kind.${s.kind}`)}{s.holds.includes("WormLiquid") ? "" : ` · ${t("water.cleanOnly")}`}</td>
-              <td>{canEdit && s.kind !== "TankPipes" && s.kind !== "WormBoxSump"
+              <td>{s.kind === "WormBoxBin" ? "–" : canEdit && s.kind !== "TankPipes" && s.kind !== "WormBoxSump"
                 ? <input className="pt-input pt-water__num" type="number" min={0} step={10} value={s.capacityL ?? 0} aria-label={t("water.litres")}
                     onChange={(e) => setStore(s.id, { capacityL: num(e.target.value) ?? 0 })} />
                 : `${Math.round(s.capacityL ?? 0)} l`}</td>

@@ -3,6 +3,7 @@ import { activitiesIn, cropById, cropName, deriveWindows, whatNow, zoneOffset } 
 import type { Activity, ClimateMonth, CropCalendar, Habitat } from "@dlab5/permtek5-core";
 import { useT } from "../../lib/i18n";
 import { cropColor } from "./common";
+import { CareNow, CareYear, hasCare } from "./CareCalendar";
 
 const ORDER: Activity[] = ["SowIndoors", "SowOutdoors", "PlantOut", "Flowering", "WinterPrune", "SummerPrune", "Harvest"];
 
@@ -35,7 +36,8 @@ export function HabitatCalendar({ habitat, months, areaName }: { habitat: Habita
   for (const p of habitat.plants) add(p.cropId, p.zoneId);
   const zoneName = (id: string) => habitat.zones.find((z) => z.id === id)?.name ?? "";
 
-  if (!rows.size) return <div className="pt-empty"><p>{t("cal.empty")}</p></div>;
+  const care = hasCare(habitat) ? <CareYear names={names} now={now} /> : null;
+  if (!rows.size) return <div className="pt-panel"><div className="pt-empty"><p>{t("cal.empty")}</p></div>{care}</div>;
   return (
     <div className="pt-panel">
       <ClimateNote months={months} areaName={areaName} />
@@ -73,6 +75,7 @@ export function HabitatCalendar({ habitat, months, areaName }: { habitat: Habita
         {ORDER.map((a) => <span key={a}><span className={`pt-cal__act pt-cal__act--${a}`}>{t(`act.short.${a}`)}</span> {t(`act.${a}`)}</span>)}
         <span><span className="pt-cal__act pt-cal__act--Flowering pt-cal__act--frost">{t("act.short.Flowering")}</span> {t("cal.lateFrost")}</span>
       </p>
+      {care}
     </div>
   );
 }
@@ -125,6 +128,7 @@ export function HabitatNow({ habitat, months, areaName }: { habitat: Habitat; mo
           </p>
         </>
       )}
+      {hasCare(habitat) && <CareNow month={month} />}
     </div>
   );
 }

@@ -374,5 +374,17 @@
   "view.import": "Import",
   "view.now": "Jetzt",
   "view.overview": "Plan",
-  "view.recipes": "Rezepte"
+  "view.recipes": "Rezepte",
+  "care.title": "Pflege der Gilde",
+  "care.month": "Pflege in diesem Monat",
+  "care.none": "Diesen Monat keine Saisonarbeit; die Rhythmen unten laufen weiter.",
+  "care.rhythms": "Was im Rhythmus wiederkehrt",
+  "care.task": "Aufgabe",
+  "care.daily": "täglich",
+  "care.weekly": "wöchentlich",
+  "care.monthly": "monatlich",
+  "care.quarterly": "alle drei Monate",
+  "care.yearly": "einmal im Jahr",
+  "care.every": "alle {n} Tage",
+  "care.note": "Der Zwilling am Rand führt Buch über das Erledigte, schlägt die Aufgaben des Roboters vor und erinnert dich an deine; eine Reaktion des Wächters (voller Sumpf, Frost, Sturm) zieht eine Aufgabe vor."
 }

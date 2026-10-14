@@ -84,6 +84,13 @@ export function railItems(id: string, t: (key: string) => string): RailItem[] {
       // a bowl
       icon: icon(<><path d="M3 11h18a9 9 0 0 1-18 0z" /><path d="M8 7c0-1.5 1-2 1-3.5M12 7c0-1.5 1-2 1-3.5M16 7c0-1.5 1-2 1-3.5" /></>),
     },
+    {
+      key: "learn",
+      label: t("view.learn"),
+      href: `/w/${id}/learn/`,
+      // a loop: plan, do, check, act
+      icon: icon(<><path d="M20 12a8 8 0 1 1-2.3-5.7" /><path d="M20 4v4h-4" /><path d="M9 12l2 2 4-4" /></>),
+    },
   ];
 }
 

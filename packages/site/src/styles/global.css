@@ -1154,3 +1154,41 @@ a {
 .pt-care__mark { display: inline-block; width: 1rem; height: 0.75rem; padding: 0; }
 .pt-care__mark--person { background: var(--pt-warning); border-color: transparent; }
 .pt-care__mark--robot { background: var(--pt-accent); border-color: transparent; }
+
+/* a guild's water (docs/adr/0025) */
+.pt-water__flows { list-style: none; margin: var(--pt-space-2) 0; padding: 0; display: grid; gap: var(--pt-space-2); }
+.pt-water__flows li { display: flex; flex-wrap: wrap; align-items: center; gap: var(--pt-space-1); }
+.pt-water__arrow { color: var(--pt-accent); font-weight: 700; }
+.pt-water__num { width: 5.5rem; }
+.pt-water__worm::before { background: var(--pt-warning); }
+.pt-water__stores, .pt-water__budget { font-size: 0.8125rem; }
+.pt-water__budget td { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* the Learn view: plan-do-check-act cycles (docs/adr/0026) */
+.pt-learn { display: grid; gap: var(--pt-space-4); }
+.pt-learn__guild { display: grid; gap: var(--pt-space-3); }
+.pt-learn__cycle { border: 1px solid var(--pt-border-strong); border-left: 3px solid var(--pt-accent); border-radius: var(--pt-radius-sm);
+  padding: var(--pt-space-3) var(--pt-space-4); display: grid; gap: var(--pt-space-2); background: var(--pt-bg-sunken); }
+.pt-learn__head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--pt-space-2) var(--pt-space-3); }
+.pt-learn__phases { display: flex; gap: var(--pt-space-1); list-style: none; margin: 0; padding: 0; }
+.pt-learn__due { color: var(--pt-warning); font-weight: 600; }
+.pt-learn__hyps { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--pt-space-3); }
+.pt-learn__hyp { display: grid; gap: var(--pt-space-1); padding-top: var(--pt-space-2); border-top: 1px solid var(--pt-border); }
+.pt-learn__hyphead { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--pt-space-2); }
+.pt-learn__code { font-family: var(--pt-font-mono, monospace); font-size: 0.75rem; color: var(--pt-text-muted); min-width: 2em; }
+.pt-learn__verdict--VerdictHolds::before { background: var(--pt-success); }
+.pt-learn__verdict--VerdictFails::before { background: var(--pt-danger); }
+.pt-learn__verdict--VerdictOpen::before { background: var(--pt-text-muted); }
+.pt-learn__numbers { margin: 0; font-size: 0.875rem; }
+.pt-learn__num { width: 6rem; }
+.pt-learn__strip { position: relative; height: 1.1rem; border-radius: 999px; background: var(--pt-bg); border: 1px solid var(--pt-border); max-width: 28rem; }
+.pt-learn__range { position: absolute; top: 0; bottom: 0; background: color-mix(in srgb, var(--pt-success) 30%, transparent); }
+.pt-learn__expected { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--pt-success); }
+.pt-learn__dot { position: absolute; top: 50%; width: 0.7rem; height: 0.7rem; margin: -0.35rem 0 0 -0.35rem; border-radius: 50%;
+  background: var(--pt-text); border: 2px solid var(--pt-bg); }
+.pt-learn__dot--out { background: var(--pt-danger); }
+.pt-learn__why { font-size: 0.8125rem; }
+.pt-learn__why > summary { cursor: pointer; color: var(--pt-text-muted); }
+.pt-learn__checks { margin: 0; padding-left: 1.1em; font-size: 0.8125rem; }
+.pt-learn__add { display: flex; flex-wrap: wrap; gap: var(--pt-space-2); align-items: center; margin: 0; }
+.pt-learn__act { width: 100%; max-width: 40rem; }

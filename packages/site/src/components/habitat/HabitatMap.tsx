@@ -2,18 +2,19 @@ import * as React from "react";
 import {
   CITYDEMO_TTL, EXPOSURES, ROBOT_NAME, SUBSTRATE_KINDS, ZONE_KINDS, bedGrid, bedLoad, loadClass, newGuild, guildForBed, wormBinCols, cropById, cropName, defaultOffset, footprint, habitatFromTtl, newId, sowingJob,
 } from "@dlab5/permtek5-core";
-import type { Bed, Cell, CellStatus, Exposure, GardenPlant, Guild, Habitat, SubstrateKind, Zone, ZoneKind } from "@dlab5/permtek5-core";
+import type { Bed, Cell, CellStatus, ClimateMonth, Exposure, GardenPlant, Guild, Habitat, SubstrateKind, Zone, ZoneKind } from "@dlab5/permtek5-core";
 import { CELL_STATUSES } from "@dlab5/permtek5-core";
 import { useT } from "../../lib/i18n";
 import { CropSelect, cropColor, num } from "./common";
 import { FeedingGuide } from "./FeedingGuide";
+import { GuildWater } from "./GuildWater";
 
 type Edit = (f: (h: Habitat) => Habitat) => void;
 
 
 /** The site's areas (roof, garden …; perma:GardenZone), with each area's beds and garden plants. */
-export function HabitatMap({ habitat, edit, canEdit, replace }: {
-  habitat: Habitat; edit: Edit; canEdit: boolean; replace: (h: Habitat) => void;
+export function HabitatMap({ habitat, edit, canEdit, replace, months = null }: {
+  habitat: Habitat; edit: Edit; canEdit: boolean; replace: (h: Habitat) => void; months?: ClimateMonth[] | null;
 }) {
   const { t } = useT();
   const addZone = (kind: ZoneKind) => edit((h) => ({
@@ -36,7 +37,7 @@ export function HabitatMap({ habitat, edit, canEdit, replace }: {
           )}
         </div>
       )}
-      {habitat.zones.map((z) => <ZoneCard key={z.id} zone={z} habitat={habitat} edit={edit} canEdit={canEdit} />)}
+      {habitat.zones.map((z) => <ZoneCard key={z.id} zone={z} habitat={habitat} edit={edit} canEdit={canEdit} months={months} />)}
       {canEdit && habitat.zones.length > 0 && (
         <p className="pt-habitat__actions">
           <span className="pt-muted">{t("hab.add.area")}</span>
@@ -49,7 +50,7 @@ export function HabitatMap({ habitat, edit, canEdit, replace }: {
   );
 }
 
-function ZoneCard({ zone, habitat, edit, canEdit }: { zone: Zone; habitat: Habitat; edit: Edit; canEdit: boolean }) {
+function ZoneCard({ zone, habitat, edit, canEdit, months }: { zone: Zone; habitat: Habitat; edit: Edit; canEdit: boolean; months: ClimateMonth[] | null }) {
   const { t } = useT();
   const set = (patch: Partial<Zone>) => edit((h) => ({ ...h, zones: h.zones.map((z) => (z.id === zone.id ? { ...z, ...patch } : z)) }));
   const beds = habitat.beds.filter((b) => b.zoneId === zone.id);
@@ -100,7 +101,7 @@ function ZoneCard({ zone, habitat, edit, canEdit }: { zone: Zone; habitat: Habit
         ))}
       </div>
 
-      {guilds.map((g) => <GuildCard key={g.id} guild={g} habitat={habitat} edit={edit} canEdit={canEdit} />)}
+      {guilds.map((g) => <GuildCard key={g.id} guild={g} habitat={habitat} edit={edit} canEdit={canEdit} months={months} />)}
       {plainBeds.map((b) => <BedEditor key={b.id} bed={b} habitat={habitat} edit={edit} canEdit={canEdit} />)}
       {plants.length > 0 && <GardenPlants zone={zone} plants={plants} edit={edit} canEdit={canEdit} />}
 
@@ -125,7 +126,7 @@ function ZoneCard({ zone, habitat, edit, canEdit }: { zone: Zone; habitat: Habit
  * is made of (WormBed5: one bed with a worm box, worked by a Gantry5-gen1); the
  * bed editor inside sets the sizes.
  */
-function GuildCard({ guild, habitat, edit, canEdit }: { guild: Guild; habitat: Habitat; edit: Edit; canEdit: boolean }) {
+function GuildCard({ guild, habitat, edit, canEdit, months }: { guild: Guild; habitat: Habitat; edit: Edit; canEdit: boolean; months: ClimateMonth[] | null }) {
   const { t } = useT();
   const set = (patch: Partial<Guild>) => edit((h) => ({ ...h, guilds: (h.guilds ?? []).map((g) => (g.id === guild.id ? { ...g, ...patch } : g)) }));
   const beds = habitat.beds.filter((b) => b.guildId === guild.id);
@@ -145,10 +146,14 @@ function GuildCard({ guild, habitat, edit, canEdit }: { guild: Guild; habitat: H
       </label>
       {beds.map((b) => <BedEditor key={b.id} bed={b} habitat={habitat} edit={edit} canEdit={canEdit} />)}
       {guild.type === "WormBed5" && <FeedingGuide />}
+      <GuildWater guild={guild} habitat={habitat} edit={edit} canEdit={canEdit} months={months} />
       {canEdit && !planted && (
         <p className="pt-habitat__actions">
           <button className="pt-button pt-button--ghost" onClick={() => edit((h) => ({
             ...h, guilds: (h.guilds ?? []).filter((g) => g.id !== guild.id), beds: h.beds.filter((b) => b.guildId !== guild.id),
+            // its water and what it was learning go with it
+            catchments: (h.catchments ?? []).filter((c) => c.guildId !== guild.id), stores: (h.stores ?? []).filter((s) => s.guildId !== guild.id),
+            valves: (h.valves ?? []).filter((v) => v.guildId !== guild.id), cycles: (h.cycles ?? []).filter((c) => c.aboutId !== guild.id),
           }))}>{t("hab.remove.guild")}</button>
         </p>
       )}

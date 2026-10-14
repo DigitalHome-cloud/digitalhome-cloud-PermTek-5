@@ -6,6 +6,7 @@ import { HabitatMap } from "../components/habitat/HabitatMap";
 import { HabitatRecipes } from "../components/habitat/HabitatRecipes";
 import { HabitatCalendar, HabitatNow } from "../components/habitat/HabitatCalendar";
 import { HabitatTransfer } from "../components/habitat/HabitatTransfer";
+import { HabitatLearn } from "../components/habitat/HabitatLearn";
 import { SaveBar } from "../components/habitat/common";
 import { getSpace, spaceTitle } from "../lib/data";
 import type { Space } from "../lib/data";
@@ -36,6 +37,7 @@ const VIEWS = [
   "calendar",
   "now",
   "recipes",
+  "learn",
   "import",
   "export",
 ] as const;
@@ -147,10 +149,11 @@ function ViewBody({ view, space }: { view: View; space: Space }) {
     <>
       {canEdit && <SaveBar dirty={hab.dirty} saving={hab.saving} onSave={() => hab.save()} onDiscard={hab.discard} />}
       {!canEdit && <p className="pt-muted">{t("hab.readonly")}</p>}
-      {view === "overview" && <HabitatMap habitat={h} edit={hab.edit} canEdit={canEdit} replace={hab.replace} />}
+      {view === "overview" && <HabitatMap habitat={h} edit={hab.edit} canEdit={canEdit} replace={hab.replace} months={area.months} />}
       {view === "calendar" && <HabitatCalendar habitat={h} months={area.months} areaName={area.areaName} />}
       {view === "now" && <HabitatNow habitat={h} months={area.months} areaName={area.areaName} />}
       {view === "recipes" && <HabitatRecipes habitat={h} edit={hab.edit} canEdit={canEdit} months={area.months} areaName={area.areaName} />}
+      {view === "learn" && <HabitatLearn habitat={h} edit={hab.edit} canEdit={canEdit} months={area.months} />}
       {(view === "import" || view === "export") && <HabitatTransfer habitat={h} canEdit={canEdit} replace={hab.replace} mode={view} />}
     </>
   );

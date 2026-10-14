@@ -6,6 +6,7 @@
  */
 import { mintId } from "./identity.js";
 import { cropById } from "./library.js";
+import type { LearningCycle } from "./learning.js";
 import type { Recipe } from "./recipes.js";
 
 export const HABITAT_IRI = "https://permtek-5.digitalhome.cloud/id/";
@@ -62,6 +63,20 @@ export interface GardenPlant {
   plantedYear?: number; rootstock?: string; xM?: number; yM?: number;
 }
 
+/** A guild's water (docs/adr/0025, water.ts). A store says what it may hold; worm liquid never goes into clean water. */
+export type StoreKind = "RainBarrel" | "TankPipes" | "WormBoxSump" | "GardenTank";
+export const STORE_KINDS: StoreKind[] = ["RainBarrel", "TankPipes", "WormBoxSump", "GardenTank"];
+export type WaterKind = "CleanWater" | "WormLiquid";
+export const WATER_KINDS: WaterKind[] = ["CleanWater", "WormLiquid"];
+export type ValveKind = "ManualTap" | "EdgeValve";
+export const VALVE_KINDS: ValveKind[] = ["ManualTap", "EdgeValve"];
+/** A roof (or other surface) whose rain goes, by its gutter, into a store. */
+export interface RainCatchment { id: string; name: string; guildId: string; zoneId?: string; m2: number; runoff?: number; storeId: string }
+/** A barrel, the bed's tank pipes, the worm box's sump, a garden tank. It stands in its guild's area unless `zoneId` says. */
+export interface WaterStore { id: string; name: string; guildId: string; zoneId?: string; kind: StoreKind; capacityL?: number; holds: WaterKind[]; overflowTo?: string }
+/** A tap from one store to another: a person opens a manual one; the edge opens an edge valve, after a person confirmed. */
+export interface Valve { id: string; name: string; guildId: string; from: string; to: string; kind: ValveKind }
+
 export interface Habitat {
   zones: Zone[];
   guilds: Guild[];
@@ -70,13 +85,19 @@ export interface Habitat {
   plants: GardenPlant[];
   /** The household's own recipes (recipes.ts): what it wants to eat, and so what it plants. Absent when it has none. */
   recipes?: Recipe[];
+  /** The guilds' water (water.ts). Absent when none is mapped. */
+  catchments?: RainCatchment[];
+  stores?: WaterStore[];
+  valves?: Valve[];
+  /** What the habitat is learning (learning.ts): plan-do-check-act cycles about its guilds. Absent when none. */
+  cycles?: LearningCycle[];
   /** Triples about anything else in the graph, as N-Triples: kept as they are on every save. */
   rest: string;
 }
 
 export const emptyHabitat = (): Habitat => ({ zones: [], guilds: [], beds: [], cells: [], plants: [], rest: "" });
 
-export const newId = (kind: "zone" | "guild" | "bed" | "cell" | "plant" | "recipe") =>
+export const newId = (kind: "zone" | "guild" | "bed" | "cell" | "plant" | "recipe" | "rain" | "store" | "valve" | "cycle" | "hyp" | "measure" | "check") =>
   `${HABITAT_IRI}${kind}-${mintId(kind[0])}`;
 
 /** A roof is about a degree warmer than the street; elsewhere start at 0. */
@@ -131,7 +152,8 @@ export function wormBinCols(b: Bed): number {
 export const zoneOffset = (h: Habitat, zoneId: string) => h.zones.find((z) => z.id === zoneId)?.offsetC ?? 0;
 
 export interface Problem {
-  code: "cellOutside" | "cellTwice" | "cellInBin" | "noZone" | "noBed" | "noGuild" | "guildBeds" | "unknownCrop";
+  code: "cellOutside" | "cellTwice" | "cellInBin" | "noZone" | "noBed" | "noGuild" | "guildBeds" | "unknownCrop"
+    | "waterNoGuild" | "valveEnds" | "wormIntoClean" | "rainNoStore";
   id: string;
 }
 
@@ -153,6 +175,17 @@ export function checkHabitat(h: Habitat): Problem[] {
   for (const p of h.plants) {
     if (!zones.has(p.zoneId)) problems.push({ code: "noZone", id: p.id });
     if (!cropById(p.cropId)) problems.push({ code: "unknownCrop", id: p.id });
+  }
+  // the water: every part in a guild of the site, valves joining two stores, worm liquid kept out of clean water
+  const stores = new Map((h.stores ?? []).map((s) => [s.id, s]));
+  for (const x of [...(h.catchments ?? []), ...(h.stores ?? []), ...(h.valves ?? [])]) {
+    if (!guilds.has(x.guildId)) problems.push({ code: "waterNoGuild", id: x.id });
+  }
+  for (const c of h.catchments ?? []) if (!stores.has(c.storeId)) problems.push({ code: "rainNoStore", id: c.id });
+  for (const v of h.valves ?? []) {
+    const from = stores.get(v.from), to = stores.get(v.to);
+    if (!from || !to || v.from === v.to) problems.push({ code: "valveEnds", id: v.id });
+    else if (from.holds.includes("WormLiquid") && !to.holds.includes("WormLiquid")) problems.push({ code: "wormIntoClean", id: v.id });
   }
   const seen = new Set<string>();
   for (const c of h.cells) {

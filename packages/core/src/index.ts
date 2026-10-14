@@ -36,12 +36,18 @@ export type { Activity, CropMix, CropNeeds, LibraryCrop, TypicalWindow } from ".
 export { FROST_RISK_MIN_C, activitiesIn, deriveWindows } from "./calendar.js";
 export type { CropCalendar } from "./calendar.js";
 export {
-  CELL_STATUSES, EXPOSURES, GUILD_ROBOT, GUILD_TYPES, HABITAT_IRI, ROBOT_NAME, SUBSTRATE_KINDS, ZONE_KINDS,
+  CELL_STATUSES, EXPOSURES, GUILD_ROBOT, GUILD_TYPES, HABITAT_IRI, ROBOT_NAME, STORE_KINDS, SUBSTRATE_KINDS, VALVE_KINDS, WATER_KINDS, ZONE_KINDS,
   bedGrid, checkHabitat, defaultOffset, emptyHabitat, footprint, newGuild, guildForBed, WORMBED5, newId, sowingJob, wormBinCols, zoneOffset,
 } from "./habitatModel.js";
 export type {
-  Bed, Cell, CellStatus, Exposure, GardenPlant, Guild, GuildType, Habitat, Problem, RobotModel, SowingJob, SubstrateKind, Zone, ZoneKind,
+  Bed, Cell, CellStatus, Exposure, GardenPlant, Guild, GuildType, Habitat, Problem, RainCatchment, RobotModel, SowingJob, StoreKind, SubstrateKind,
+  Valve, ValveKind, WaterKind, WaterStore, Zone, ZoneKind,
 } from "./habitatModel.js";
+export { WORMBED5_WATER, defaultWater, rainLitres, useMmPerDay, waterBudget } from "./water.js";
+export type { WaterMonth } from "./water.js";
+export { PHASES, VERDICTS, adoptStarter, checksDue, nextCycle, nextPhase, say, verdict } from "./learning.js";
+export type { Check, Hypothesis, Lang, LearningCycle, Measure, Phase, StarterGuide, Texts, Verdict } from "./learning.js";
+export { SIZING_GUIDE } from "./sizingGuide.generated.js";
 export { habitatFromTtl, habitatToTtl } from "./habitatGraph.js";
 export { whatNow } from "./now.js";
 export { FEEDING_GUIDE } from "./feedingGuide.generated.js";

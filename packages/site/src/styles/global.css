@@ -1146,3 +1146,11 @@ a {
 .pt-yeartable th, .pt-yeartable td { text-align: left; vertical-align: top; padding: var(--pt-space-1) var(--pt-space-2); border-top: 1px solid var(--pt-border); }
 .pt-yeartable tbody tr { cursor: pointer; }
 .pt-yeartable__at { background: var(--pt-surface-raised); }
+
+/* the care calendar of a WormBed5 guild (docs/adr/0024): who does a task, and its months */
+.pt-care { display: grid; gap: var(--pt-space-2); margin-top: var(--pt-space-4); }
+.pt-care__who { display: inline-block; min-width: 3.5rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--pt-text-muted); }
+.pt-care__task--robot .pt-care__who { color: var(--pt-accent); }
+.pt-care__mark { display: inline-block; width: 1rem; height: 0.75rem; padding: 0; }
+.pt-care__mark--person { background: var(--pt-warning); border-color: transparent; }
+.pt-care__mark--robot { background: var(--pt-accent); border-color: transparent; }

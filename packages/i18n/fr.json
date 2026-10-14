@@ -374,5 +374,17 @@
   "view.import": "Importer",
   "view.now": "Maintenant",
   "view.overview": "Plan",
-  "view.recipes": "Recettes"
+  "view.recipes": "Recettes",
+  "care.title": "Entretien de la guilde",
+  "care.month": "Entretien ce mois-ci",
+  "care.none": "Pas de travail de saison ce mois-ci ; les rythmes ci-dessous continuent.",
+  "care.rhythms": "Ce qui revient à un rythme",
+  "care.task": "Tâche",
+  "care.daily": "chaque jour",
+  "care.weekly": "chaque semaine",
+  "care.monthly": "chaque mois",
+  "care.quarterly": "tous les trois mois",
+  "care.yearly": "une fois par an",
+  "care.every": "tous les {n} jours",
+  "care.note": "Le jumeau en périphérie tient le registre de ce qui est fait, propose les tâches du robot et vous rappelle les vôtres ; une réaction du gardien (puisard plein, gel, tempête) avance une tâche."
 }

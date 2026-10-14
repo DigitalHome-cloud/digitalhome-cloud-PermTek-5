@@ -374,5 +374,17 @@
   "view.import": "Import",
   "view.now": "Now",
   "view.overview": "Map",
-  "view.recipes": "Recipes"
+  "view.recipes": "Recipes",
+  "care.title": "Care of the guild",
+  "care.month": "Care this month",
+  "care.none": "No seasonal work this month; the rhythms below go on.",
+  "care.rhythms": "What comes round by a rhythm",
+  "care.task": "Task",
+  "care.daily": "every day",
+  "care.weekly": "every week",
+  "care.monthly": "every month",
+  "care.quarterly": "every three months",
+  "care.yearly": "once a year",
+  "care.every": "every {n} days",
+  "care.note": "The twin edge keeps the record of what was done, proposes the robot's tasks and reminds you of yours; a reaction of the keeper (a full sump, frost, a storm) brings a task forward."
 }

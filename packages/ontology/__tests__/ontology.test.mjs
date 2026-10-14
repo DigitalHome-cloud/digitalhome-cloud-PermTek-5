@@ -47,8 +47,9 @@ test("a thing without a name, or with a type from no scheme, does not", async ()
 // The habitat module (zones, beds, cells, garden plants): validated as the
 // graph Lambda does, with the habitat shapes and concepts and no crop library.
 async function validateHabitat(abox) {
-  const shapes = rdf.dataset(); shapes.addAll(parse(read("shapes/perma-habitat-shapes.ttl")));
+  const shapes = rdf.dataset(); shapes.addAll(parse(read("shapes/perma-habitat-shapes.ttl"))); shapes.addAll(parse(read("shapes/perma-learning-shapes.ttl")));
   const data = rdf.dataset(); data.addAll(parse(abox)); data.addAll(parse(read("tbox/perma-habitat-concepts.ttl")));
+  data.addAll(parse(read("tbox/perma-learning-concepts.ttl")));
   return new SHACLValidator(shapes, { factory: rdf }).validate(data);
 }
 const messages = (r) => r.results.map((x) => x.message?.[0]?.value).join("; ");
@@ -119,4 +120,59 @@ id:zone-z-1 a perma:GardenZone ; rdfs:label "Roof" ; perma:zoneKind perma:RoofZo
     P + `id:guild-g-1 a perma:Guild ; rdfs:label "x" ; perma:inZone id:zone-z-1 ; perma:guildType perma:WormBed5 ; perma:robotModel perma:WormBed5 .`,
     P + guild + bed("; perma:inGuild id:zone-z-1"),
   ]) assert.equal((await validateHabitat(bad)).conforms, false, bad.slice(-120));
+});
+
+// ------------------------------------------------------------ water and learning (docs/adr/0025, 0026)
+
+const W = `${H}id:guild-g-1 a perma:Guild ; rdfs:label "Guild" ; perma:inZone id:zone-z-1 ; perma:guildType perma:WormBed5 .
+id:store-s-barrel a perma:WaterStore ; rdfs:label "Barrel" ; perma:inGuild id:guild-g-1 ; perma:storeKind perma:RainBarrel ;
+  perma:capacityL 200.0 ; perma:holds perma:CleanWater .
+id:store-s-sump a perma:WaterStore ; rdfs:label "Sump" ; perma:inGuild id:guild-g-1 ; perma:storeKind perma:WormBoxSump ;
+  perma:capacityL 14.4 ; perma:holds perma:WormLiquid .
+id:store-s-pipes a perma:WaterStore ; rdfs:label "Pipes" ; perma:inGuild id:guild-g-1 ; perma:storeKind perma:TankPipes ;
+  perma:holds perma:CleanWater , perma:WormLiquid .
+`;
+
+test("the learning module parses and its concepts are labelled in EN, DE and FR", () => {
+  for (const f of ["tbox/perma-learning.ttl", "tbox/perma-learning-concepts.ttl", "shapes/perma-learning-shapes.ttl"]) assert.ok(parse(read(f)).length > 10, f);
+  const s = new N3.Store(parse(read("tbox/perma-learning-concepts.ttl")));
+  const SKOS = "http://www.w3.org/2004/02/skos/core#";
+  for (const c of s.getSubjects("http://www.w3.org/1999/02/22-rdf-syntax-ns#type", SKOS + "Concept", null)) {
+    const langs = s.getObjects(c, SKOS + "prefLabel", null).map((o) => o.language);
+    for (const l of ["en", "de", "fr"]) assert.ok(langs.includes(l), `${c.value} has no @${l} prefLabel`);
+  }
+});
+
+test("water flows: worm liquid may go to the tank pipes, never into the clean rain barrel", async () => {
+  const ok = await validateHabitat(`${W}id:valve-v-1 a perma:Valve ; rdfs:label "Sump to bed" ; perma:inGuild id:guild-g-1 ;
+    perma:flowFrom id:store-s-sump ; perma:flowTo id:store-s-pipes ; perma:valveKind perma:EdgeValve .
+    id:valve-v-2 a perma:Valve ; rdfs:label "Barrel tap" ; perma:inGuild id:guild-g-1 ;
+    perma:flowFrom id:store-s-barrel ; perma:flowTo id:store-s-pipes ; perma:valveKind perma:ManualTap .`);
+  assert.ok(ok.conforms, messages(ok));
+  const bad = await validateHabitat(`${W}id:valve-v-1 a perma:Valve ; rdfs:label "Wrong way" ; perma:inGuild id:guild-g-1 ;
+    perma:flowFrom id:store-s-sump ; perma:flowTo id:store-s-barrel ; perma:valveKind perma:EdgeValve .`);
+  assert.equal(bad.conforms, false);
+  assert.match(messages(bad), /Worm liquid never flows into a store kept for clean water/);
+  const noEnd = await validateHabitat(`${W}id:valve-v-1 a perma:Valve ; rdfs:label "Half" ; perma:inGuild id:guild-g-1 ;
+    perma:flowFrom id:store-s-sump ; perma:valveKind perma:EdgeValve .`);
+  assert.equal(noEnd.conforms, false, "a valve joins two stores");
+});
+
+const L = `${W}@prefix xsd: <http://www.w3.org/2001/XMLSchema#> . @prefix sosa: <http://www.w3.org/ns/sosa/> .
+id:measure-m-1 a perma:Measure ; rdfs:label "Liquid out"@en ; perma:everyDays 30 ; perma:reading "wormBin.sumpL" .
+id:cycle-y-1 a perma:LearningCycle ; rdfs:label "Sizing"@en ; perma:about id:guild-g-1 ; perma:cyclePhase perma:PlanPhase ;
+  perma:hasHypothesis id:hyp-h-1 .
+`;
+
+test("a hypothesis has its range around the number expected, a unit and a measure; a check a number and a day", async () => {
+  const hyp = (low, exp, high) => `id:hyp-h-1 a perma:Hypothesis ; rdfs:label "Liquid per kg"@en ; perma:expected ${exp} ;
+    perma:low ${low} ; perma:high ${high} ; perma:unit "l/kg" ; perma:measuredBy id:measure-m-1 ; perma:verdict perma:VerdictOpen .`;
+  const ok = await validateHabitat(`${L}${hyp("0.05", "0.15", "0.30")}
+    id:check-k-1 a perma:Check ; perma:ofHypothesis id:hyp-h-1 ; sosa:hasSimpleResult 0.12 ; sosa:resultTime "2026-05-01"^^xsd:date ; perma:checkedBy "person" .`);
+  assert.ok(ok.conforms, messages(ok));
+  assert.equal((await validateHabitat(`${L}${hyp("0.40", "0.15", "0.30")}`)).conforms, false, "lowest above expected");
+  assert.equal((await validateHabitat(`${L}${hyp("0.05", "0.35", "0.30")}`)).conforms, false, "expected above highest");
+  assert.equal((await validateHabitat(`${L}${hyp("0.05", "0.15", "0.30")}
+    id:check-k-1 a perma:Check ; perma:ofHypothesis id:hyp-h-1 ; sosa:hasSimpleResult 0.12 .`)).conforms, false, "a check without its day");
+  assert.equal((await validateHabitat(`${L}id:cycle-y-1 perma:cyclePhase perma:Nonsense .`)).conforms, false, "a phase from no scheme");
 });

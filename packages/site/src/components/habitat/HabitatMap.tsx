@@ -1,10 +1,11 @@
 import * as React from "react";
 import {
-  CITYDEMO_TTL, EXPOSURES, ROBOT_NAME, SUBSTRATE_KINDS, ZONE_KINDS, bedGrid, bedLoad, loadClass, newGuild, guildForBed, wormBinCols, cropById, cropName, defaultOffset, footprint, habitatFromTtl, newId, sowingJob,
-  crowdedCells, layerOf, plantingConflict,
+  EXPOSURES, ROBOT_NAME, SUBSTRATE_KINDS, WORMBED5_SIZES, bedGrid, bedLoad, loadClass, guildForBed, wormBinCols, cropById, cropName, footprint, newId, sowingJob,
+  crowdedCells, layerOf, plantingConflict, wormBoxCm, wormBoxYear,
 } from "@dlab5/permtek5-core";
 import type { Bed, Cell, CellStatus, ClimateMonth, Exposure, GardenPlant, Guild, Habitat, SubstrateKind, Zone, ZoneKind } from "@dlab5/permtek5-core";
-import { FarmCard, NewFarm } from "./FarmCard";
+import { FarmCard } from "./FarmCard";
+import { NewWormBed, PLACES, Pick, boxOptions } from "./NewWormBed";
 import { PlanFromSets } from "./PlantSets";
 import { CELL_STATUSES } from "@dlab5/permtek5-core";
 import { useT } from "../../lib/i18n";
@@ -15,42 +16,30 @@ import { GuildWater } from "./GuildWater";
 type Edit = (f: (h: Habitat) => Habitat) => void;
 
 
-/** The site's areas (roof, garden …; perma:GardenZone), with each area's beds and garden plants. */
-export { BedEditor };
+/**
+ * The site's WormBed5 guilds, by area (docs/adr/0028). A map starts empty: a person says what they build (one
+ * WormBed5 or a farm of them), where it stands and how big, and plans it from plant sets. Other uses come later.
+ */
+export { BedEditor, GuildCard };
 
-export function HabitatMap({ habitat, edit, canEdit, replace, months = null }: {
-  habitat: Habitat; edit: Edit; canEdit: boolean; replace: (h: Habitat) => void; months?: ClimateMonth[] | null;
+export function HabitatMap({ habitat, edit, canEdit, months = null }: {
+  habitat: Habitat; edit: Edit; canEdit: boolean; replace?: (h: Habitat) => void; months?: ClimateMonth[] | null;
 }) {
   const { t } = useT();
-  const addZone = (kind: ZoneKind) => edit((h) => ({
-    ...h, zones: [...h.zones, { id: newId("zone"), name: t(`hab.kind.${kind}`), kind, exposure: [], offsetC: defaultOffset(kind) }],
-  }));
+  const [adding, setAdding] = React.useState(false);
+  const empty = habitat.zones.length === 0;
   return (
     <div className="pt-habitat">
-      {habitat.zones.length === 0 && (
-        <div className="pt-empty">
-          <p>{t("hab.empty")}</p>
-          {canEdit && (
-            <p className="pt-habitat__actions">
-              {ZONE_KINDS.map((k) => (
-                <button key={k} className="pt-button" onClick={() => addZone(k)}>+ {t(`hab.kind.${k}`)}</button>
-              ))}
-              <button className="pt-button pt-button--ghost" onClick={() => replace({ ...habitatFromTtl(CITYDEMO_TTL), rest: habitat.rest })}>
-                {t("hab.example")}
-              </button>
-            </p>
-          )}
-        </div>
-      )}
+      <details className="pt-howto" open={empty}>
+        <summary>{t("wb.how")}</summary>
+        <ol>{[1, 2, 3, 4, 5].map((n) => <li key={n}>{t(`wb.how.${n}`)}</li>)}</ol>
+      </details>
+      {empty && !canEdit && <p className="pt-empty">{t("hab.empty")}</p>}
+      {empty && canEdit && <NewWormBed habitat={habitat} edit={edit} />}
       {habitat.zones.map((z) => <ZoneCard key={z.id} zone={z} habitat={habitat} edit={edit} canEdit={canEdit} months={months} />)}
-      {canEdit && habitat.zones.length > 0 && (
-        <p className="pt-habitat__actions">
-          <span className="pt-muted">{t("hab.add.area")}</span>
-          {ZONE_KINDS.map((k) => (
-            <button key={k} className="pt-button pt-button--ghost" onClick={() => addZone(k)}>+ {t(`hab.kind.${k}`)}</button>
-          ))}
-        </p>
-      )}
+      {canEdit && !empty && (adding
+        ? <NewWormBed habitat={habitat} edit={edit} onDone={() => setAdding(false)} />
+        : <p className="pt-habitat__actions"><button className="pt-button" onClick={() => setAdding(true)}>+ {t("wb.add")}</button></p>)}
     </div>
   );
 }
@@ -61,22 +50,12 @@ function ZoneCard({ zone, habitat, edit, canEdit, months }: { zone: Zone; habita
   const beds = habitat.beds.filter((b) => b.zoneId === zone.id);
   const plants = habitat.plants.filter((p) => p.zoneId === zone.id);
   const empty = !beds.length && !plants.length && !(habitat.guilds ?? []).some((g) => g.zoneId === zone.id) && !(habitat.farms ?? []).some((f) => f.zoneId === zone.id);
-  const [farming, setFarming] = React.useState(false);
   const toggle = (e: Exposure) => set({ exposure: zone.exposure.includes(e) ? zone.exposure.filter((x) => x !== e) : [...zone.exposure, e].sort() });
-  const addBed = () => edit((h) => ({
-    ...h, beds: [...h.beds, { id: newId("bed"), name: t("hab.bed.default"), zoneId: zone.id, lengthCm: 300, widthCm: 100, depthCm: 15, cellCm: 10,
-      substrate: zone.kind === "GroundZone" ? "GardenSoil" as SubstrateKind : "LightweightRoofSubstrate" as SubstrateKind }],
-  }));
-  const guilds = (habitat.guilds ?? []).filter((g) => g.zoneId === zone.id);
   const farms = (habitat.farms ?? []).filter((f) => f.zoneId === zone.id);
+  // a farm's guilds show in the farm
+  const inFarm = new Set(beds.filter((b) => b.farmId && farms.some((f) => f.id === b.farmId)).map((b) => b.guildId));
+  const guilds = (habitat.guilds ?? []).filter((g) => g.zoneId === zone.id && !inFarm.has(g.id));
   const plainBeds = beds.filter((b) => (!b.guildId || !guilds.some((g) => g.id === b.guildId)) && (!b.farmId || !farms.some((f) => f.id === b.farmId)));
-  const addGuild = () => edit((h) => {
-    const made = newGuild(zone, t("hab.guild.default", { area: zone.name }), t("hab.bed.default"));
-    return { ...h, guilds: [...(h.guilds ?? []), made.guild], beds: [...h.beds, made.bed] };
-  });
-  const addPlant = () => edit((h) => ({
-    ...h, plants: [...h.plants, { id: newId("plant"), name: t("hab.plant.default"), zoneId: zone.id, cropId: "crop-pear" }],
-  }));
 
   return (
     <section className="pt-panel" aria-label={zone.name}>
@@ -89,7 +68,7 @@ function ZoneCard({ zone, habitat, edit, canEdit, months }: { zone: Zone; habita
       <div className="pt-habitat__fields">
         <label className="pt-field"><span>{t("hab.kind")}</span>
           <select value={zone.kind} disabled={!canEdit} onChange={(e) => set({ kind: e.target.value as ZoneKind })}>
-            {ZONE_KINDS.map((k) => <option key={k} value={k}>{t(`hab.kind.${k}`)}</option>)}
+            {(PLACES.includes(zone.kind) ? PLACES : [...PLACES, zone.kind]).map((k) => <option key={k} value={k}>{t(`hab.kind.${k}`)}</option>)}
           </select>
         </label>
         <label className="pt-field"><span>{t("hab.area")}</span>
@@ -109,22 +88,15 @@ function ZoneCard({ zone, habitat, edit, canEdit, months }: { zone: Zone; habita
       </div>
 
       {guilds.map((g) => <GuildCard key={g.id} guild={g} habitat={habitat} edit={edit} canEdit={canEdit} months={months} />)}
-      {farms.map((f) => <FarmCard key={f.id} farm={f} habitat={habitat} edit={edit} canEdit={canEdit} />)}
+      {farms.map((f) => <FarmCard key={f.id} farm={f} habitat={habitat} edit={edit} canEdit={canEdit} months={months} />)}
       {plainBeds.map((b) => <BedEditor key={b.id} bed={b} habitat={habitat} edit={edit} canEdit={canEdit} />)}
       {plants.length > 0 && <GardenPlants zone={zone} plants={plants} edit={edit} canEdit={canEdit} />}
 
-      {canEdit && farming && <NewFarm zone={zone} edit={edit} onDone={() => setFarming(false)} />}
-      {canEdit && (
+      {canEdit && empty && (
         <p className="pt-habitat__actions">
-          <button className="pt-button" onClick={addGuild}>+ {t("hab.add.guild")}</button>
-          <button className="pt-button pt-button--ghost" onClick={addBed}>+ {t("hab.add.bed")}</button>
-          <button className="pt-button pt-button--ghost" onClick={() => setFarming(true)} aria-expanded={farming}>+ {t("farm.add")}</button>
-          <button className="pt-button pt-button--ghost" onClick={addPlant}>+ {t("hab.add.plant")}</button>
-          {empty && (
-            <button className="pt-button pt-button--ghost" onClick={() => edit((h) => ({ ...h, zones: h.zones.filter((z) => z.id !== zone.id) }))}>
-              {t("hab.remove.zone")}
-            </button>
-          )}
+          <button className="pt-button pt-button--ghost" onClick={() => edit((h) => ({ ...h, zones: h.zones.filter((z) => z.id !== zone.id) }))}>
+            {t("hab.remove.zone")}
+          </button>
         </p>
       )}
     </section>
@@ -136,7 +108,9 @@ function ZoneCard({ zone, habitat, edit, canEdit, months }: { zone: Zone; habita
  * is made of (WormBed5: one bed with a worm box, worked by a Gantry5-gen1); the
  * bed editor inside sets the sizes.
  */
-function GuildCard({ guild, habitat, edit, canEdit, months }: { guild: Guild; habitat: Habitat; edit: Edit; canEdit: boolean; months: ClimateMonth[] | null }) {
+function GuildCard({ guild, habitat, edit, canEdit, months, inFarm = false }: {
+  guild: Guild; habitat: Habitat; edit: Edit; canEdit: boolean; months: ClimateMonth[] | null; inFarm?: boolean;
+}) {
   const { t } = useT();
   const set = (patch: Partial<Guild>) => edit((h) => ({ ...h, guilds: (h.guilds ?? []).map((g) => (g.id === guild.id ? { ...g, ...patch } : g)) }));
   const beds = habitat.beds.filter((b) => b.guildId === guild.id);
@@ -156,7 +130,7 @@ function GuildCard({ guild, habitat, edit, canEdit, months }: { guild: Guild; ha
       {beds.map((b) => <BedEditor key={b.id} bed={b} habitat={habitat} edit={edit} canEdit={canEdit} />)}
       {guild.type === "WormBed5" && <FeedingGuide />}
       <GuildWater guild={guild} habitat={habitat} edit={edit} canEdit={canEdit} months={months} />
-      {canEdit && (
+      {canEdit && !inFarm && (
         <p className="pt-habitat__actions">
           <ConfirmButton label={t("hab.remove.guild")}
             says={t("hab.remove.guild.says", {
@@ -204,6 +178,10 @@ function BedEditor({ bed, habitat, edit, canEdit }: { bed: Bed; habitat: Habitat
   const zone = habitat.zones.find((z) => z.id === bed.zoneId);
   const load = bedLoad(bed);
   // what a roof carries matters on a roof or a balcony, not on the ground
+  // a WormBed5 is sized from what is offered, its worm box by the household it takes scraps from (docs/adr/0028)
+  const guided = !!bed.guildId;
+  const year = wormBoxYear(bed);
+  const people = boxOptions(bed.widthCm, bed.lengthCm).find((o) => o.cm === bed.wormBinCm)?.n;
   const onRoof = ["RoofZone", "BalconyZone"].includes(habitat.zones.find((z) => z.id === bed.zoneId)?.kind ?? "");
   const click = (row: number, col: number, force = false) => {
     const here = at.get(`${row}|${col}`);
@@ -230,18 +208,29 @@ function BedEditor({ bed, habitat, edit, canEdit }: { bed: Bed; habitat: Habitat
         <label className="pt-field"><span>{t("hab.name")}</span>
           <input value={bed.name} disabled={!canEdit} onChange={(e) => setBed({ name: e.target.value })} />
         </label>
-        <label className="pt-field"><span>{t("hab.bed.length")}</span>
-          <input type="number" min={10} step={10} disabled={!canEdit} value={bed.lengthCm} onChange={(e) => setBed({ lengthCm: num(e.target.value) ?? bed.lengthCm })} />
-        </label>
-        <label className="pt-field"><span>{t("hab.bed.width")}</span>
-          <input type="number" min={10} step={10} disabled={!canEdit} value={bed.widthCm} onChange={(e) => setBed({ widthCm: num(e.target.value) ?? bed.widthCm })} />
-        </label>
-        <label className="pt-field"><span>{t("hab.bed.depth")}</span>
-          <input type="number" min={0} step={5} disabled={!canEdit} value={bed.depthCm ?? ""} onChange={(e) => setBed({ depthCm: num(e.target.value) })} />
-        </label>
-        <label className="pt-field"><span>{t("hab.bed.cell")}</span>
-          <input type="number" min={5} max={100} step={5} disabled={!canEdit} value={bed.cellCm} onChange={(e) => setBed({ cellCm: num(e.target.value) ?? bed.cellCm })} />
-        </label>
+        {guided ? (
+          <>
+            {/* a WormBed5 takes the sizes the gantry works (docs/adr/0028); a farm's beds share the farm's size */}
+            <Pick label={t("hab.bed.length")} value={bed.lengthCm} options={WORMBED5_SIZES.lengthsCm} unit="cm" disabled={!canEdit || !!bed.farmId} on={(v) => setBed({ lengthCm: v })} />
+            <Pick label={t("hab.bed.width")} value={bed.widthCm} options={WORMBED5_SIZES.widthsCm} unit="cm" disabled={!canEdit || !!bed.farmId} on={(v) => setBed({ widthCm: v })} />
+            <Pick label={t("hab.bed.depth")} value={bed.depthCm ?? 15} options={WORMBED5_SIZES.depthsCm} unit="cm" disabled={!canEdit} on={(v) => setBed({ depthCm: v })} />
+          </>
+        ) : (
+          <>
+            <label className="pt-field"><span>{t("hab.bed.length")}</span>
+              <input type="number" min={10} step={10} disabled={!canEdit} value={bed.lengthCm} onChange={(e) => setBed({ lengthCm: num(e.target.value) ?? bed.lengthCm })} />
+            </label>
+            <label className="pt-field"><span>{t("hab.bed.width")}</span>
+              <input type="number" min={10} step={10} disabled={!canEdit} value={bed.widthCm} onChange={(e) => setBed({ widthCm: num(e.target.value) ?? bed.widthCm })} />
+            </label>
+            <label className="pt-field"><span>{t("hab.bed.depth")}</span>
+              <input type="number" min={0} step={5} disabled={!canEdit} value={bed.depthCm ?? ""} onChange={(e) => setBed({ depthCm: num(e.target.value) })} />
+            </label>
+            <label className="pt-field"><span>{t("hab.bed.cell")}</span>
+              <input type="number" min={5} max={100} step={5} disabled={!canEdit} value={bed.cellCm} onChange={(e) => setBed({ cellCm: num(e.target.value) ?? bed.cellCm })} />
+            </label>
+          </>
+        )}
         <label className="pt-field"><span>{t("hab.bed.substrate")}</span>
           <select value={bed.substrate ?? "LightweightRoofSubstrate"} disabled={!canEdit} onChange={(e) => setBed({ substrate: e.target.value as SubstrateKind })}>
             {SUBSTRATE_KINDS.map((k) => <option key={k} value={k}>{t(`hab.sub.${k}`)}</option>)}
@@ -255,9 +244,18 @@ function BedEditor({ bed, habitat, edit, canEdit }: { bed: Bed; habitat: Habitat
             {[50, 75, 110, 125, 160].map((d) => <option key={d} value={d}>{d}</option>)}
           </select>
         </label>
-        <label className="pt-field"><span>{t("hab.bed.worm")}</span>
-          <input type="number" min={0} step={10} disabled={!canEdit} value={bed.wormBinCm ?? 0} onChange={(e) => setBed({ wormBinCm: num(e.target.value) ?? 0 })} />
-        </label>
+        {guided ? (
+          <label className="pt-field"><span>{t("wb.box.people")}</span>
+            <select value={people ?? ""} disabled={!canEdit} onChange={(e) => setBed({ wormBinCm: wormBoxCm(Number(e.target.value), bed.widthCm, bed.lengthCm) })}>
+              {people === undefined && <option value="">{t("wb.box.asIs", { cm: bed.wormBinCm ?? 0 })}</option>}
+              {boxOptions(bed.widthCm, bed.lengthCm).map(({ n, cm, max }) => <option key={n} value={n}>{t(max ? "wb.box.option.max" : n === 1 ? "wb.box.option.one" : "wb.box.option", { n, cm })}</option>)}
+            </select>
+          </label>
+        ) : (
+          <label className="pt-field"><span>{t("hab.bed.worm")}</span>
+            <input type="number" min={0} step={10} disabled={!canEdit} value={bed.wormBinCm ?? 0} onChange={(e) => setBed({ wormBinCm: num(e.target.value) ?? 0 })} />
+          </label>
+        )}
         <label className="pt-field" title={t("hab.bed.mulch.hint")}><span>{t("hab.bed.mulch")}</span>
           <input type="number" min={0} max={15} disabled={!canEdit} value={bed.mulchCm ?? 0} onChange={(e) => setBed({ mulchCm: num(e.target.value) ?? 0 })} />
         </label>
@@ -268,6 +266,9 @@ function BedEditor({ bed, habitat, edit, canEdit }: { bed: Bed; habitat: Habitat
         {onRoof && <span className="pt-muted"> · {t(`hab.load.${loadClass(load.kgPerM2)}`)} {t("hab.load.check")}</span>}
       </p>
       {(bed.mulchCm ?? 0) > 3 && bed.guildId && <p className="pt-muted">{t("hab.bed.mulch.thick")}</p>}
+      {guided && (bed.wormBinCm ?? 0) > 0 && (
+        <p className="pt-muted">{t("wb.box.year", { cm: bed.wormBinCm ?? 0, kg: year.scrapsKg, castings: year.castingsKg, uses: year.bedUsesKg })}</p>
+      )}
       <p className="pt-muted pt-bedbox__hint">{t("hab.bed.grid", { rows, cols })}</p>
       {canEdit && (
         <label className="pt-field pt-bedbox__brush"><span>{t("hab.brush")}</span>

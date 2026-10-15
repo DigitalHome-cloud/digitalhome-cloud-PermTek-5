@@ -343,6 +343,11 @@ perma:setFor a owl:ObjectProperty ;
     rdfs:label "for surface"@en , "für Fläche"@de , "pour surface"@fr ;
     rdfs:comment "The surface categories the set is made for (perma:SurfaceCategories)."@en .
 
+perma:rationale a owl:DatatypeProperty ;
+    rdfs:domain perma:PlantSet ; rdfs:range rdfs:Literal ;
+    rdfs:label "rationale"@en , "Begründung"@de , "raisonnement"@fr ;
+    rdfs:comment "Why the set's crops go together and what to watch, in a few sentences: the set's explanation page shows it (docs/adr/0028)."@en .
+
 perma:draft a owl:DatatypeProperty ;
     rdfs:domain perma:PlantSet ; rdfs:range xsd:boolean ;
     rdfs:label "draft"@en , "Entwurf"@de , "brouillon"@fr ;

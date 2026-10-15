@@ -1211,3 +1211,24 @@ a {
 .pt-confirm { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
 .pt-button--danger { background: var(--pt-danger); border-color: var(--pt-danger); color: #fff; }
 .pt-io__delete { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--pt-border); }
+
+/* A WormBed5, guided; plant sets explained (docs/adr/0028) */
+.pt-howto { margin: 0 0 1rem; }
+.pt-howto > summary { cursor: pointer; font-weight: 600; }
+.pt-howto ol { margin: 0.5rem 0 0; padding-left: 1.25rem; display: grid; gap: 0.25rem; }
+.pt-wizard { margin-bottom: 1rem; }
+.pt-wizard__step { border: 1px solid var(--pt-border); border-radius: var(--pt-radius-sm); padding: 0.75rem 1rem; margin: 0 0 0.75rem; display: grid; gap: 0.5rem; }
+.pt-wizard__step > legend { font-weight: 600; padding: 0 0.25rem; }
+.pt-wizard__step .pt-habitat__chips { margin: 0; }
+.pt-plansets__about { flex-basis: 100%; font-size: 0.875rem; }
+.pt-plansets__why { font-size: 0.875rem; }
+.pt-plansets__why > summary { cursor: pointer; }
+.pt-plansets__deep { flex-basis: 100%; font-size: 0.875rem; color: var(--pt-warning); }
+.pt-sets__steps { padding-left: 1.25rem; display: grid; gap: 0.25rem; }
+.pt-sets__index { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0; }
+.pt-sets__index .pt-chip { text-decoration: none; }
+.pt-sets__set { margin-top: 1rem; scroll-margin-top: 1rem; }
+.pt-sets__set h3 { margin: 1rem 0 0.25rem; font-size: 1rem; }
+.pt-sets__about { font-weight: 500; }
+.pt-sets__pairs { margin: 0; padding-left: 1.25rem; display: grid; gap: 0.25rem; }
+.pt-table__scroll { overflow-x: auto; }

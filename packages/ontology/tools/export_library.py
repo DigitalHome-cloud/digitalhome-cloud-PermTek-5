@@ -130,7 +130,8 @@ def export_plantsets():
         out.append({
             "id": str(ps)[len(ID):],
             "names": dict(sorted((l.language, str(l)) for l in g.objects(ps, RDFS.label) if l.language)),
-            "about": str(g.value(ps, RDFS.comment) or ""),
+            "about": dict(sorted((l.language, str(l)) for l in g.objects(ps, RDFS.comment) if l.language)),
+            "why": dict(sorted((l.language, str(l)) for l in g.objects(ps, PERMA.rationale) if l.language)),
             "for": sorted(local(c) for c in g.objects(ps, PERMA.setFor)),
             "members": sorted(members, key=lambda m: (-m["share"], m["cropId"])),
         })

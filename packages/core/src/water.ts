@@ -1,6 +1,6 @@
 /**
  * A guild's water (docs/adr/0025): rain caught on a roof, stores (a rain barrel, the bed's tank pipes, the worm
- * box's sump, a garden tank) and the valves between them. Worm liquid and clean water are kept apart: worm liquid
+ * box's sump, a garden tank, and the worm box's bin that a mist line waters) and the valves between them. Worm liquid and clean water are kept apart: worm liquid
  * never flows into a store kept for clean water (the shapes say the same, packages/ontology).
  *
  *   defaultWater(guild, bed)     the parts a WormBed5 has when nothing else is said
@@ -18,11 +18,13 @@ export const WORMBED5_WATER = { catchmentM2: 8, runoff: 0.8, barrelL: 200, garde
 const DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 /**
- * The water parts a WormBed5 guild has: the roof's rain into a barrel whose tap refills the tank pipes, and the
+ * The water parts a WormBed5 guild has: the roof's rain into a barrel whose tap refills the tank pipes, a mist
+ * line from the barrel under the worm box's lid (it waters the bedding with the box closed, ADR 0025), and the
  * worm box's sump with a valve to the tank pipes and one to a garden tank (which stands in the guild's area until
- * someone moves it). Names come in the caller's language.
+ * someone moves it). The barrel's two valves are the edge's: it proposes them, a person confirms. Names come in
+ * the caller's language.
  */
-export function defaultWater(guild: Guild, bed: Bed, names: Record<"roof" | "barrel" | "pipes" | "sump" | "garden" | "barrelTap" | "sumpBed" | "sumpGarden", string>): {
+export function defaultWater(guild: Guild, bed: Bed, names: Record<"roof" | "barrel" | "pipes" | "sump" | "bin" | "garden" | "barrelTap" | "mist" | "sumpBed" | "sumpGarden", string>): {
   catchments: RainCatchment[]; stores: WaterStore[]; valves: Valve[];
 } {
   const g = guild.id;
@@ -30,13 +32,15 @@ export function defaultWater(guild: Guild, bed: Bed, names: Record<"roof" | "bar
   const pipes: WaterStore = { id: newId("store"), name: names.pipes, guildId: g, kind: "TankPipes",
     capacityL: Math.round(bedLoad(bed).tankLitres), holds: ["CleanWater", "WormLiquid"] };
   const sump: WaterStore = { id: newId("store"), name: names.sump, guildId: g, kind: "WormBoxSump", capacityL: sumpLitres(bed), holds: ["WormLiquid"] };
+  const bin: WaterStore = { id: newId("store"), name: names.bin, guildId: g, kind: "WormBoxBin", holds: ["CleanWater"] };
   const garden: WaterStore = { id: newId("store"), name: names.garden, guildId: g, kind: "GardenTank",
     capacityL: WORMBED5_WATER.gardenTankL, holds: ["CleanWater", "WormLiquid"] };
   return {
     catchments: [{ id: newId("rain"), name: names.roof, guildId: g, m2: WORMBED5_WATER.catchmentM2, runoff: WORMBED5_WATER.runoff, storeId: barrel.id }],
-    stores: [barrel, pipes, sump, garden],
+    stores: [barrel, pipes, sump, bin, garden],
     valves: [
-      { id: newId("valve"), name: names.barrelTap, guildId: g, from: barrel.id, to: pipes.id, kind: "ManualTap" },
+      { id: newId("valve"), name: names.barrelTap, guildId: g, from: barrel.id, to: pipes.id, kind: "EdgeValve" },
+      { id: newId("valve"), name: names.mist, guildId: g, from: barrel.id, to: bin.id, kind: "EdgeValve" },
       { id: newId("valve"), name: names.sumpBed, guildId: g, from: sump.id, to: pipes.id, kind: "EdgeValve" },
       { id: newId("valve"), name: names.sumpGarden, guildId: g, from: sump.id, to: garden.id, kind: "EdgeValve" },
     ],

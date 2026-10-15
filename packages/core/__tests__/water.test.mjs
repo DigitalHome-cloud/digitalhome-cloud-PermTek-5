@@ -6,7 +6,7 @@ import { WORMBED5_WATER, checkHabitat, defaultWater, habitatFromTtl, habitatToTt
 
 // docs/adr/0025: a guild's water, rain caught and stored, worm liquid kept apart from clean water.
 const DEMO = fs.readFileSync(new URL("../../ontology/abox/examples/citydemo-habitat.ttl", import.meta.url), "utf8");
-const NAMES = { roof: "Roof", barrel: "Rain barrel", pipes: "Tank pipes", sump: "Sump", garden: "Garden tank",
+const NAMES = { roof: "Roof", barrel: "Rain barrel", pipes: "Tank pipes", sump: "Sump", bin: "Worm box bin", garden: "Garden tank", mist: "Mist line",
   barrelTap: "Barrel tap", sumpBed: "Sump to bed", sumpGarden: "Sump to garden" };
 // a generic temperate year (not a site): mean °C, rain mm, sun kWh/m² a day
 const MEAN = [2.5, 3.5, 7, 10.5, 14.5, 17.5, 19.5, 19, 15.5, 11, 6.5, 3.5];
@@ -14,10 +14,12 @@ const RAIN = [60, 50, 55, 50, 65, 70, 75, 70, 60, 65, 65, 65];
 const SUN = [0.8, 1.5, 2.6, 3.9, 4.8, 5.2, 5.2, 4.5, 3.2, 1.9, 1.0, 0.6];
 const MONTHS = MEAN.map((m, i) => ({ month: i + 1, minC: m - 4, meanC: m, maxC: m + 4, rainMm: RAIN[i], sunKwhM2: SUN[i], windMs: 3 }));
 
-test("CityDemo's guild has its water: roof, barrel, tank pipes, sump, garden tank and three valves; it round-trips", async () => {
+test("CityDemo's guild has its water: roof, barrel, tank pipes, sump, the box's bin, garden tank and four valves; it round-trips", async () => {
   const h = habitatFromTtl(DEMO);
-  assert.deepEqual(h.stores.map((s) => s.kind).sort(), ["GardenTank", "RainBarrel", "TankPipes", "WormBoxSump"]);
-  assert.equal(h.valves.length, 3);
+  assert.deepEqual(h.stores.map((s) => s.kind).sort(), ["GardenTank", "RainBarrel", "TankPipes", "WormBoxBin", "WormBoxSump"]);
+  assert.equal(h.valves.length, 4);
+  const mist = h.valves.find((v) => h.stores.find((s) => s.id === v.to)?.kind === "WormBoxBin");
+  assert.equal(h.stores.find((s) => s.id === mist.from).kind, "RainBarrel", "the mist line waters the box from the barrel");
   assert.equal(h.catchments[0].storeId, h.stores.find((s) => s.kind === "RainBarrel").id);
   assert.ok(h.stores.find((s) => s.kind === "GardenTank").zoneId.endsWith("zone-z-citygarden"), "the garden tank stands in the garden");
   assert.deepEqual(checkHabitat(h), []);
@@ -32,7 +34,8 @@ test("a new WormBed5 gets the default water, sized from its bed", () => {
   assert.equal(sump.capacityL, 14, "the sump: 40 cm x 120 cm x 3 cm");
   assert.ok(w.stores.find((s) => s.kind === "TankPipes").capacityL > 150);
   assert.equal(w.catchments[0].m2, WORMBED5_WATER.catchmentM2);
-  assert.deepEqual(w.valves.map((v) => v.kind), ["ManualTap", "EdgeValve", "EdgeValve"]);
+  assert.deepEqual(w.valves.map((v) => v.kind), ["EdgeValve", "EdgeValve", "EdgeValve", "EdgeValve"], "the barrel's tap and the mist line are the edge's too");
+  assert.equal(w.stores.find((s) => s.kind === "WormBoxBin").capacityL, undefined, "the bin stores nothing");
   const h = { zones: [zone], guilds: [guild], beds: [bed], cells: [], plants: [], rest: "", ...w };
   assert.deepEqual(checkHabitat(h), []);
 });

@@ -64,8 +64,8 @@ export interface GardenPlant {
 }
 
 /** A guild's water (docs/adr/0025, water.ts). A store says what it may hold; worm liquid never goes into clean water. */
-export type StoreKind = "RainBarrel" | "TankPipes" | "WormBoxSump" | "GardenTank";
-export const STORE_KINDS: StoreKind[] = ["RainBarrel", "TankPipes", "WormBoxSump", "GardenTank"];
+export type StoreKind = "RainBarrel" | "TankPipes" | "WormBoxSump" | "WormBoxBin" | "GardenTank";
+export const STORE_KINDS: StoreKind[] = ["RainBarrel", "TankPipes", "WormBoxSump", "WormBoxBin", "GardenTank"];
 export type WaterKind = "CleanWater" | "WormLiquid";
 export const WATER_KINDS: WaterKind[] = ["CleanWater", "WormLiquid"];
 export type ValveKind = "ManualTap" | "EdgeValve";

@@ -51,3 +51,20 @@ export function SaveBar({ dirty, saving, onSave, onDiscard }: {
 }
 
 export const num = (s: string): number | undefined => (s.trim() === "" || Number.isNaN(Number(s)) ? undefined : Number(s));
+
+/**
+ * A button for something that removes a lot: the first press says what goes, the second does it.
+ * No browser dialog: it stays in the page, and a screen reader hears it.
+ */
+export function ConfirmButton({ label, says, onConfirm }: { label: string; says: string; onConfirm: () => void }) {
+  const { t } = useT();
+  const [asking, setAsking] = React.useState(false);
+  if (!asking) return <button className="pt-button pt-button--ghost" onClick={() => setAsking(true)}>{label}</button>;
+  return (
+    <span className="pt-confirm" role="alert">
+      <span>{says}</span>
+      <button className="pt-button pt-button--danger" onClick={() => { setAsking(false); onConfirm(); }}>{t("hab.confirm.yes")}</button>
+      <button className="pt-button pt-button--ghost" onClick={() => setAsking(false)}>{t("hab.confirm.no")}</button>
+    </span>
+  );
+}

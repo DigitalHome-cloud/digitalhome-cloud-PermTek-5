@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link } from "gatsby";
+import { Link, navigate } from "gatsby";
 import { signOutAndReload, useSession } from "./AuthGate";
 import { ThemeSegments } from "./ThemeSegments";
 import { listSpaces, spaceTitle } from "../lib/data";
@@ -234,9 +234,16 @@ function RailLinks({ items, active }: { items: RailItem[]; active: string }) {
       {items.map((item) => (
         <li key={item.key}>
           {/* A plain <a>, not gatsby's <Link>: these are matchPath routes, so
-              there is no page for Gatsby to prefetch and Link would warn. */}
+              there is no page for Gatsby to prefetch and Link would warn.
+              Within the space it navigates on the client, so the unsaved
+              draft of the map survives a change of view. */}
           <a
             href={item.href}
+            onClick={(e) => {
+              if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+              e.preventDefault();
+              void navigate(item.href);
+            }}
             className={`pt-rail__item${
               item.key === active ? " pt-rail__item--on" : ""
             }`}

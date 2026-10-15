@@ -267,6 +267,7 @@ const routes: Array<[string, lambda.IFunction]> = [
   ["/edge/v1/graphs/list", backend.edgeGraphs.resources.lambda],
   ["/edge/v1/graphs/get", backend.edgeGraphs.resources.lambda],
   ["/edge/v1/graphs/put", backend.edgeGraphs.resources.lambda],
+  ["/edge/v1/plan", backend.edgeGraphs.resources.lambda],
   ["/edge/v1/models", backend.edgeModels.resources.lambda],
 ];
 for (const [path, fn] of routes) {

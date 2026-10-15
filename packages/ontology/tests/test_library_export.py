@@ -62,3 +62,14 @@ def test_mixed_planting_attributes_hold_both_ways_and_recipes_link_to_crops():
     assert {l.get("cropId") for l in burger["lines"]} >= {"crop-carrot", "crop-chives", "crop-onion", "crop-rocket", "crop-cucumber"}
     assert any("cropId" not in l for l in burger["lines"]), "what is bought stays a line of text"
     assert recipes["recipe-ratatouille"]["steps"] and recipes["recipe-ratatouille"]["keepsAs"] == "Frozen"
+    with open(export_library.PLANTSETS_OUT) as fh:
+        assert fh.read() == export_library.render_plantsets(), "run: packages/ontology/tools/export_library.py"
+
+
+def test_every_plant_set_member_is_a_library_herb_with_a_spacing():
+    crops = {c["id"]: c for c in export_library.export(Graph().parse(export_library.LIBRARY))}
+    for s in export_library.export_plantsets():
+        assert set(s["names"]) == {"en", "de", "fr"}, s["id"]
+        for m in s["members"]:
+            c = crops.get(m["cropId"])
+            assert c and c["needs"].get("spacingCm") and "mix" in c, (s["id"], m["cropId"])

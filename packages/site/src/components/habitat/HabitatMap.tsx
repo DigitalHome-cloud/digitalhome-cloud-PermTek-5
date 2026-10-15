@@ -1,11 +1,14 @@
 import * as React from "react";
 import {
   CITYDEMO_TTL, EXPOSURES, ROBOT_NAME, SUBSTRATE_KINDS, ZONE_KINDS, bedGrid, bedLoad, loadClass, newGuild, guildForBed, wormBinCols, cropById, cropName, defaultOffset, footprint, habitatFromTtl, newId, sowingJob,
+  crowdedCells, layerOf, plantingConflict,
 } from "@dlab5/permtek5-core";
 import type { Bed, Cell, CellStatus, ClimateMonth, Exposure, GardenPlant, Guild, Habitat, SubstrateKind, Zone, ZoneKind } from "@dlab5/permtek5-core";
+import { FarmCard, NewFarm } from "./FarmCard";
+import { PlanFromSets } from "./PlantSets";
 import { CELL_STATUSES } from "@dlab5/permtek5-core";
 import { useT } from "../../lib/i18n";
-import { CropSelect, cropColor, num } from "./common";
+import { ConfirmButton, CropSelect, cropColor, num } from "./common";
 import { FeedingGuide } from "./FeedingGuide";
 import { GuildWater } from "./GuildWater";
 
@@ -13,6 +16,8 @@ type Edit = (f: (h: Habitat) => Habitat) => void;
 
 
 /** The site's areas (roof, garden …; perma:GardenZone), with each area's beds and garden plants. */
+export { BedEditor };
+
 export function HabitatMap({ habitat, edit, canEdit, replace, months = null }: {
   habitat: Habitat; edit: Edit; canEdit: boolean; replace: (h: Habitat) => void; months?: ClimateMonth[] | null;
 }) {
@@ -55,14 +60,16 @@ function ZoneCard({ zone, habitat, edit, canEdit, months }: { zone: Zone; habita
   const set = (patch: Partial<Zone>) => edit((h) => ({ ...h, zones: h.zones.map((z) => (z.id === zone.id ? { ...z, ...patch } : z)) }));
   const beds = habitat.beds.filter((b) => b.zoneId === zone.id);
   const plants = habitat.plants.filter((p) => p.zoneId === zone.id);
-  const empty = !beds.length && !plants.length && !(habitat.guilds ?? []).some((g) => g.zoneId === zone.id);
+  const empty = !beds.length && !plants.length && !(habitat.guilds ?? []).some((g) => g.zoneId === zone.id) && !(habitat.farms ?? []).some((f) => f.zoneId === zone.id);
+  const [farming, setFarming] = React.useState(false);
   const toggle = (e: Exposure) => set({ exposure: zone.exposure.includes(e) ? zone.exposure.filter((x) => x !== e) : [...zone.exposure, e].sort() });
   const addBed = () => edit((h) => ({
     ...h, beds: [...h.beds, { id: newId("bed"), name: t("hab.bed.default"), zoneId: zone.id, lengthCm: 300, widthCm: 100, depthCm: 15, cellCm: 10,
       substrate: zone.kind === "GroundZone" ? "GardenSoil" as SubstrateKind : "LightweightRoofSubstrate" as SubstrateKind }],
   }));
   const guilds = (habitat.guilds ?? []).filter((g) => g.zoneId === zone.id);
-  const plainBeds = beds.filter((b) => !b.guildId || !guilds.some((g) => g.id === b.guildId));
+  const farms = (habitat.farms ?? []).filter((f) => f.zoneId === zone.id);
+  const plainBeds = beds.filter((b) => (!b.guildId || !guilds.some((g) => g.id === b.guildId)) && (!b.farmId || !farms.some((f) => f.id === b.farmId)));
   const addGuild = () => edit((h) => {
     const made = newGuild(zone, t("hab.guild.default", { area: zone.name }), t("hab.bed.default"));
     return { ...h, guilds: [...(h.guilds ?? []), made.guild], beds: [...h.beds, made.bed] };
@@ -102,13 +109,16 @@ function ZoneCard({ zone, habitat, edit, canEdit, months }: { zone: Zone; habita
       </div>
 
       {guilds.map((g) => <GuildCard key={g.id} guild={g} habitat={habitat} edit={edit} canEdit={canEdit} months={months} />)}
+      {farms.map((f) => <FarmCard key={f.id} farm={f} habitat={habitat} edit={edit} canEdit={canEdit} />)}
       {plainBeds.map((b) => <BedEditor key={b.id} bed={b} habitat={habitat} edit={edit} canEdit={canEdit} />)}
       {plants.length > 0 && <GardenPlants zone={zone} plants={plants} edit={edit} canEdit={canEdit} />}
 
+      {canEdit && farming && <NewFarm zone={zone} edit={edit} onDone={() => setFarming(false)} />}
       {canEdit && (
         <p className="pt-habitat__actions">
           <button className="pt-button" onClick={addGuild}>+ {t("hab.add.guild")}</button>
           <button className="pt-button pt-button--ghost" onClick={addBed}>+ {t("hab.add.bed")}</button>
+          <button className="pt-button pt-button--ghost" onClick={() => setFarming(true)} aria-expanded={farming}>+ {t("farm.add")}</button>
           <button className="pt-button pt-button--ghost" onClick={addPlant}>+ {t("hab.add.plant")}</button>
           {empty && (
             <button className="pt-button pt-button--ghost" onClick={() => edit((h) => ({ ...h, zones: h.zones.filter((z) => z.id !== zone.id) }))}>
@@ -130,7 +140,6 @@ function GuildCard({ guild, habitat, edit, canEdit, months }: { guild: Guild; ha
   const { t } = useT();
   const set = (patch: Partial<Guild>) => edit((h) => ({ ...h, guilds: (h.guilds ?? []).map((g) => (g.id === guild.id ? { ...g, ...patch } : g)) }));
   const beds = habitat.beds.filter((b) => b.guildId === guild.id);
-  const planted = habitat.cells.some((c) => beds.some((b) => b.id === c.bedId));
   return (
     <div className="pt-guild">
       <div className="pt-habitat__zonehead">
@@ -147,14 +156,24 @@ function GuildCard({ guild, habitat, edit, canEdit, months }: { guild: Guild; ha
       {beds.map((b) => <BedEditor key={b.id} bed={b} habitat={habitat} edit={edit} canEdit={canEdit} />)}
       {guild.type === "WormBed5" && <FeedingGuide />}
       <GuildWater guild={guild} habitat={habitat} edit={edit} canEdit={canEdit} months={months} />
-      {canEdit && !planted && (
+      {canEdit && (
         <p className="pt-habitat__actions">
-          <button className="pt-button pt-button--ghost" onClick={() => edit((h) => ({
-            ...h, guilds: (h.guilds ?? []).filter((g) => g.id !== guild.id), beds: h.beds.filter((b) => b.guildId !== guild.id),
-            // its water and what it was learning go with it
-            catchments: (h.catchments ?? []).filter((c) => c.guildId !== guild.id), stores: (h.stores ?? []).filter((s) => s.guildId !== guild.id),
-            valves: (h.valves ?? []).filter((v) => v.guildId !== guild.id), cycles: (h.cycles ?? []).filter((c) => c.aboutId !== guild.id),
-          }))}>{t("hab.remove.guild")}</button>
+          <ConfirmButton label={t("hab.remove.guild")}
+            says={t("hab.remove.guild.says", {
+              beds: beds.length, cells: habitat.cells.filter((c) => beds.some((b) => b.id === c.bedId)).length,
+              water: [...(habitat.catchments ?? []), ...(habitat.stores ?? []), ...(habitat.valves ?? [])].filter((x) => x.guildId === guild.id).length,
+              cycles: (habitat.cycles ?? []).filter((c) => c.aboutId === guild.id).length,
+            })}
+            onConfirm={() => edit((h) => {
+              const gone = new Set(h.beds.filter((b) => b.guildId === guild.id).map((b) => b.id));
+              return {
+                ...h, guilds: (h.guilds ?? []).filter((g) => g.id !== guild.id), beds: h.beds.filter((b) => !gone.has(b.id)),
+                // its bed's plants, its water and what it was learning go with it
+                cells: h.cells.filter((c) => !gone.has(c.bedId)),
+                catchments: (h.catchments ?? []).filter((c) => c.guildId !== guild.id), stores: (h.stores ?? []).filter((s) => s.guildId !== guild.id),
+                valves: (h.valves ?? []).filter((v) => v.guildId !== guild.id), cycles: (h.cycles ?? []).filter((c) => c.aboutId !== guild.id),
+              };
+            })} />
         </p>
       )}
     </div>
@@ -168,7 +187,10 @@ function BedEditor({ bed, habitat, edit, canEdit }: { bed: Bed; habitat: Habitat
   const [selected, setSelected] = React.useState<string | null>(null);
   const { rows, cols } = bedGrid(bed);
   const cells = habitat.cells.filter((c) => c.bedId === bed.id);
-  const at = new Map(cells.map((c) => [`${c.row}|${c.col}`, c]));
+  // a ground cover may share a cell with a tall plant: the cell shows the tall one
+  const at = new Map([...cells].sort((a, b) => Number(layerOf(b.cropId) === "ground") - Number(layerOf(a.cropId) === "ground")).map((c) => [`${c.row}|${c.col}`, c]));
+  const crowded = crowdedCells(bed, cells);
+  const [refused, setRefused] = React.useState<string | null>(null);
   // cells covered by a planted cell's spacing (shown lighter)
   const covered = new Map<string, Cell>();
   for (const c of cells) {
@@ -183,10 +205,17 @@ function BedEditor({ bed, habitat, edit, canEdit }: { bed: Bed; habitat: Habitat
   const load = bedLoad(bed);
   // what a roof carries matters on a roof or a balcony, not on the ground
   const onRoof = ["RoofZone", "BalconyZone"].includes(habitat.zones.find((z) => z.id === bed.zoneId)?.kind ?? "");
-  const click = (row: number, col: number) => {
+  const click = (row: number, col: number, force = false) => {
     const here = at.get(`${row}|${col}`);
-    if (here) { setSelected(here.id); return; }
+    setRefused(null);
+    if (here && !(brush && layerOf(brush) === "ground" && layerOf(here.cropId) === "tall")) { setSelected(here.id); return; }
     if (!canEdit || !brush || col >= binFrom) return;
+    // planting by hand keeps the spacing too (docs/adr/0027); Shift+click plants anyway, and the cell shows as crowded
+    const other = plantingConflict(bed, cells, row, col, brush);
+    if (other && !force) {
+      setRefused(t("hab.cell.tooClose", { crop: cropName(cropById(other.cropId)!, lang), row: other.row + 1, col: other.col + 1 }));
+      return;
+    }
     const id = newId("cell");
     edit((h) => ({ ...h, cells: [...h.cells, { id, bedId: bed.id, row, col, cropId: brush, status: "CellPlanned" as CellStatus }] }));
     setSelected(id);
@@ -257,15 +286,20 @@ function BedEditor({ bed, habitat, edit, canEdit }: { bed: Bed; habitat: Habitat
             }
             return (
               <button key={`${r}|${c}`} type="button" role="gridcell"
-                className={"pt-bed__cell" + (here ? ` pt-bed__cell--on pt-bed__cell--${here.status}` : near ? " pt-bed__cell--near" : "") + (here?.id === selected ? " pt-bed__cell--sel" : "")}
+                className={"pt-bed__cell" + (here ? ` pt-bed__cell--on pt-bed__cell--${here.status}` : near ? " pt-bed__cell--near" : "") + (here?.id === selected ? " pt-bed__cell--sel" : "")
+                  + (here && crowded.has(here.id) ? " pt-bed__cell--crowded" : "")}
                 style={color ? { background: color } : undefined}
                 title={here ? `${name} · ${t(`hab.status.${here.status}`)}` : `${r + 1} / ${c + 1}`}
                 aria-label={here ? name : `${r + 1} / ${c + 1}`}
-                onClick={() => click(r, c)} />
+                onClick={(e) => click(r, c, e.shiftKey)} />
             );
           }))}
         </div>
       </div>
+
+      {refused && <p className="pt-error" role="status">{refused} {t("hab.cell.force")}</p>}
+      {crowded.size > 0 && <p className="pt-muted">{t("hab.bed.crowded", { n: crowded.size })}</p>}
+      {canEdit && <PlanFromSets beds={[bed]} habitat={habitat} edit={edit} canEdit={canEdit} />}
 
       {sel && crop && (
         <div className="pt-cellpanel">
@@ -301,7 +335,7 @@ function BedEditor({ bed, habitat, edit, canEdit }: { bed: Bed; habitat: Habitat
           )}
         </div>
       )}
-      {canEdit && !bed.guildId && zone && (
+      {canEdit && !bed.guildId && !bed.farmId && zone && (
         <button className="pt-button pt-button--ghost" title={t("hab.make.guild.hint")} onClick={() => edit((h) => {
           const made = guildForBed(bed, zone, t("hab.guild.default", { area: zone.name }), h.cells);
           return { ...h, guilds: [...(h.guilds ?? []), made.guild], beds: h.beds.map((b) => (b.id === bed.id ? made.bed : b)) };
@@ -309,7 +343,11 @@ function BedEditor({ bed, habitat, edit, canEdit }: { bed: Bed; habitat: Habitat
           {t("hab.make.guild")}
         </button>
       )}
-      {canEdit && cells.length === 0 && !bed.guildId && (
+      {canEdit && cells.length > 0 && (
+        <ConfirmButton label={t("hab.clear.bed")} says={t("hab.clear.bed.says", { n: cells.length })}
+          onConfirm={() => { setSelected(null); edit((h) => ({ ...h, cells: h.cells.filter((c) => c.bedId !== bed.id) })); }} />
+      )}
+      {canEdit && cells.length === 0 && !bed.guildId && !bed.farmId && (
         <button className="pt-button pt-button--ghost" onClick={() => edit((h) => ({ ...h, beds: h.beds.filter((b) => b.id !== bed.id) }))}>
           {t("hab.remove.bed")}
         </button>

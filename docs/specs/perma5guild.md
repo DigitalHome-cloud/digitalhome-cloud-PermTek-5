@@ -11,13 +11,17 @@ robot, **Gantry5-gen1**, in `roofbed-robot.md`.
 Site (one per home)
 └─ Area (roof, garden, balcony)
    └─ Perma5Guild   type WormBed5 · robot Gantry5-gen1 · one edge
-      ├─ growing bed (cells: planned → sown → growing → harvested)
+      ├─ growing bed (cells: planned → sown → growing → harvested; planned from plant sets: ADR 0027)
       ├─ worm box   (scraps in; castings, liquid, worms, a little heat out)
       ├─ water      (rain catchment, barrel, tank pipes, sump, garden tank; valves between them: ADR 0025)
       ├─ sensors    (fixed: over time · on the robot: over space)
       ├─ robot      (sows, waters, probes, photographs, feeds the worms, weeds)
       └─ learning   (plan-do-check-act cycles: hypotheses, measures, checks: ADR 0026)
 ```
+
+A plain bed, or a **farm of beds** (rectangle beds in rows with paths), stands
+in an area without a guild and is worked by hand. Each is a surface category
+with its own limits (ADR 0027). Greenhouses and food forests come later.
 
 ## 1. Type and instance
 

@@ -14,7 +14,9 @@ import {
   CELL_STATUSES, EXPOSURES, GUILD_TYPES, STORE_KINDS, SUBSTRATE_KINDS, VALVE_KINDS, WATER_KINDS, ZONE_KINDS,
   type Bed, type Cell, type CellStatus, type Exposure, type GardenPlant, type Guild, type GuildType, type Habitat, type RainCatchment, type RobotModel,
   type StoreKind, type SubstrateKind, type Valve, type ValveKind, type WaterKind, type WaterStore, type Zone, type ZoneKind,
+  type BedFarm,
 } from "./habitatModel.js";
+import type { PlantSet } from "./plantSets.js";
 import { PHASES, VERDICTS, type Check, type Hypothesis, type Lang, type LearningCycle, type Measure, type Phase, type Texts, type Verdict } from "./learning.js";
 
 const { namedNode, literal, quad } = N3.DataFactory;
@@ -70,6 +72,27 @@ export function habitatToTtl(h: Habitat): Promise<string> {
     if (b.tankPipeMm !== undefined) add(b.id, "tankPipeMm", int(b.tankPipeMm));
     if (b.wormBinCm !== undefined) add(b.id, "wormBinCm", int(b.wormBinCm));
     if (b.mulchCm) add(b.id, "mulchCm", int(b.mulchCm));
+    if (b.farmId) add(b.id, "inFarm", namedNode(b.farmId));
+  }
+  // Farms of beds and the space's own plant sets (docs/adr/0027).
+  for (const f of h.farms ?? []) {
+    add(f.id, "a", p("BedFarm")); name(f.id, f.name);
+    add(f.id, "inZone", namedNode(f.zoneId));
+    add(f.id, "surfaceCategory", p("BedFarmSurface"));
+    add(f.id, "bedRows", int(f.rows)); add(f.id, "bedsPerRow", int(f.perRow)); add(f.id, "pathCm", int(f.pathCm));
+    add(f.id, "bedLengthCm", int(f.lengthCm)); add(f.id, "bedWidthCm", int(f.widthCm)); add(f.id, "cellSizeCm", int(f.cellCm));
+  }
+  for (const ps of h.plantSets ?? []) {
+    add(ps.id, "a", p("PlantSet"));
+    for (const [lang, text] of Object.entries(ps.names)) if (text) qs.push(quad(namedNode(ps.id), namedNode(LABEL), literal(text, lang)));
+    if (ps.about) qs.push(quad(namedNode(ps.id), namedNode(COMMENT), literal(ps.about, "en")));
+    for (const f of ps.for) add(ps.id, "setFor", p(f));
+    if (ps.draft) add(ps.id, "draft", literal("true", namedNode(XSD + "boolean")));
+    ps.members.forEach((m, i) => {
+      const node = `${ps.id}/member-${i + 1}`;
+      add(ps.id, "member", namedNode(node));
+      add(node, "memberCrop", namedNode(CROP_IRI + m.cropId)); add(node, "share", dec(m.share));
+    });
   }
   for (const c of h.cells) {
     add(c.id, "a", p("PlantingCell"));
@@ -181,7 +204,7 @@ export function habitatToTtl(h: Habitat): Promise<string> {
   });
 }
 
-const CLASSES = ["GardenZone", "Guild", "GrowingBed", "PlantingCell", "GardenPlant", "RainCatchment", "WaterStore", "Valve",
+const CLASSES = ["GardenZone", "Guild", "GrowingBed", "BedFarm", "PlantSet", "PlantingCell", "GardenPlant", "RainCatchment", "WaterStore", "Valve",
   "LearningCycle", "Hypothesis", "Measure", "Check"].map((c) => PERMA + c);
 
 export function habitatFromTtl(ttl: string): Habitat {
@@ -219,7 +242,28 @@ export function habitatFromTtl(ttl: string): Habitat {
     ...(num(id, "tankPipeMm") !== undefined && { tankPipeMm: num(id, "tankPipeMm") }),
     ...(num(id, "wormBinCm") !== undefined && { wormBinCm: num(id, "wormBinCm") }),
     ...(num(id, "mulchCm") && { mulchCm: num(id, "mulchCm") }),
+    ...(str(id, "inFarm") && { farmId: str(id, "inFarm") }),
   }));
+  const farms: BedFarm[] = ofType("BedFarm").map((id) => ({
+    id, name: label(id), zoneId: str(id, "inZone") ?? "",
+    rows: num(id, "bedRows") ?? 1, perRow: num(id, "bedsPerRow") ?? 1, pathCm: num(id, "pathCm") ?? 40,
+    lengthCm: num(id, "bedLengthCm") ?? 0, widthCm: num(id, "bedWidthCm") ?? 0, cellCm: num(id, "cellSizeCm") ?? 10,
+  }));
+  const memberIds = new Set<string>();
+  const plantSets: PlantSet[] = ofType("PlantSet").map((id) => {
+    const names: PlantSet["names"] = {};
+    for (const n of store.getObjects(namedNode(id), namedNode(LABEL), null)) names[(((n as { language?: string }).language) || "en") as keyof PlantSet["names"]] = n.value;
+    const members = store.getObjects(namedNode(id), p("member"), null).map((m) => m.value)
+      .sort((a, b) => Number(a.split("/member-")[1] ?? 0) - Number(b.split("/member-")[1] ?? 0))
+      .map((m) => { memberIds.add(m); return { cropId: (str(m, "memberCrop") ?? "").slice(CROP_IRI.length), share: num(m, "share") ?? 1 }; });
+    const about = store.getObjects(namedNode(id), namedNode(COMMENT), null)[0]?.value;
+    return {
+      id, names, members,
+      for: store.getObjects(namedNode(id), p("setFor"), null).map(local).filter((x): x is string => !!x).sort(),
+      ...(about && { about }),
+      ...(str(id, "draft") === "true" && { draft: true }),
+    };
+  });
   const cells: Cell[] = ofType("PlantingCell").map((id) => ({
     id, bedId: str(id, "inBed") ?? "", row: num(id, "row") ?? 0, col: num(id, "col") ?? 0, cropId: crop(id),
     status: (CELL_STATUSES as string[]).includes(local(one(id, "cellStatus")) ?? "") ? (local(one(id, "cellStatus")) as CellStatus) : "CellPlanned",
@@ -337,13 +381,14 @@ export function habitatFromTtl(ttl: string): Habitat {
   });
 
   // Everything not about these subjects stays as it was.
-  const mine = new Set([...CLASSES.flatMap((c) => store.getSubjects(namedNode(RDF_TYPE), namedNode(c), null).map((x) => x.value)), ...recipeIds, ...lineIds]);
+  const mine = new Set([...CLASSES.flatMap((c) => store.getSubjects(namedNode(RDF_TYPE), namedNode(c), null).map((x) => x.value)), ...recipeIds, ...lineIds, ...memberIds]);
   const rest = store.getQuads(null, null, null, null).filter((q) => !mine.has(q.subject.value));
   const writer = new N3.Writer({ format: "N-Triples" });
   return {
     zones, guilds, beds, cells, plants, ...(recipes.length > 0 && { recipes }),
     ...(catchments.length > 0 && { catchments }), ...(stores.length > 0 && { stores }), ...(valves.length > 0 && { valves }),
     ...(cycles.length > 0 && { cycles }),
+    ...(farms.length > 0 && { farms }), ...(plantSets.length > 0 && { plantSets }),
     rest: rest.length ? writer.quadsToString(rest) : "",
   };
 }

@@ -1,5 +1,6 @@
 import * as React from "react";
 import {
+  layerOf,
   bedGrid, cropById, cropName, crops, cropsWanted, deriveWindows, footprint, givesWay, newId, parseIngredients, plantCounts, recipeName, scorePlanting, sharedRecipes,
   standingIn, suggestPlanting, wormBinCols, yearPlan, zoneOffset,
 } from "@dlab5/permtek5-core";
@@ -341,7 +342,7 @@ function YearInBed({ bed, habitat, ids, weights, months, seed, tallSide, edit, c
   );
 }
 
-function Preview({ bed, suggestion, habitat }: { bed: Bed; suggestion: { cells: Placement[] }; habitat: Habitat }) {
+export function Preview({ bed, suggestion, habitat }: { bed: Bed; suggestion: { cells: Placement[] }; habitat: Habitat }) {
   const { t, lang } = useT();
   const { rows, cols } = bedGrid(bed);
   const binFrom = cols - wormBinCols(bed);
@@ -350,8 +351,16 @@ function Preview({ bed, suggestion, habitat }: { bed: Bed; suggestion: { cells: 
     const f = footprint(cropId, bed), r0 = row - Math.floor((f - 1) / 2), c0 = col - Math.floor((f - 1) / 2);
     for (let r = r0; r < r0 + f; r++) for (let c = c0; c < c0 + f; c++) cell.set(`${r}|${c}`, { cropId, centre: r === row && c === col, old });
   };
-  for (const c of habitat.cells) if (c.bedId === bed.id) paint(c.row, c.col, c.cropId, true);
-  for (const p of suggestion.cells) paint(p.row, p.col, p.cropId, false);
+  // upright plants first; a ground cover then shows its own spread where it is free, and its centre under a tall plant
+  const ground = (id: string) => layerOf(id) === "ground";
+  const all = [...habitat.cells.filter((c) => c.bedId === bed.id).map((c) => ({ ...c, old: true })), ...suggestion.cells.map((p) => ({ ...p, old: false }))];
+  for (const c of all.filter((c) => !ground(c.cropId))) paint(c.row, c.col, c.cropId, c.old);
+  for (const c of all.filter((c) => ground(c.cropId))) {
+    const f = footprint(c.cropId, bed), r0 = c.row - Math.floor((f - 1) / 2), c0 = c.col - Math.floor((f - 1) / 2);
+    for (let r = r0; r < r0 + f; r++) for (let k = c0; k < c0 + f; k++) {
+      if (!cell.has(`${r}|${k}`) || (r === c.row && k === c.col)) cell.set(`${r}|${k}`, { cropId: c.cropId, centre: r === c.row && k === c.col, old: c.old });
+    }
+  }
   return (
     <div className="pt-bed__scroll">
       <div className="pt-bed pt-bed--preview" style={{ gridTemplateColumns: `repeat(${cols}, 1.25rem)` }} role="img" aria-label={t("rec.plant.preview")}>

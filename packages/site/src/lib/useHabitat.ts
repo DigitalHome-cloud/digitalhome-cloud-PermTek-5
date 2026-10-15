@@ -37,6 +37,14 @@ export function useHabitat(spaceId: string) {
 
   const dirty = !!draft && !!saved && draft !== saved;
 
+  // Leaving the page (reload, another site, closing the tab) with unsaved changes asks first.
+  React.useEffect(() => {
+    if (!dirty) return;
+    const warn = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ""; };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [dirty]);
+
   const save = async (next: Habitat | null = draft): Promise<SaveResult> => {
     if (!next) return { ok: true };
     const problems = checkHabitat(next);

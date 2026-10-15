@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import {
+  layerOf,
   cropById, cropsWanted, footprint, matchCrop, parseIngredients, plantCounts, scorePlanting, sharedRecipes, suggestPlanting,
 } from "../dist/index.js";
 
@@ -68,18 +69,22 @@ test("a mixed suggestion keeps every spacing, has good neighbours and no bad one
   const s = suggestPlanting(b, plantCounts(b, ids));
   assert.ok(s.crops.every((c) => c.placed === c.wanted && !c.why), JSON.stringify(s.crops));
   // no two plants overlap, none leaves the soil or enters the worm box
-  const taken = new Set();
+  const taken = new Map();
   for (const p of s.cells) {
     const f = footprint(p.cropId, b), r0 = p.row - Math.floor((f - 1) / 2), c0 = p.col - Math.floor((f - 1) / 2);
     for (let r = r0; r < r0 + f; r++) for (let c = c0; c < c0 + f; c++) {
       assert.ok(r >= 0 && r < 10 && c >= 0 && c < 26, `${p.cropId} at ${p.row},${p.col} stays in the soil`);
-      assert.ok(!taken.has(`${r}|${c}`), `${p.cropId} at ${p.row},${p.col} overlaps`);
-      taken.add(`${r}|${c}`);
+      // a low ground cover may grow under a tall plant (docs/adr/0027); nothing else shares a cell
+      const k = `${r}|${c}|${layerOf(p.cropId) === "ground" ? "g" : "u"}`;
+      assert.ok(!taken.has(k), `${p.cropId} at ${p.row},${p.col} overlaps`);
+      assert.ok(layerOf(p.cropId) !== "ground" || !taken.has(`${r}|${c}|u`) || taken.get(`${r}|${c}|u`) === "tall", `${p.cropId} under a plant that is not tall`);
+      taken.set(k, layerOf(p.cropId));
     }
   }
   assert.equal(s.badPairs, 0, JSON.stringify(s.pairs.bad));
   assert.ok(s.goodPairs >= 20, `good neighbours: ${s.goodPairs}`);
-  assert.ok(s.cover > 0.8 && s.fedByBuilder >= 1, `cover ${s.cover}, heavy feeders with a bean beside them: ${s.fedByBuilder}`);
+  // cucumbers now grow under the peppers (docs/adr/0027), so a little less of the bed is covered by plants alone
+  assert.ok(s.cover > 0.75 && s.fedByBuilder >= 1, `cover ${s.cover}, heavy feeders with a bean beside them: ${s.fedByBuilder}`);
   assert.deepEqual(suggestPlanting(b, plantCounts(b, ids)).cells, s.cells, "the same input gives the same bed");
   assert.notDeepEqual(suggestPlanting(b, plantCounts(b, ids), [], { seed: 6 }).cells, s.cells, "another seed, another bed");
 });

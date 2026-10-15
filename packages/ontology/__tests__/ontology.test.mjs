@@ -176,3 +176,25 @@ test("a hypothesis has its range around the number expected, a unit and a measur
     id:check-k-1 a perma:Check ; perma:ofHypothesis id:hyp-h-1 ; sosa:hasSimpleResult 0.12 .`)).conforms, false, "a check without its day");
   assert.equal((await validateHabitat(`${L}id:cycle-y-1 perma:cyclePhase perma:Nonsense .`)).conforms, false, "a phase from no scheme");
 });
+
+test("a farm of beds: rows, beds per row, a path of 20..200 cm; its beds say so", async () => {
+  const farm = (extra) => `${H}id:farm-f-1 a perma:BedFarm ; rdfs:label "Field beds" ; perma:inZone id:zone-z-1 ; perma:surfaceCategory perma:BedFarmSurface ;
+perma:bedLengthCm 500 ; perma:bedWidthCm 120 ; perma:cellSizeCm 10 ; ${extra} .
+id:bed-b-1 perma:inFarm id:farm-f-1 ; perma:surfaceCategory perma:RectangleBedSurface .`;
+  const ok = await validateHabitat(farm("perma:bedRows 2 ; perma:bedsPerRow 3 ; perma:pathCm 50"));
+  assert.ok(ok.conforms, messages(ok));
+  for (const bad of ["perma:bedRows 2 ; perma:bedsPerRow 3 ; perma:pathCm 5", "perma:bedRows 20 ; perma:bedsPerRow 3 ; perma:pathCm 50",
+    "perma:bedsPerRow 3 ; perma:pathCm 50"]) {
+    assert.equal((await validateHabitat(farm(bad))).conforms, false, bad);
+  }
+});
+
+test("a space's own plant set: a name, members with a library crop and a share", async () => {
+  const set = (member) => `${H}id:set-s-1 a perma:PlantSet ; rdfs:label "Shady herbs"@en ; perma:setFor perma:RectangleBedSurface ;
+perma:draft true ; perma:member ${member} .`;
+  const ok = await validateHabitat(set("[ perma:memberCrop crop:crop-parsley ; perma:share 2.0 ]"));
+  assert.ok(ok.conforms, messages(ok));
+  for (const bad of ["[ perma:memberCrop crop:crop-parsley ; perma:share 0.0 ]", "[ perma:memberCrop id:zone-z-1 ; perma:share 1.0 ]", "[ perma:share 1.0 ]"]) {
+    assert.equal((await validateHabitat(set(bad))).conforms, false, bad);
+  }
+});

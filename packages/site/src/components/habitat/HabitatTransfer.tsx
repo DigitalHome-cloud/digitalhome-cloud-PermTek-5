@@ -1,7 +1,8 @@
 import * as React from "react";
-import { checkHabitat, habitatFromTtl, habitatToTtl } from "@dlab5/permtek5-core";
+import { checkHabitat, emptyHabitat, habitatFromTtl, habitatToTtl } from "@dlab5/permtek5-core";
 import type { Habitat } from "@dlab5/permtek5-core";
 import { useT } from "../../lib/i18n";
+import { ConfirmButton } from "./common";
 
 /** The habitat's A-Box as a Turtle file: download it, or load one (it replaces the draft; nothing is saved until you save). */
 export function HabitatTransfer({ habitat, canEdit, replace, mode }: {
@@ -34,6 +35,16 @@ export function HabitatTransfer({ habitat, canEdit, replace, mode }: {
         <>
           <p className="pt-panel__hint">{t("io.export.hint")}</p>
           <div><button className="pt-button" onClick={download}>{t("io.export")}</button></div>
+          {canEdit && habitat.zones.length > 0 && (
+            <div className="pt-io__delete">
+              <h2>{t("io.delete")}</h2>
+              <p className="pt-panel__hint">{t("io.delete.hint")}</p>
+              {/* everything the map holds goes; triples it does not know (an edge's, a tool's) stay */}
+              <ConfirmButton label={t("io.delete")}
+                says={t("io.delete.says", { zones: habitat.zones.length, beds: habitat.beds.length, cells: habitat.cells.length, plants: habitat.plants.length })}
+                onConfirm={() => { replace({ ...emptyHabitat(), rest: habitat.rest }); setMsg(t("io.deleted")); }} />
+            </div>
+          )}
         </>
       ) : (
         <>

@@ -48,6 +48,10 @@ perma:GrowingBed a owl:Class ;
     rdfs:label "Growing bed"@en , "Beet"@de , "Planche de culture"@fr ;
     rdfs:comment "A rectangular bed in a zone, split into square cells (row 0 and column 0 at one corner)."@en .
 
+perma:BedFarm a owl:Class ;
+    rdfs:label "Farm of beds"@en , "Beetfeld"@de , "Ensemble de planches"@fr ;
+    rdfs:comment "Rectangle beds of one size in rows, with paths between them: the surface category perma:BedFarmSurface. Its beds are ordinary growing beds that say perma:inFarm."@en .
+
 perma:PlantingCell a owl:Class ;
     rdfs:label "Planting cell"@en , "Pflanzzelle"@de , "Case de plantation"@fr ;
     rdfs:comment "Where one plant or sowing point of a bed stands, with its crop and how far it has got."@en .
@@ -148,6 +152,36 @@ perma:wormBinCm a owl:DatatypeProperty ;
     rdfs:domain perma:GrowingBed ; rdfs:range xsd:integer ;
     rdfs:label "worm box (cm)"@en , "Wurmkiste (cm)"@de , "lombricomposteur (cm)"@fr ;
     rdfs:comment "Length of the bed's far end (the highest columns) taken by a worm compost box: two bins, the upper one above the soil for the worms, the lower one a sump for the liquid, which a tap lets on to the tank pipes. No cells are planted there."@en .
+
+perma:surfaceCategory a owl:ObjectProperty ;
+    rdfs:range skos:Concept ;
+    rdfs:label "surface category"@en , "Flächenart"@de , "catégorie de surface"@fr ;
+    rdfs:comment "What kind of surface a bed or farm is (perma:SurfaceCategories). Each category has its own limits and its own planner; a bed without one is a rectangle bed."@en .
+
+perma:inFarm a owl:ObjectProperty ;
+    rdfs:domain perma:GrowingBed ; rdfs:range perma:BedFarm ;
+    rdfs:label "in farm"@en , "im Beetfeld"@de , "dans l'ensemble"@fr .
+
+perma:bedRows a owl:DatatypeProperty ;
+    rdfs:domain perma:BedFarm ; rdfs:range xsd:integer ;
+    rdfs:label "rows of beds"@en , "Beetreihen"@de , "rangs de planches"@fr .
+
+perma:bedsPerRow a owl:DatatypeProperty ;
+    rdfs:domain perma:BedFarm ; rdfs:range xsd:integer ;
+    rdfs:label "beds per row"@en , "Beete je Reihe"@de , "planches par rang"@fr .
+
+perma:pathCm a owl:DatatypeProperty ;
+    rdfs:domain perma:BedFarm ; rdfs:range xsd:integer ;
+    rdfs:label "path (cm)"@en , "Weg (cm)"@de , "allée (cm)"@fr ;
+    rdfs:comment "Width of the paths between the beds."@en .
+
+perma:bedLengthCm a owl:DatatypeProperty ;
+    rdfs:domain perma:BedFarm ; rdfs:range xsd:integer ;
+    rdfs:label "bed length (cm)"@en , "Beetlänge (cm)"@de , "longueur des planches (cm)"@fr .
+
+perma:bedWidthCm a owl:DatatypeProperty ;
+    rdfs:domain perma:BedFarm ; rdfs:range xsd:integer ;
+    rdfs:label "bed width (cm)"@en , "Beetbreite (cm)"@de , "largeur des planches (cm)"@fr .
 
 perma:inBed a owl:ObjectProperty ;
     rdfs:domain perma:PlantingCell ; rdfs:range perma:GrowingBed ;

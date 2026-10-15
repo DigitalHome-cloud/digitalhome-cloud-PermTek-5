@@ -37,10 +37,10 @@ export { FROST_RISK_MIN_C, activitiesIn, deriveWindows } from "./calendar.js";
 export type { CropCalendar } from "./calendar.js";
 export {
   CELL_STATUSES, EXPOSURES, GUILD_ROBOT, GUILD_TYPES, HABITAT_IRI, ROBOT_NAME, STORE_KINDS, SUBSTRATE_KINDS, VALVE_KINDS, WATER_KINDS, ZONE_KINDS,
-  bedGrid, checkHabitat, defaultOffset, emptyHabitat, footprint, newGuild, guildForBed, WORMBED5, newId, sowingJob, wormBinCols, zoneOffset,
+  SURFACE_LIMITS, bedGrid, checkHabitat, defaultOffset, emptyHabitat, farmBeds, farmLayout, footprint, newFarm, newGuild, guildForBed, WORMBED5, newId, sowingJob, wormBinCols, zoneOffset,
 } from "./habitatModel.js";
 export type {
-  Bed, Cell, CellStatus, Exposure, GardenPlant, Guild, GuildType, Habitat, Problem, RainCatchment, RobotModel, SowingJob, StoreKind, SubstrateKind,
+  Bed, BedFarm, Cell, CellStatus, Exposure, GardenPlant, Guild, GuildType, Habitat, Problem, RainCatchment, RobotModel, SowingJob, StoreKind, SubstrateKind,
   Valve, ValveKind, WaterKind, WaterStore, Zone, ZoneKind,
 } from "./habitatModel.js";
 export { WORMBED5_WATER, defaultWater, rainLitres, useMmPerDay, waterBudget } from "./water.js";
@@ -62,7 +62,9 @@ export {
 export type { BedLoad, LoadClass } from "./bedLoad.js";
 export { cropsWanted, matchCrop, parseIngredients, recipeName, sharedRecipes } from "./recipes.js";
 export type { Recipe, RecipeLine } from "./recipes.js";
-export { plantCounts, scorePlanting, suggestPlanting } from "./planting.js";
-export type { Placement, PlantingOptions, PlantingScore, PlantingSuggestion } from "./planting.js";
+export { crowdedCells, layerOf, planFarm, planFromSets, plantCounts, shareOut, plantingConflict, scorePlanting, suggestPlanting } from "./planting.js";
+export type { Layer, Placement, PlantingOptions, PlantingScore, PlantingSuggestion, SetChoice, SetPlan } from "./planting.js";
+export { PLANNED_SURFACES, plantSetById, plantSets, setName } from "./plantSets.js";
+export type { PlantSet, SetMember, SurfaceCategory } from "./plantSets.js";
 export { cropSeasons, givesWay, standingIn, yearPlan } from "./season.js";
 export type { CropSeason, GoesIn, Planting, YearPlan } from "./season.js";

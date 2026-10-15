@@ -1,4 +1,5 @@
-// The edge side of A-Box sync, and /tenant (which tenant and spaces this edge serves). An edge reads a graph with its
+// The edge side of A-Box sync, /tenant (which tenant and spaces this edge serves), and /plan (the cloud's bed
+// planner for the edge's agent, docs/adr/0027). An edge reads a graph with its
 // version, merges locally statement by statement against the version it
 // last synced, and writes back naming the version it read. If someone saved
 // meanwhile, it gets 409 and the current document, and merges again.
@@ -6,6 +7,7 @@ import type { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda
 import { extractBearer, json, parseJsonBody, versionGate } from "../edge-shared/http";
 import { verifyDeviceToken } from "../edge-shared/registry";
 import { BadGraphRequest, getGraph, listGraphs, saveGraph } from "../graph-shared/store";
+import { planForEdge, type PlanRequest } from "../graph-shared/plan";
 import { getSpace, getTenant, spacesOfTenant } from "../shared/spaces";
 
 export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> => {
@@ -15,7 +17,7 @@ export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGateway
   if (!verified.ok) {
     return verified.reason === "revoked" ? json(410, { error: "revoked" }) : json(401, { error: "invalid_token" });
   }
-  const body = parseJsonBody<{ name?: string; ttl?: string; baseVersion?: number }>(event) || {};
+  const body = parseJsonBody<{ name?: string; ttl?: string; baseVersion?: number } & PlanRequest>(event) || {};
   // ADR-0005: an edge reaches only its own tenant's graphs (one per space)
   const tenant = verified.row.tenant_id;
   if (!tenant) return json(403, { error: "no_tenant", message: "this edge belongs to no tenant yet; link it again" });
@@ -34,6 +36,12 @@ export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGateway
     if (event.rawPath.endsWith("/graphs/get")) {
       const g = await getGraph(space.id);
       return json(200, g ?? { name: space.id, version: 0, ttl: "" });
+    }
+    if (event.rawPath.endsWith("/plan")) {
+      // the bed planner (docs/adr/0027): a proposal, never saved here
+      const g = await getGraph(space.id);
+      const r = planForEdge(g?.ttl ?? "", body);
+      return json(r.status, r.body);
     }
     if (event.rawPath.endsWith("/graphs/put")) {
       if (typeof body.ttl !== "string") return json(400, { error: "invalid_request", message: "ttl is required" });

@@ -6,8 +6,10 @@
  */
 import { mintId } from "./identity.js";
 import { cropById } from "./library.js";
+import { layerOf } from "./planting.js";
 import type { LearningCycle } from "./learning.js";
 import type { Recipe } from "./recipes.js";
+import type { PlantSet } from "./plantSets.js";
 
 export const HABITAT_IRI = "https://permtek-5.digitalhome.cloud/id/";
 
@@ -52,7 +54,24 @@ export interface Bed {
   substrate?: SubstrateKind; tankPipes?: number; tankPipeMm?: number; wormBinCm?: number;
   /** Mulch on the soil, cm; thin on a robot bed (a seeder and a camera have to reach the soil). */
   mulchCm?: number;
+  /** The farm of beds it is one of (docs/adr/0027). */
+  farmId?: string;
 }
+
+/**
+ * A farm of beds (docs/adr/0027): rectangle beds of one size in rows, with paths between them. Its beds are
+ * ordinary beds that say `farmId`; farmBeds() makes them.
+ */
+export interface BedFarm {
+  id: string; name: string; zoneId: string;
+  rows: number; perRow: number; pathCm: number;
+  lengthCm: number; widthCm: number; cellCm: number;
+}
+/** The limits of the surface categories there is a planner for (the shapes say the same). */
+export const SURFACE_LIMITS = {
+  RectangleBedSurface: { maxLengthCm: 3000, maxWidthCm: 1000 },
+  BedFarmSurface: { maxBeds: 50, maxRows: 10, maxPerRow: 10, minPathCm: 20, maxPathCm: 200 },
+} as const;
 export interface Cell {
   id: string; bedId: string; row: number; col: number; cropId: string; status: CellStatus; sownOn?: string;
   /** Only when this cell differs from the crop's sowing depth / seeds per point. */
@@ -91,13 +110,17 @@ export interface Habitat {
   valves?: Valve[];
   /** What the habitat is learning (learning.ts): plan-do-check-act cycles about its guilds. Absent when none. */
   cycles?: LearningCycle[];
+  /** Farms of beds (docs/adr/0027). Absent when none. */
+  farms?: BedFarm[];
+  /** The space's own plant sets, and the edge agent's drafts (plantSets.ts). Absent when none. */
+  plantSets?: PlantSet[];
   /** Triples about anything else in the graph, as N-Triples: kept as they are on every save. */
   rest: string;
 }
 
 export const emptyHabitat = (): Habitat => ({ zones: [], guilds: [], beds: [], cells: [], plants: [], rest: "" });
 
-export const newId = (kind: "zone" | "guild" | "bed" | "cell" | "plant" | "recipe" | "rain" | "store" | "valve" | "cycle" | "hyp" | "measure" | "check") =>
+export const newId = (kind: "zone" | "guild" | "bed" | "cell" | "plant" | "recipe" | "rain" | "store" | "valve" | "cycle" | "hyp" | "measure" | "check" | "farm" | "set") =>
   `${HABITAT_IRI}${kind}-${mintId(kind[0])}`;
 
 /** A roof is about a degree warmer than the street; elsewhere start at 0. */
@@ -110,6 +133,36 @@ export const bedGrid = (b: Bed) => ({ rows: Math.ceil(b.widthCm / b.cellCm), col
 export function footprint(cropId: string, b: Bed): number {
   const spacing = cropById(cropId)?.needs.spacingCm;
   return spacing ? Math.max(1, Math.round(spacing / b.cellCm)) : 1;
+}
+
+/** A new farm of beds in an area, and its beds, named "<farm> 1.1" (row.bed). */
+export function newFarm(zone: Zone, name: string, rows: number, perRow: number, size: { lengthCm: number; widthCm: number; cellCm: number; pathCm: number }):
+  { farm: BedFarm; beds: Bed[] } {
+  const farm: BedFarm = { id: newId("farm"), name, zoneId: zone.id, rows, perRow, ...size };
+  return { farm, beds: farmBeds(farm, zone) };
+}
+
+/** The beds a farm is made of, one per row and place. */
+export function farmBeds(farm: BedFarm, zone: Zone): Bed[] {
+  const beds: Bed[] = [];
+  for (let r = 1; r <= farm.rows; r++) for (let b = 1; b <= farm.perRow; b++) {
+    beds.push({
+      id: newId("bed"), name: `${farm.name} ${r}.${b}`, zoneId: farm.zoneId, farmId: farm.id,
+      lengthCm: farm.lengthCm, widthCm: farm.widthCm, cellCm: farm.cellCm,
+      substrate: zone.kind === "GroundZone" ? "GardenSoil" : "LightweightRoofSubstrate",
+    });
+  }
+  return beds;
+}
+
+/** Where a farm's bed lies, in cm from the farm's corner: beds along x in a row, rows along y, paths between. */
+export function farmLayout(farm: BedFarm, beds: Bed[]): { bedId: string; xCm: number; yCm: number }[] {
+  const mine = beds.filter((b) => b.farmId === farm.id);
+  return mine.map((b, i) => ({
+    bedId: b.id,
+    xCm: (i % farm.perRow) * (farm.lengthCm + farm.pathCm),
+    yCm: Math.floor(i / farm.perRow) * (farm.widthCm + farm.pathCm),
+  }));
 }
 
 /** A new guild of a type, with the bed that type starts with (docs/specs/roofbed-system.md for WormBed5). */
@@ -153,7 +206,7 @@ export const zoneOffset = (h: Habitat, zoneId: string) => h.zones.find((z) => z.
 
 export interface Problem {
   code: "cellOutside" | "cellTwice" | "cellInBin" | "noZone" | "noBed" | "noGuild" | "guildBeds" | "unknownCrop"
-    | "waterNoGuild" | "valveEnds" | "wormIntoClean" | "rainNoStore";
+    | "waterNoGuild" | "valveEnds" | "wormIntoClean" | "rainNoStore" | "noFarm" | "farmTooBig" | "setEmpty";
   id: string;
 }
 
@@ -171,6 +224,17 @@ export function checkHabitat(h: Habitat): Problem[] {
   for (const b of h.beds) {
     if (!zones.has(b.zoneId)) problems.push({ code: "noZone", id: b.id });
     if (b.guildId && guilds.get(b.guildId)?.zoneId !== b.zoneId) problems.push({ code: "noGuild", id: b.id });
+  }
+  const farms = new Map((h.farms ?? []).map((f) => [f.id, f]));
+  const L = SURFACE_LIMITS.BedFarmSurface;
+  for (const f of farms.values()) {
+    if (!zones.has(f.zoneId)) problems.push({ code: "noZone", id: f.id });
+    if (h.beds.filter((b) => b.farmId === f.id).length > L.maxBeds || f.rows * f.perRow > L.maxBeds) problems.push({ code: "farmTooBig", id: f.id });
+  }
+  for (const b of h.beds) if (b.farmId && farms.get(b.farmId)?.zoneId !== b.zoneId) problems.push({ code: "noFarm", id: b.id });
+  for (const s of h.plantSets ?? []) {
+    if (!s.members.length) problems.push({ code: "setEmpty", id: s.id });
+    for (const m of s.members) if (!cropById(m.cropId)) problems.push({ code: "unknownCrop", id: s.id });
   }
   for (const p of h.plants) {
     if (!zones.has(p.zoneId)) problems.push({ code: "noZone", id: p.id });
@@ -194,7 +258,8 @@ export function checkHabitat(h: Habitat): Problem[] {
     const { rows, cols } = bedGrid(b);
     if (c.row < 0 || c.col < 0 || c.row >= rows || c.col >= cols) problems.push({ code: "cellOutside", id: c.id });
     else if (c.col >= cols - wormBinCols(b)) problems.push({ code: "cellInBin", id: c.id });
-    const key = `${c.bedId}|${c.row}|${c.col}`;
+    // one plant per layer in a cell: a ground cover may share it with a tall plant (planting.ts, layerOf)
+    const key = `${c.bedId}|${c.row}|${c.col}|${layerOf(c.cropId) === "ground" ? "ground" : "up"}`;
     if (seen.has(key)) problems.push({ code: "cellTwice", id: c.id });
     seen.add(key);
     if (!cropById(c.cropId)) problems.push({ code: "unknownCrop", id: c.id });

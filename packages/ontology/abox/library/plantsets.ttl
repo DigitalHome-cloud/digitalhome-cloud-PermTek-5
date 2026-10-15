@@ -1,0 +1,75 @@
+@prefix perma: <https://permaculture.digitalhome.cloud/ontology#> .
+@prefix id:    <https://permaculture.digitalhome.cloud/id/> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+
+# Plant sets (docs/adr/0027): crops planned together, each with its share of the room.
+# Traditional companion-planting guidance, to confirm by what the bed shows. Only crops of crops.ttl.
+# A space can hold its own sets (and the edge agent's drafts) in its graph; they join this file by review.
+
+id:set-kitchen-herbs a perma:PlantSet ;
+    rdfs:label "Kitchen herbs"@en , "Küchenkräuter"@de , "Herbes aromatiques"@fr ;
+    rdfs:comment "Herbs a kitchen uses every week, close at hand. Rosemary takes the most room and goes in first; chives and parsley fill in."@en ;
+    perma:setFor perma:RectangleBedSurface , perma:BedFarmSurface ;
+    perma:member
+        [ perma:memberCrop id:crop-rosemary ; perma:share 2.0 ] ,
+        [ perma:memberCrop id:crop-thyme ; perma:share 1.5 ] ,
+        [ perma:memberCrop id:crop-basil ; perma:share 1.5 ] ,
+        [ perma:memberCrop id:crop-parsley ; perma:share 1.5 ] ,
+        [ perma:memberCrop id:crop-chives ; perma:share 1.0 ] ,
+        [ perma:memberCrop id:crop-dill ; perma:share 1.0 ] .
+
+id:set-salad-bed a perma:PlantSet ;
+    rdfs:label "Salad bed"@en , "Salatbeet"@de , "Planche à salades"@fr ;
+    rdfs:comment "Leaves and quick roots, sown again as they are cut. Radish marks the rows and is pulled first."@en ;
+    perma:setFor perma:RectangleBedSurface , perma:BedFarmSurface ;
+    perma:member
+        [ perma:memberCrop id:crop-lettuce ; perma:share 3.0 ] ,
+        [ perma:memberCrop id:crop-rocket ; perma:share 1.5 ] ,
+        [ perma:memberCrop id:crop-spinach ; perma:share 1.5 ] ,
+        [ perma:memberCrop id:crop-radish ; perma:share 1.0 ] ,
+        [ perma:memberCrop id:crop-spring-onion ; perma:share 1.0 ] .
+
+id:set-tomato-friends a perma:PlantSet ;
+    rdfs:label "Tomato and friends"@en , "Tomate und Freunde"@de , "La tomate et ses amis"@fr ;
+    rdfs:comment "Tomatoes with their traditional companions: basil and marigold against pests, carrots and chives in the gaps, thyme under them."@en ;
+    perma:setFor perma:RectangleBedSurface , perma:BedFarmSurface ;
+    perma:member
+        [ perma:memberCrop id:crop-tomato ; perma:share 4.0 ] ,
+        [ perma:memberCrop id:crop-basil ; perma:share 1.5 ] ,
+        [ perma:memberCrop id:crop-marigold ; perma:share 1.0 ] ,
+        [ perma:memberCrop id:crop-carrot ; perma:share 1.0 ] ,
+        [ perma:memberCrop id:crop-chives ; perma:share 0.5 ] ,
+        [ perma:memberCrop id:crop-thyme ; perma:share 1.0 ] .
+
+id:set-roots-and-onions a perma:PlantSet ;
+    rdfs:label "Roots and onions"@en , "Wurzeln und Zwiebeln"@de , "Racines et oignons"@fr ;
+    rdfs:comment "Carrots beside onions and garlic: each is said to keep the other's fly away."@en ;
+    perma:setFor perma:RectangleBedSurface , perma:BedFarmSurface ;
+    perma:member
+        [ perma:memberCrop id:crop-carrot ; perma:share 3.0 ] ,
+        [ perma:memberCrop id:crop-onion ; perma:share 2.0 ] ,
+        [ perma:memberCrop id:crop-garlic ; perma:share 1.5 ] ,
+        [ perma:memberCrop id:crop-radish ; perma:share 0.5 ] .
+
+id:set-mediterranean a perma:PlantSet ;
+    rdfs:label "Mediterranean summer"@en , "Mediterraner Sommer"@de , "Été méditerranéen"@fr ;
+    rdfs:comment "Warm-season fruit crops with the herbs they are traditionally grown with. For a sunny, sheltered bed."@en ;
+    perma:setFor perma:RectangleBedSurface , perma:BedFarmSurface ;
+    perma:member
+        [ perma:memberCrop id:crop-aubergine ; perma:share 2.0 ] ,
+        [ perma:memberCrop id:crop-sweet-pepper ; perma:share 2.0 ] ,
+        [ perma:memberCrop id:crop-basil ; perma:share 1.5 ] ,
+        [ perma:memberCrop id:crop-thyme ; perma:share 1.0 ] ,
+        [ perma:memberCrop id:crop-marigold ; perma:share 0.5 ] .
+
+id:set-cucurbits-and-beans a perma:PlantSet ;
+    rdfs:label "Courgettes and beans"@en , "Zucchini und Bohnen"@de , "Courgettes et haricots"@fr ;
+    rdfs:comment "Heavy-feeding cucurbits with beans that fix nitrogen, dill and marigold for the insects."@en ;
+    perma:setFor perma:RectangleBedSurface , perma:BedFarmSurface ;
+    perma:member
+        [ perma:memberCrop id:crop-courgette ; perma:share 3.0 ] ,
+        [ perma:memberCrop id:crop-cucumber ; perma:share 2.0 ] ,
+        [ perma:memberCrop id:crop-bush-bean ; perma:share 2.0 ] ,
+        [ perma:memberCrop id:crop-dill ; perma:share 0.5 ] ,
+        [ perma:memberCrop id:crop-marigold ; perma:share 0.5 ] .

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { climateMonths, cropById, cropSeasons, deriveWindows, footprint, standingIn, yearPlan } from "../dist/index.js";
+import { layerOf, climateMonths, cropById, cropSeasons, deriveWindows, footprint, standingIn, yearPlan } from "../dist/index.js";
 
 // docs/adr/0022: a year in the bed. An invented mild lowland climate.
 const LOW = [1, 1.5, 3, 5.5, 9, 12.5, 14, 14, 11.5, 9, 5, 2.5];
@@ -34,12 +34,15 @@ test("the year from March: each crop goes in in a month of its calendar, and no 
     assert.ok(p.toOffset >= p.fromOffset && p.toOffset <= 11);
   }
   for (let k = 0; k < 12; k++) {
-    const taken = new Set();
+    const taken = new Map();
     for (const p of standingIn(plan, k)) {
       const f = footprint(p.cropId, bed), r0 = p.row - Math.floor((f - 1) / 2), c0 = p.col - Math.floor((f - 1) / 2);
       for (let r = r0; r < r0 + f; r++) for (let c = c0; c < c0 + f; c++) {
-        assert.ok(r >= 0 && r < 12 && c >= 0 && c < 26 && !taken.has(`${r}|${c}`), `month +${k}: ${p.cropId} at ${p.row},${p.col}`);
-        taken.add(`${r}|${c}`);
+        // a low ground cover may grow under a tall plant (docs/adr/0027); nothing else shares a cell
+        const key = `${r}|${c}|${layerOf(p.cropId) === "ground" ? "g" : "u"}`;
+        assert.ok(r >= 0 && r < 12 && c >= 0 && c < 26 && !taken.has(key), `month +${k}: ${p.cropId} at ${p.row},${p.col}`);
+        assert.ok(layerOf(p.cropId) !== "ground" || !taken.has(`${r}|${c}|u`) || taken.get(`${r}|${c}|u`) === "tall", `month +${k}: ${p.cropId} under a plant that is not tall`);
+        taken.set(key, layerOf(p.cropId));
       }
     }
   }

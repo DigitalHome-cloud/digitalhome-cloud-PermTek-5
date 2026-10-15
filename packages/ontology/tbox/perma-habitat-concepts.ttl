@@ -41,6 +41,22 @@ perma:CellGrowing a skos:Concept ; skos:inScheme perma:CellStatuses ; skos:topCo
 perma:CellHarvested a skos:Concept ; skos:inScheme perma:CellStatuses ; skos:topConceptOf perma:CellStatuses ;
     skos:prefLabel "Harvested"@en , "Geerntet"@de , "Récolté"@fr .
 
+perma:SurfaceCategories a skos:ConceptScheme ;
+    skos:prefLabel "Surface categories"@en , "Flächenarten"@de , "Catégories de surface"@fr ;
+    skos:hasTopConcept perma:RectangleBedSurface , perma:BedFarmSurface , perma:GreenhouseSurface , perma:FoodForestSurface .
+perma:RectangleBedSurface a skos:Concept ; skos:inScheme perma:SurfaceCategories ; skos:topConceptOf perma:SurfaceCategories ;
+    skos:prefLabel "Rectangle bed"@en , "Rechteckbeet"@de , "Planche rectangulaire"@fr ;
+    skos:definition "One rectangular bed of square cells, up to 30 m long and 10 m wide; planted by cells (docs/adr/0027)."@en .
+perma:BedFarmSurface a skos:Concept ; skos:inScheme perma:SurfaceCategories ; skos:topConceptOf perma:SurfaceCategories ;
+    skos:prefLabel "Farm of beds"@en , "Beetfeld"@de , "Ensemble de planches"@fr ;
+    skos:definition "Rectangle beds of one size in rows, with paths between them, up to 50 beds; plant sets are shared out over the beds."@en .
+perma:GreenhouseSurface a skos:Concept ; skos:inScheme perma:SurfaceCategories ; skos:topConceptOf perma:SurfaceCategories ;
+    skos:prefLabel "Greenhouse"@en , "Gewächshaus"@de , "Serre"@fr ;
+    skos:definition "Beds under glass or film, with their own climate. Not planned yet."@en .
+perma:FoodForestSurface a skos:Concept ; skos:inScheme perma:SurfaceCategories ; skos:topConceptOf perma:SurfaceCategories ;
+    skos:prefLabel "Food forest"@en , "Waldgarten"@de , "Forêt comestible"@fr ;
+    skos:definition "Trees, shrubs and herbs in layers on open ground, placed by canopy rather than by cells. Not planned yet."@en .
+
 perma:SubstrateKinds a skos:ConceptScheme ;
     skos:prefLabel "Substrates"@en , "Substrate"@de , "Substrats"@fr ;
     skos:hasTopConcept perma:LightweightRoofSubstrate , perma:GardenSoil , perma:PottingCompost .

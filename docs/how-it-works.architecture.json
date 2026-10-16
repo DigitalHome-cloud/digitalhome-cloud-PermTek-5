@@ -51,7 +51,7 @@
           "twin",
           "robot"
         ],
-        "note": "An edge pairs by a code an admin approves, syncs the site's knowledge, simulates the gantry, and writes back what was sown."
+        "note": "The twin edge syncs a bed's target, rehearses getting there from a clean bed, and keeps a logbook and a replayable USD run."
       }
     ]
   },
@@ -117,7 +117,7 @@
       "id": "map",
       "type": "frontend",
       "label": "Map",
-      "sublabel": "areas · guilds · cells",
+      "sublabel": "areas · guilds · periods",
       "pos": [
         520,
         60
@@ -187,7 +187,7 @@
       "id": "twin",
       "type": "backend",
       "label": "Twin edge",
-      "sublabel": "one per guild",
+      "sublabel": "rehearsal · logbook · USD",
       "pos": [
         1010,
         300
@@ -307,7 +307,7 @@
       "id": "sync",
       "from": "abox",
       "to": "edgeapi",
-      "label": "sync"
+      "label": "targets"
     },
     {
       "id": "token",
@@ -345,7 +345,7 @@
       "title": "Suggestions, you decide",
       "items": [
         "Calendar months are general practice, to confirm",
-        "Late frost at blossom is flagged",
+        "The twin rehearses a period's target; nothing goes back to the map",
         "A robot proposes jobs; a person confirms"
       ]
     },

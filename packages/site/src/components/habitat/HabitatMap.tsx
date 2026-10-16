@@ -1,12 +1,13 @@
 import * as React from "react";
 import {
   EXPOSURES, ROBOT_NAME, SUBSTRATE_KINDS, WORMBED5_SIZES, bedGrid, bedLoad, loadClass, guildForBed, wormBinCols, cropById, cropName, footprint, newId, sowingJob,
-  crowdedCells, layerOf, plantingConflict, removeZone, wormBoxCm, wormBoxYear, zoneContents,
+  crowdedCells, layerOf, periodCells, plantingConflict, removeZone, wormBoxCm, wormBoxYear, zoneContents,
 } from "@dlab5/permtek5-core";
 import type { Bed, Cell, CellStatus, ClimateMonth, Exposure, GardenPlant, Guild, Habitat, SubstrateKind, Zone, ZoneKind } from "@dlab5/permtek5-core";
 import { FarmCard } from "./FarmCard";
 import { NewWormBed, PLACES, Pick, boxOptions } from "./NewWormBed";
 import { PlanFromSets } from "./PlantSets";
+import { BedPeriods, startPeriod } from "./BedPeriods";
 import { CELL_STATUSES } from "@dlab5/permtek5-core";
 import { useT } from "../../lib/i18n";
 import { ConfirmButton, CropSelect, cropColor, num } from "./common";
@@ -91,7 +92,7 @@ function ZoneCard({ zone, habitat, edit, canEdit, months }: { zone: Zone; habita
 
       {guilds.map((g) => <GuildCard key={g.id} guild={g} habitat={habitat} edit={edit} canEdit={canEdit} months={months} />)}
       {farms.map((f) => <FarmCard key={f.id} farm={f} habitat={habitat} edit={edit} canEdit={canEdit} months={months} />)}
-      {plainBeds.map((b) => <BedEditor key={b.id} bed={b} habitat={habitat} edit={edit} canEdit={canEdit} />)}
+      {plainBeds.map((b) => <BedEditor key={b.id} bed={b} habitat={habitat} edit={edit} canEdit={canEdit} months={months} />)}
       {plants.length > 0 && <GardenPlants zone={zone} plants={plants} edit={edit} canEdit={canEdit} />}
 
       {canEdit && (
@@ -135,7 +136,7 @@ function GuildCard({ guild, habitat, edit, canEdit, months, inFarm = false }: {
         <input type="checkbox" checked={guild.wormsMayLeave ?? true} disabled={!canEdit} onChange={(e) => set({ wormsMayLeave: e.target.checked })} />
         {t("hab.guild.worms")}
       </label>
-      {beds.map((b) => <BedEditor key={b.id} bed={b} habitat={habitat} edit={edit} canEdit={canEdit} />)}
+      {beds.map((b) => <BedEditor key={b.id} bed={b} habitat={habitat} edit={edit} canEdit={canEdit} months={months} />)}
       {guild.type === "WormBed5" && <FeedingGuide />}
       <GuildWater guild={guild} habitat={habitat} edit={edit} canEdit={canEdit} months={months} />
       {canEdit && !inFarm && (
@@ -151,7 +152,7 @@ function GuildCard({ guild, habitat, edit, canEdit, months, inFarm = false }: {
               return {
                 ...h, guilds: (h.guilds ?? []).filter((g) => g.id !== guild.id), beds: h.beds.filter((b) => !gone.has(b.id)),
                 // its bed's plants, its water and what it was learning go with it
-                cells: h.cells.filter((c) => !gone.has(c.bedId)),
+                cells: h.cells.filter((c) => !gone.has(c.bedId)), periods: (h.periods ?? []).filter((p) => !gone.has(p.bedId)),
                 catchments: (h.catchments ?? []).filter((c) => c.guildId !== guild.id), stores: (h.stores ?? []).filter((s) => s.guildId !== guild.id),
                 valves: (h.valves ?? []).filter((v) => v.guildId !== guild.id), cycles: (h.cycles ?? []).filter((c) => c.aboutId !== guild.id),
               };
@@ -163,12 +164,15 @@ function GuildCard({ guild, habitat, edit, canEdit, months, inFarm = false }: {
 }
 
 /** A bed as its grid of cells. Choose a crop, then click empty cells to plant it; click a planted cell to edit it. */
-function BedEditor({ bed, habitat, edit, canEdit }: { bed: Bed; habitat: Habitat; edit: Edit; canEdit: boolean }) {
+function BedEditor({ bed, habitat, edit, canEdit, months = null }: { bed: Bed; habitat: Habitat; edit: Edit; canEdit: boolean; months?: ClimateMonth[] | null }) {
   const { t, lang } = useT();
   const [brush, setBrush] = React.useState("");
   const [selected, setSelected] = React.useState<string | null>(null);
+  // the grid shows one period's target (docs/adr/0029); "" is the bed as it stands
+  const [period, setPeriod] = React.useState(() => startPeriod(habitat, bed));
+  const inPeriod = (habitat.periods ?? []).find((p) => p.id === period);
   const { rows, cols } = bedGrid(bed);
-  const cells = habitat.cells.filter((c) => c.bedId === bed.id);
+  const cells = periodCells(habitat, bed.id, inPeriod?.id);
   // a ground cover may share a cell with a tall plant: the cell shows the tall one
   const at = new Map([...cells].sort((a, b) => Number(layerOf(b.cropId) === "ground") - Number(layerOf(a.cropId) === "ground")).map((c) => [`${c.row}|${c.col}`, c]));
   const crowded = crowdedCells(bed, cells);
@@ -203,7 +207,7 @@ function BedEditor({ bed, habitat, edit, canEdit }: { bed: Bed; habitat: Habitat
       return;
     }
     const id = newId("cell");
-    edit((h) => ({ ...h, cells: [...h.cells, { id, bedId: bed.id, row, col, cropId: brush, status: "CellPlanned" as CellStatus }] }));
+    edit((h) => ({ ...h, cells: [...h.cells, { id, bedId: bed.id, row, col, cropId: brush, status: "CellPlanned" as CellStatus, ...(inPeriod && { periodId: inPeriod.id }) }] }));
     setSelected(id);
   };
   const sel = cells.find((c) => c.id === selected);
@@ -277,6 +281,7 @@ function BedEditor({ bed, habitat, edit, canEdit }: { bed: Bed; habitat: Habitat
       {guided && (bed.wormBinCm ?? 0) > 0 && (
         <p className="pt-muted">{t("wb.box.year", { cm: bed.wormBinCm ?? 0, kg: year.scrapsKg, castings: year.castingsKg, uses: year.bedUsesKg })}</p>
       )}
+      <BedPeriods bed={bed} habitat={habitat} edit={edit} canEdit={canEdit} months={months} period={inPeriod?.id ?? ""} setPeriod={(id) => { setPeriod(id); setSelected(null); }} />
       <p className="pt-muted pt-bedbox__hint">{t("hab.bed.grid", { rows, cols })}</p>
       {canEdit && (
         <label className="pt-field pt-bedbox__brush"><span>{t("hab.brush")}</span>
@@ -308,7 +313,7 @@ function BedEditor({ bed, habitat, edit, canEdit }: { bed: Bed; habitat: Habitat
 
       {refused && <p className="pt-error" role="status">{refused} {t("hab.cell.force")}</p>}
       {crowded.size > 0 && <p className="pt-muted">{t("hab.bed.crowded", { n: crowded.size })}</p>}
-      {canEdit && <PlanFromSets beds={[bed]} habitat={habitat} edit={edit} canEdit={canEdit} />}
+      {canEdit && inPeriod?.kind !== "RestKind" && <PlanFromSets key={inPeriod?.id ?? ""} beds={[bed]} habitat={habitat} edit={edit} canEdit={canEdit} periodId={inPeriod?.id} />}
 
       {sel && crop && (
         <div className="pt-cellpanel">
@@ -354,10 +359,10 @@ function BedEditor({ bed, habitat, edit, canEdit }: { bed: Bed; habitat: Habitat
       )}
       {canEdit && cells.length > 0 && (
         <ConfirmButton label={t("hab.clear.bed")} says={t("hab.clear.bed.says", { n: cells.length })}
-          onConfirm={() => { setSelected(null); edit((h) => ({ ...h, cells: h.cells.filter((c) => c.bedId !== bed.id) })); }} />
+          onConfirm={() => { setSelected(null); edit((h) => ({ ...h, cells: h.cells.filter((c) => c.bedId !== bed.id || (c.periodId ?? "") !== (inPeriod?.id ?? "")) })); }} />
       )}
-      {canEdit && cells.length === 0 && !bed.guildId && !bed.farmId && (
-        <button className="pt-button pt-button--ghost" onClick={() => edit((h) => ({ ...h, beds: h.beds.filter((b) => b.id !== bed.id) }))}>
+      {canEdit && !habitat.cells.some((c) => c.bedId === bed.id) && !bed.guildId && !bed.farmId && (
+        <button className="pt-button pt-button--ghost" onClick={() => edit((h) => ({ ...h, beds: h.beds.filter((b) => b.id !== bed.id), periods: (h.periods ?? []).filter((p) => p.bedId !== bed.id) }))}>
           {t("hab.remove.bed")}
         </button>
       )}

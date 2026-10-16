@@ -41,3 +41,22 @@ id:bed-f2 a perma:GrowingBed ; rdfs:label "Roof beds 1.2" ; perma:inZone id:zone
   assert.deepEqual(sets_of(false), [1, 1]);
   assert.ok((planForEdge(TTL, {}).body.sets as { about: string }[]).every((s) => s.about), "each library set says what it is");
 });
+
+test("a bed with growing periods plans the one asked for, by id or by month, around what that period holds", () => {
+  const year = `${TTL}
+id:period-p1 a perma:GrowingPeriod ; rdfs:label "Spring" ; perma:ofBed id:bed-b ; perma:fromMonth 3 ; perma:toMonth 6 ; perma:periodKind perma:GrowingKind .
+id:period-p2 a perma:GrowingPeriod ; rdfs:label "Winter" ; perma:ofBed id:bed-b ; perma:fromMonth 10 ; perma:toMonth 2 ; perma:periodKind perma:RestKind .
+id:cell-c1 a perma:PlantingCell ; perma:inBed id:bed-b ; perma:row 0 ; perma:col 0 ; perma:grows <https://permaculture.digitalhome.cloud/id/crop-lettuce> ;
+  perma:cellStatus perma:CellPlanned ; perma:inPeriod id:period-p1 .`;
+  const what = planForEdge(year, {});
+  const periods = (what.body.beds as { periods: { name: string; planted: number }[] }[])[0].periods;
+  assert.deepEqual(periods.map((p) => [p.name, p.planted]), [["Spring", 1], ["Winter", 0]]);
+  const sets = [{ setId: "set-salad-bed", share: 1 }];
+  const byMonth = planForEdge(year, { bedId: "bed-b", sets, month: 4 }).body.plans as { periodId: string; cells: { row: number; col: number }[] }[];
+  assert.ok(byMonth[0].periodId.endsWith("period-p1"));
+  assert.ok(!byMonth[0].cells.some((c) => c.row === 0 && c.col === 0), "the spring lettuce stays where it is");
+  const byId = planForEdge(year, { bedId: "bed-b", sets, periodId: "period-p2" }).body.plans as { periodId: string }[];
+  assert.ok(byId[0].periodId.endsWith("period-p2"));
+  const none = planForEdge(year, { bedId: "bed-b", sets }).body.plans as { periodId: string | null }[];
+  assert.equal(none[0].periodId, null, "without a period or a month: the bed as it stands");
+});

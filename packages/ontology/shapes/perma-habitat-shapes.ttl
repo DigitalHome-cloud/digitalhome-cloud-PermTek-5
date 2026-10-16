@@ -15,6 +15,7 @@
 permash:InZoneKinds a sh:NodeShape ; sh:property [ sh:path skos:inScheme ; sh:hasValue perma:ZoneKinds ] .
 permash:InExposures a sh:NodeShape ; sh:property [ sh:path skos:inScheme ; sh:hasValue perma:Exposures ] .
 permash:InCellStatuses a sh:NodeShape ; sh:property [ sh:path skos:inScheme ; sh:hasValue perma:CellStatuses ] .
+permash:InPeriodKinds a sh:NodeShape ; sh:property [ sh:path skos:inScheme ; sh:hasValue perma:PeriodKinds ] .
 permash:InGuildTypes a sh:NodeShape ; sh:property [ sh:path skos:inScheme ; sh:hasValue perma:GuildTypes ] .
 permash:InRobotModels a sh:NodeShape ; sh:property [ sh:path skos:inScheme ; sh:hasValue perma:RobotModels ] .
 permash:InSubstrateKinds a sh:NodeShape ; sh:property [ sh:path skos:inScheme ; sh:hasValue perma:SubstrateKinds ] .
@@ -117,6 +118,25 @@ permash:SetMemberShape a sh:NodeShape ;
     sh:property [ sh:path perma:share ; sh:minCount 1 ; sh:maxCount 1 ; sh:minExclusive 0 ; sh:maxInclusive 100 ;
                   sh:message "A member's share is above 0, up to 100."@en ] .
 
+# A bed's growing period (docs/adr/0029). That a bed's periods do not overlap, packages/core checks.
+permash:GrowingPeriodShape a sh:NodeShape ;
+    sh:targetClass perma:GrowingPeriod ;
+    sh:property [ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ; sh:message "A period needs a name."@en ] ;
+    sh:property [ sh:path perma:ofBed ; sh:minCount 1 ; sh:maxCount 1 ; sh:class perma:GrowingBed ;
+                  sh:message "A period belongs to one bed of the site."@en ] ;
+    sh:property [ sh:path perma:fromMonth ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:integer ;
+                  sh:minInclusive 1 ; sh:maxInclusive 12 ; sh:message "A period starts in a month 1..12."@en ] ;
+    sh:property [ sh:path perma:toMonth ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:integer ;
+                  sh:minInclusive 1 ; sh:maxInclusive 12 ; sh:message "A period ends in a month 1..12."@en ] ;
+    sh:property [ sh:path perma:periodKind ; sh:minCount 1 ; sh:maxCount 1 ; sh:node permash:InPeriodKinds ;
+                  sh:message "A period's kind is one concept from perma:PeriodKinds."@en ] ;
+    sh:property [ sh:path perma:setChoice ; sh:node permash:SetChoiceShape ] .
+permash:SetChoiceShape a sh:NodeShape ;
+    sh:property [ sh:path perma:plantSet ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ;
+                  sh:message "A set choice names one plant set."@en ] ;
+    sh:property [ sh:path perma:share ; sh:minCount 1 ; sh:maxCount 1 ; sh:minExclusive 0 ; sh:maxInclusive 100 ;
+                  sh:message "A set's share is above 0, up to 100."@en ] .
+
 permash:PlantingCellShape a sh:NodeShape ;
     sh:targetClass perma:PlantingCell ;
     sh:property [ sh:path perma:inBed ; sh:minCount 1 ; sh:maxCount 1 ; sh:class perma:GrowingBed ;
@@ -133,7 +153,9 @@ permash:PlantingCellShape a sh:NodeShape ;
     sh:property [ sh:path perma:cellSeedsPerPoint ; sh:maxCount 1 ; sh:datatype xsd:integer ; sh:minInclusive 1 ; sh:maxInclusive 20 ;
                   sh:message "Seeds per point is 1..20."@en ] ;
     sh:property [ sh:path perma:sownOn ; sh:maxCount 1 ; sh:datatype xsd:date ;
-                  sh:message "Sown on is a date (YYYY-MM-DD)."@en ] .
+                  sh:message "Sown on is a date (YYYY-MM-DD)."@en ] ;
+    sh:property [ sh:path perma:inPeriod ; sh:maxCount 1 ; sh:class perma:GrowingPeriod ;
+                  sh:message "A cell is the target of at most one period of the site."@en ] .
 
 permash:GardenPlantShape a sh:NodeShape ;
     sh:targetClass perma:GardenPlant ;

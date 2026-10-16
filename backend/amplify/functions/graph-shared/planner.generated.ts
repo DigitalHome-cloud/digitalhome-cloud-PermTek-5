@@ -2084,9 +2084,10 @@ function planFarm(beds, choices, existing = [], opts = {}, own = []) {
 // ../packages/core/src/habitatModel.ts
 var ZONE_KINDS = ["RoofZone", "GroundZone", "BalconyZone", "GreenhouseZone"];
 var EXPOSURES = ["FullSun", "HalfShade", "Shade", "Windy"];
-var CELL_STATUSES = ["CellPlanned", "CellSown", "CellGrowing", "CellHarvested"];
+var CELL_STATUSES = ["CellPlanned", "CellSown", "CellGrowing", "CellHarvested", "CellLost"];
 var SUBSTRATE_KINDS = ["LightweightRoofSubstrate", "GardenSoil", "PottingCompost"];
 var GUILD_TYPES = ["WormBed5"];
+var PERIOD_KINDS = ["GrowingKind", "RestKind"];
 var STORE_KINDS = ["RainBarrel", "TankPipes", "WormBoxSump", "WormBoxBin", "GardenTank"];
 var WATER_KINDS = ["CleanWater", "WormLiquid"];
 var VALVE_KINDS = ["ManualTap", "EdgeValve"];
@@ -2097,6 +2098,14 @@ function footprint(cropId, b) {
 }
 function wormBinCols(b) {
   return b.wormBinCm ? Math.min(bedGrid(b).cols, Math.ceil(b.wormBinCm / b.cellCm)) : 0;
+}
+function monthsOf(p2) {
+  const out = [];
+  for (let m = p2.fromMonth, n = 0; n < 12; m = m % 12 + 1, n++) {
+    out.push(m);
+    if (m === p2.toMonth) break;
+  }
+  return out;
 }
 
 // ../packages/core/src/learning.ts
@@ -2117,6 +2126,7 @@ var CLASSES = [
   "Guild",
   "GrowingBed",
   "BedFarm",
+  "GrowingPeriod",
   "PlantSet",
   "PlantingCell",
   "GardenPlant",
@@ -2205,6 +2215,20 @@ function habitatFromTtl(ttl) {
       ...str(id, "draft") === "true" && { draft: true }
     };
   });
+  const choiceIds = /* @__PURE__ */ new Set();
+  const periods = ofType("GrowingPeriod").map((id) => ({
+    id,
+    bedId: str(id, "ofBed") ?? "",
+    name: label(id),
+    kind: PERIOD_KINDS.includes(local(one(id, "periodKind")) ?? "") ? local(one(id, "periodKind")) : "GrowingKind",
+    fromMonth: num(id, "fromMonth") ?? 1,
+    toMonth: num(id, "toMonth") ?? 12,
+    sets: store.getObjects(namedNode(id), p("setChoice"), null).map((c) => c.value).sort((a, b) => Number(a.split("/set-")[1] ?? 0) - Number(b.split("/set-")[1] ?? 0)).map((c) => {
+      choiceIds.add(c);
+      const set = str(c, "plantSet") ?? "";
+      return { setId: set.startsWith(CROP_IRI) ? set.slice(CROP_IRI.length) : set, share: num(c, "share") ?? 1 };
+    })
+  }));
   const cells = ofType("PlantingCell").map((id) => ({
     id,
     bedId: str(id, "inBed") ?? "",
@@ -2214,7 +2238,8 @@ function habitatFromTtl(ttl) {
     status: CELL_STATUSES.includes(local(one(id, "cellStatus")) ?? "") ? local(one(id, "cellStatus")) : "CellPlanned",
     ...str(id, "sownOn") && { sownOn: str(id, "sownOn") },
     ...num(id, "cellSowingDepthMm") !== void 0 && { depthMm: num(id, "cellSowingDepthMm") },
-    ...num(id, "cellSeedsPerPoint") !== void 0 && { seeds: num(id, "cellSeedsPerPoint") }
+    ...num(id, "cellSeedsPerPoint") !== void 0 && { seeds: num(id, "cellSeedsPerPoint") },
+    ...str(id, "inPeriod") && { periodId: str(id, "inPeriod") }
   }));
   const plants = ofType("GardenPlant").map((id) => ({
     id,
@@ -2341,7 +2366,7 @@ function habitatFromTtl(ttl) {
       ...local(one(id, "preservesAs")) && { keepsAs: local(one(id, "preservesAs")) }
     };
   });
-  const mine = /* @__PURE__ */ new Set([...CLASSES.flatMap((c) => store.getSubjects(namedNode(RDF_TYPE), namedNode(c), null).map((x) => x.value)), ...recipeIds, ...lineIds, ...memberIds]);
+  const mine = /* @__PURE__ */ new Set([...CLASSES.flatMap((c) => store.getSubjects(namedNode(RDF_TYPE), namedNode(c), null).map((x) => x.value)), ...recipeIds, ...lineIds, ...memberIds, ...choiceIds]);
   const rest = store.getQuads(null, null, null, null).filter((q) => !mine.has(q.subject.value));
   const writer = new N3.Writer({ format: "N-Triples" });
   return {
@@ -2356,14 +2381,21 @@ function habitatFromTtl(ttl) {
     ...valves.length > 0 && { valves },
     ...cycles.length > 0 && { cycles },
     ...farms.length > 0 && { farms },
+    ...periods.length > 0 && { periods },
     ...plantSets2.length > 0 && { plantSets: plantSets2 },
     rest: rest.length ? writer.quadsToString(rest) : ""
   };
 }
+
+// ../packages/core/src/periods.ts
+var periodsOf = (h, bedId) => (h.periods ?? []).filter((p2) => p2.bedId === bedId).sort((a, b) => a.fromMonth - b.fromMonth);
+var periodAt = (h, bedId, month) => periodsOf(h, bedId).find((p2) => monthsOf(p2).includes(month));
 export {
   cropById,
   cropName,
   habitatFromTtl,
+  periodAt,
+  periodsOf,
   planFarm,
   planFromSets,
   plantSets,

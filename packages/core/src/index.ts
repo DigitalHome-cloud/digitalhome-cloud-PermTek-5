@@ -36,11 +36,11 @@ export type { Activity, CropMix, CropNeeds, LibraryCrop, TypicalWindow } from ".
 export { FROST_RISK_MIN_C, activitiesIn, deriveWindows } from "./calendar.js";
 export type { CropCalendar } from "./calendar.js";
 export {
-  CELL_STATUSES, EXPOSURES, GUILD_ROBOT, GUILD_TYPES, HABITAT_IRI, ROBOT_NAME, STORE_KINDS, SUBSTRATE_KINDS, VALVE_KINDS, WATER_KINDS, ZONE_KINDS,
-  SURFACE_LIMITS, bedGrid, checkHabitat, defaultOffset, emptyHabitat, farmBeds, farmLayout, footprint, newFarm, newGuild, guildForBed, WORMBED5, newId, removeZone, sowingJob, wormBinCols, zoneContents, zoneOffset,
+  CELL_STATUSES, EXPOSURES, GUILD_ROBOT, PERIOD_KINDS, GUILD_TYPES, HABITAT_IRI, ROBOT_NAME, STORE_KINDS, SUBSTRATE_KINDS, VALVE_KINDS, WATER_KINDS, ZONE_KINDS,
+  SURFACE_LIMITS, bedGrid, checkHabitat, defaultOffset, emptyHabitat, farmBeds, farmLayout, footprint, newFarm, newGuild, guildForBed, WORMBED5, newId, monthsOf, removeZone, sowingJob, wormBinCols, zoneContents, zoneOffset,
 } from "./habitatModel.js";
 export type {
-  Bed, BedFarm, Cell, CellStatus, Exposure, GardenPlant, Guild, GuildType, Habitat, Problem, RainCatchment, RobotModel, SowingJob, StoreKind, SubstrateKind,
+  Bed, BedFarm, BedPeriod, Cell, CellStatus, PeriodKind, Exposure, GardenPlant, Guild, GuildType, Habitat, Problem, RainCatchment, RobotModel, SowingJob, StoreKind, SubstrateKind,
   Valve, ValveKind, WaterKind, WaterStore, Zone, ZoneKind,
 } from "./habitatModel.js";
 export { WORMBED5_WATER, defaultWater, rainLitres, useMmPerDay, waterBudget } from "./water.js";
@@ -66,6 +66,8 @@ export { crowdedCells, layerOf, planFarm, planFromSets, plantCounts, shareOut, p
 export type { FarmOptions, Layer, Placement, PlantingOptions, PlantingScore, PlantingSuggestion, SetChoice, SetPlan } from "./planting.js";
 export { PLANNED_SURFACES, plantSetById, plantSets, setName, setText } from "./plantSets.js";
 export type { PlantSet, SetMember, SurfaceCategory } from "./plantSets.js";
+export { checkPeriod, defaultPeriods, freeMonths, newPeriod, periodAt, periodCells, periodCrops, periodFits, periodsOf, standingCells } from "./periods.js";
+export type { PeriodWarning } from "./periods.js";
 export { WORMBED5_SIZES, WORM_BOX, minDepthCm, newWormBedFarm, wormBedParts, wormBoxCm, wormBoxYear } from "./wormbed5.js";
 export type { WormBedSize } from "./wormbed5.js";
 export { cropSeasons, givesWay, standingIn, yearPlan } from "./season.js";

@@ -32,6 +32,15 @@ The Map starts empty and is guided (ADR 0028):
 Plain beds, trees and greenhouses are not offered for now. Beds and trees
 already on a map still show.
 
+A bed's year is split into **periods** (ADR 0029):
+- **Growing periods:** each has its own plant sets and its own target, the cells
+  planned for it.
+- **Rest:** winter or maintenance; nothing is sown but a cover crop.
+
+The Map holds the target. The twin edge rehearses getting there from a clean
+bed: sowing, coming up or not, resowing, growth, and the harvest a person does.
+A rehearsal writes nothing back into the space.
+
 ## 1. Type and instance
 
 | | Fixed by the guild **type** | Set per **instance** |

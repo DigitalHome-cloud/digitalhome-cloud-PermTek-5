@@ -1,8 +1,8 @@
 import * as React from "react";
-import { cropById, cropName, minDepthCm, newId, planFarm, plantSets, setName, setText } from "@dlab5/permtek5-core";
-import type { Bed, Habitat, PlantSet, SetChoice, SetPlan } from "@dlab5/permtek5-core";
+import { cropById, cropName, minDepthCm, monthsOf, newId, newPeriod, periodFits, periodsOf, planFarm, plantSets, setName, setText } from "@dlab5/permtek5-core";
+import type { Bed, BedPeriod, Habitat, PlantSet, SetChoice, SetPlan } from "@dlab5/permtek5-core";
 import { useT } from "../../lib/i18n";
-import { cropColor } from "./common";
+import { cropColor, monthName } from "./common";
 import { Preview } from "./HabitatRecipes";
 
 type Edit = (f: (h: Habitat) => Habitat) => void;
@@ -13,13 +13,23 @@ type Edit = (f: (h: Habitat) => Habitat) => void;
  * farm's beds: the same sets in every bed, or the sets shared out, each getting beds by its share (docs/adr/0028).
  * Each library set links to its page, which explains why its crops go together. A suggestion: a person accepts
  * it, then fine-tunes by hand.
+ *
+ * A bed plans one of its periods (docs/adr/0029): `periodId`, or the bed as it stands. The sets chosen are kept on
+ * the period. A farm plans a period by months, made in every bed that has those months free.
  */
-export function PlanFromSets({ beds, habitat, edit, canEdit }: { beds: Bed[]; habitat: Habitat; edit: Edit; canEdit: boolean }) {
+export function PlanFromSets({ beds, habitat, edit, canEdit, periodId }: { beds: Bed[]; habitat: Habitat; edit: Edit; canEdit: boolean; periodId?: string }) {
   const { t, lang } = useT();
   const own = habitat.plantSets ?? [];
   const all: PlantSet[] = [...plantSets(), ...own];
   const library = new Set(plantSets().map((s) => s.id));
-  const [shares, setShares] = React.useState<Record<string, number>>({});
+  const period = periodId ? (habitat.periods ?? []).find((p) => p.id === periodId) : undefined;
+  const farm = beds.length > 1;
+  const [months, setMonths] = React.useState({ from: 4, to: 9, name: t("period.default.growing") });
+  // the period each bed plans: the bed's own, or for a farm the bed's period with these months (made on accept)
+  const bedPeriod = (b: Bed): BedPeriod | undefined => farm
+    ? periodsOf(habitat, b.id).find((p) => p.fromMonth === months.from && p.toMonth === months.to)
+    : period;
+  const [shares, setShares] = React.useState<Record<string, number>>(() => Object.fromEntries((period?.sets ?? []).map((c) => [c.setId, c.share])));
   const [seed, setSeed] = React.useState(5);
   const [same, setSame] = React.useState(true);
   // the shallowest bed decides which crops may be too deep-rooted for it
@@ -31,15 +41,29 @@ export function PlanFromSets({ beds, habitat, edit, canEdit }: { beds: Bed[]; ha
   const bedName = (id: string) => beds.find((b) => b.id === id)?.name ?? "";
   const setTitle = (id: string) => { const s = all.find((x) => x.id === id); return s ? setName(s, lang) : id; };
 
-  const suggest = (nextSeed = seed, nextSame = same) => setPlans(planFarm(beds, choices, habitat.cells, { seed: nextSeed, same: nextSame }, own));
+  // a farm's beds whose year has no room for these months are left out
+  const fits = (b: Bed) => !!bedPeriod(b) || periodFits(habitat, newPeriod(b, months.name, "GrowingKind", months.from, months.to));
+  const planned = farm ? beds.filter(fits) : beds;
+  // what already stands in the period being planned
+  const existing = habitat.cells.filter((c) => planned.some((b) => b.id === c.bedId) && (c.periodId ?? "") === (bedPeriod(planned.find((b) => b.id === c.bedId)!)?.id ?? ""));
+  const suggest = (nextSeed = seed, nextSame = same) => setPlans(planFarm(planned, choices, existing, { seed: nextSeed, same: nextSame }, own));
   const accept = () => {
     if (!plans) return;
-    edit((h) => ({
-      ...h,
-      cells: [...h.cells, ...plans.flatMap((p) => p.plan.cells.map((c) => ({
-        id: newId("cell"), bedId: p.bedId, row: c.row, col: c.col, cropId: c.cropId, status: "CellPlanned" as const,
-      })))],
-    }));
+    edit((h) => {
+      let periods = h.periods ?? [];
+      const cells = plans.flatMap((p) => {
+        const bed = beds.find((b) => b.id === p.bedId)!;
+        let target = farm ? periods.find((x) => x.bedId === bed.id && x.fromMonth === months.from && x.toMonth === months.to) : period;
+        if (farm && !target) { target = newPeriod(bed, months.name, "GrowingKind", months.from, months.to); periods = [...periods, target]; }
+        // the period keeps the sets it was planned from
+        if (target) { const id = target.id; periods = periods.map((x) => (x.id === id ? { ...x, sets: p.choices } : x)); }
+        return p.plan.cells.map((c) => ({
+          id: newId("cell"), bedId: p.bedId, row: c.row, col: c.col, cropId: c.cropId, status: "CellPlanned" as const,
+          ...(target && { periodId: target.id }),
+        }));
+      });
+      return { ...h, cells: [...h.cells, ...cells], ...(periods.length > 0 && { periods }) };
+    });
     setPlans(null);
   };
   const placed = plans?.reduce((n, p) => n + p.plan.cells.length, 0) ?? 0;
@@ -48,6 +72,18 @@ export function PlanFromSets({ beds, habitat, edit, canEdit }: { beds: Bed[]; ha
     <details className="pt-plansets">
       <summary>{t(beds.length > 1 ? "pset.plan.farm" : "pset.plan")}</summary>
       <p className="pt-muted">{t("pset.hint")}</p>
+      {farm && (
+        <div className="pt-habitat__fields">
+          <label className="pt-field"><span>{t("period.name")}</span>
+            <input value={months.name} onChange={(e) => setMonths({ ...months, name: e.target.value })} />
+          </label>
+          <MonthPick label={t("period.from")} value={months.from} on={(m) => { setMonths({ ...months, from: m }); setPlans(null); }} />
+          <MonthPick label={t("period.to")} value={months.to} on={(m) => { setMonths({ ...months, to: m }); setPlans(null); }} />
+        </div>
+      )}
+      {farm && planned.length < beds.length && (
+        <p className="pt-plansets__deep">{t("period.farm.full", { n: beds.length - planned.length, months: monthsOf({ fromMonth: months.from, toMonth: months.to }).length })}</p>
+      )}
       {beds.length > 1 && (
         <div className="pt-habitat__chips" role="radiogroup" aria-label={t("pset.farm")}>
           {[true, false].map((o) => (
@@ -87,7 +123,7 @@ export function PlanFromSets({ beds, habitat, edit, canEdit }: { beds: Bed[]; ha
         ))}
       </ul>
       <p className="pt-habitat__actions">
-        <button className="pt-button" disabled={!choices.length} onClick={() => suggest()}>{t("rec.plant.suggest")}</button>
+        <button className="pt-button" disabled={!choices.length || !planned.length} onClick={() => suggest()}>{t("rec.plant.suggest")}</button>
         {plans && <button className="pt-button pt-button--ghost" onClick={() => { setSeed(seed + 1); suggest(seed + 1); }}>{t("rec.plant.again")}</button>}
       </p>
       {plans && plans.map(({ bedId, choices: mine, plan }) => {
@@ -95,7 +131,7 @@ export function PlanFromSets({ beds, habitat, edit, canEdit }: { beds: Bed[]; ha
         return (
           <div key={bedId} className="pt-plansets__bed">
             {beds.length > 1 && <h4>{bedName(bedId)}: {mine.map((c) => setTitle(c.setId)).join(" + ") || t("pset.none")}</h4>}
-            <Preview bed={bed} suggestion={plan} habitat={habitat} />
+            <Preview bed={bed} suggestion={plan} habitat={habitat} existing={existing.filter((c) => c.bedId === bedId)} />
             <p className="pt-recipes__legend">
               {plan.crops.filter((c) => c.placed > 0).map((c) => (
                 <span key={c.cropId}><span className="pt-recipe__dot" style={{ background: cropColor(c.cropId) }} />{c.placed} × {name(c.cropId)}</span>
@@ -117,5 +153,17 @@ export function PlanFromSets({ beds, habitat, edit, canEdit }: { beds: Bed[]; ha
         </>
       )}
     </details>
+  );
+}
+
+/** A month of the year, by its name in the page's language. */
+export function MonthPick({ label, value, on, disabled }: { label: string; value: number; on: (m: number) => void; disabled?: boolean }) {
+  const { lang } = useT();
+  return (
+    <label className="pt-field"><span>{label}</span>
+      <select value={value} disabled={disabled} onChange={(e) => on(Number(e.target.value))}>
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((m) => <option key={m} value={m}>{monthName(m, lang)}</option>)}
+      </select>
+    </label>
   );
 }

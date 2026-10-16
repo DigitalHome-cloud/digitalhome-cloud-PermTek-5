@@ -14,7 +14,7 @@ import {
   CELL_STATUSES, EXPOSURES, GUILD_TYPES, STORE_KINDS, SUBSTRATE_KINDS, VALVE_KINDS, WATER_KINDS, ZONE_KINDS,
   type Bed, type Cell, type CellStatus, type Exposure, type GardenPlant, type Guild, type GuildType, type Habitat, type RainCatchment, type RobotModel,
   type StoreKind, type SubstrateKind, type Valve, type ValveKind, type WaterKind, type WaterStore, type Zone, type ZoneKind,
-  type BedFarm,
+  type BedFarm, type BedPeriod, PERIOD_KINDS, type PeriodKind,
 } from "./habitatModel.js";
 import type { PlantSet } from "./plantSets.js";
 import { PHASES, VERDICTS, type Check, type Hypothesis, type Lang, type LearningCycle, type Measure, type Phase, type Texts, type Verdict } from "./learning.js";
@@ -95,6 +95,18 @@ export function habitatToTtl(h: Habitat): Promise<string> {
       add(node, "memberCrop", namedNode(CROP_IRI + m.cropId)); add(node, "share", dec(m.share));
     });
   }
+  // The beds' growing periods (docs/adr/0029); a library set is named by its library IRI, a space's own by its IRI.
+  for (const g of h.periods ?? []) {
+    add(g.id, "a", p("GrowingPeriod")); name(g.id, g.name);
+    add(g.id, "ofBed", namedNode(g.bedId));
+    add(g.id, "fromMonth", int(g.fromMonth)); add(g.id, "toMonth", int(g.toMonth));
+    add(g.id, "periodKind", p(g.kind));
+    g.sets.forEach((c, i) => {
+      const node = `${g.id}/set-${i + 1}`;
+      add(g.id, "setChoice", namedNode(node));
+      add(node, "plantSet", namedNode(c.setId.includes(":") ? c.setId : CROP_IRI + c.setId)); add(node, "share", dec(c.share));
+    });
+  }
   for (const c of h.cells) {
     add(c.id, "a", p("PlantingCell"));
     add(c.id, "inBed", namedNode(c.bedId));
@@ -104,6 +116,7 @@ export function habitatToTtl(h: Habitat): Promise<string> {
     if (c.depthMm !== undefined) add(c.id, "cellSowingDepthMm", int(c.depthMm));
     if (c.seeds !== undefined) add(c.id, "cellSeedsPerPoint", int(c.seeds));
     if (c.sownOn) add(c.id, "sownOn", literal(c.sownOn, namedNode(XSD + "date")));
+    if (c.periodId) add(c.id, "inPeriod", namedNode(c.periodId));
   }
   for (const g of h.plants) {
     add(g.id, "a", p("GardenPlant")); name(g.id, g.name);
@@ -205,7 +218,7 @@ export function habitatToTtl(h: Habitat): Promise<string> {
   });
 }
 
-const CLASSES = ["GardenZone", "Guild", "GrowingBed", "BedFarm", "PlantSet", "PlantingCell", "GardenPlant", "RainCatchment", "WaterStore", "Valve",
+const CLASSES = ["GardenZone", "Guild", "GrowingBed", "BedFarm", "GrowingPeriod", "PlantSet", "PlantingCell", "GardenPlant", "RainCatchment", "WaterStore", "Valve",
   "LearningCycle", "Hypothesis", "Measure", "Check"].map((c) => PERMA + c);
 
 export function habitatFromTtl(ttl: string): Habitat {
@@ -268,12 +281,26 @@ export function habitatFromTtl(ttl: string): Habitat {
       ...(str(id, "draft") === "true" && { draft: true }),
     };
   });
+  const choiceIds = new Set<string>();
+  const periods: BedPeriod[] = ofType("GrowingPeriod").map((id) => ({
+    id, bedId: str(id, "ofBed") ?? "", name: label(id),
+    kind: (PERIOD_KINDS as string[]).includes(local(one(id, "periodKind")) ?? "") ? (local(one(id, "periodKind")) as PeriodKind) : "GrowingKind",
+    fromMonth: num(id, "fromMonth") ?? 1, toMonth: num(id, "toMonth") ?? 12,
+    sets: store.getObjects(namedNode(id), p("setChoice"), null).map((c) => c.value)
+      .sort((a, b) => Number(a.split("/set-")[1] ?? 0) - Number(b.split("/set-")[1] ?? 0))
+      .map((c) => {
+        choiceIds.add(c);
+        const set = str(c, "plantSet") ?? "";
+        return { setId: set.startsWith(CROP_IRI) ? set.slice(CROP_IRI.length) : set, share: num(c, "share") ?? 1 };
+      }),
+  }));
   const cells: Cell[] = ofType("PlantingCell").map((id) => ({
     id, bedId: str(id, "inBed") ?? "", row: num(id, "row") ?? 0, col: num(id, "col") ?? 0, cropId: crop(id),
     status: (CELL_STATUSES as string[]).includes(local(one(id, "cellStatus")) ?? "") ? (local(one(id, "cellStatus")) as CellStatus) : "CellPlanned",
     ...(str(id, "sownOn") && { sownOn: str(id, "sownOn") }),
     ...(num(id, "cellSowingDepthMm") !== undefined && { depthMm: num(id, "cellSowingDepthMm") }),
     ...(num(id, "cellSeedsPerPoint") !== undefined && { seeds: num(id, "cellSeedsPerPoint") }),
+    ...(str(id, "inPeriod") && { periodId: str(id, "inPeriod") }),
   }));
   const plants: GardenPlant[] = ofType("GardenPlant").map((id) => ({
     id, name: label(id), zoneId: str(id, "inZone") ?? "", cropId: crop(id),
@@ -385,14 +412,14 @@ export function habitatFromTtl(ttl: string): Habitat {
   });
 
   // Everything not about these subjects stays as it was.
-  const mine = new Set([...CLASSES.flatMap((c) => store.getSubjects(namedNode(RDF_TYPE), namedNode(c), null).map((x) => x.value)), ...recipeIds, ...lineIds, ...memberIds]);
+  const mine = new Set([...CLASSES.flatMap((c) => store.getSubjects(namedNode(RDF_TYPE), namedNode(c), null).map((x) => x.value)), ...recipeIds, ...lineIds, ...memberIds, ...choiceIds]);
   const rest = store.getQuads(null, null, null, null).filter((q) => !mine.has(q.subject.value));
   const writer = new N3.Writer({ format: "N-Triples" });
   return {
     zones, guilds, beds, cells, plants, ...(recipes.length > 0 && { recipes }),
     ...(catchments.length > 0 && { catchments }), ...(stores.length > 0 && { stores }), ...(valves.length > 0 && { valves }),
     ...(cycles.length > 0 && { cycles }),
-    ...(farms.length > 0 && { farms }), ...(plantSets.length > 0 && { plantSets }),
+    ...(farms.length > 0 && { farms }), ...(periods.length > 0 && { periods }), ...(plantSets.length > 0 && { plantSets }),
     rest: rest.length ? writer.quadsToString(rest) : "",
   };
 }

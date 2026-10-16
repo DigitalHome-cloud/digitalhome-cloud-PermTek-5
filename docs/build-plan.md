@@ -228,12 +228,13 @@ Wikidata, to TAXREF. Next, in this order, **when the library is scaled beyond th
 | Internet on the first site | house broadband, 4G router at the nest, or none (upload when you visit) | phase 2 |
 | Nest power | solar + battery, or a cable from the house | phase 2 |
 | Plant identification | Pl@ntNet API (check terms and quota) or a local model on the nest | phase 3 |
-| Real terrain | send the house coordinates → IGN RGE ALTI 1 m replaces the two-point plane (private space only) | phase 1 |
 | Namespaces | register w3id.org/perma and /perma-bio, or use a digitalhome.cloud path | before sharing |
 | Sharing records | keep private, or export to GBIF / INPN | phase 3 |
 | Modeler for perma-core | Modeler edits a library that lives in another backend, or perma-core is edited in this app | phase 3 |
 
 Decided: **where the graph lives** → one A-Box per space in S3 (template ADR-0007), Oxigraph only on the nest.
+Decided: **real terrain** → IGN LiDAR HD (0.5 m, else RGE ALTI 1 m) into the twin's ElevationGrid, fetched into the
+private pack by `twin/tools/fetch_ign.py`; Blender only for the garden film (ADR 0030, 2026-10-16).
 
 ## Parking lot
 

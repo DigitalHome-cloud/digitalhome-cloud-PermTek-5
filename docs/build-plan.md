@@ -235,6 +235,16 @@ Wikidata, to TAXREF. Next, in this order, **when the library is scaled beyond th
 
 Decided: **where the graph lives** → one A-Box per space in S3 (template ADR-0007), Oxigraph only on the nest.
 
+## Parking lot
+
+Ideas agreed to be worth doing, deliberately not now. Each says why it waits and what would bring it back.
+
+| Idea | Why it waits | Brings it back |
+| --- | --- | --- |
+| **Publish a twin run to the cloud** (2026-10-16): an edge uploads a chosen run (its `run.usda` or track, ADR 0029) so the site can show and share it | runs, pictures and the logbook stay on the edge PC by design; publishing must be a person's explicit choice per run, with its own privacy check | someone wants to share or compare runs away from the edge |
+| **USD physics and other simulators** (2026-10-16): UsdPhysics for the gantry and bed, so Isaac Sim, Gazebo or MuJoCo could run them | Webots is enough at one guild; Isaac Sim needs an RTX GPU this PC lacks | many guilds at once, or training a robot policy in simulation; then generate it from bed.json next to the `.wbt` |
+
+
 **Risks**
 
 - **Slope**: 44.5 % is at the limit for small wheeled rovers. It affects robot hardware (tracks, or the perma spider on cables), not the app or the register.

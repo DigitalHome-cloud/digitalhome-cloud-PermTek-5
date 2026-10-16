@@ -42,6 +42,9 @@ An empty map shows "How the map works" in five steps, and the new-WormBed5 steps
 - **Areas may not be added on their own any more.** The same goes for plain beds, farms of plain beds, trees and
   greenhouses. The CityDemo example is no longer offered.
 - **What a map already holds still shows,** so nothing is hidden. Plain beds can still be made a WormBed5.
+- **An area can be removed with what it holds** (`removeZone`): its guilds, farms, beds, planted cells, trees, the
+  guilds' water and learning. The confirm lists what goes (`zoneContents`), and Save is still the person's act. A
+  store of a guild elsewhere that stood in the area stays, back in its guild's area.
 - **The ontology drops `GreenhouseSurface` and `FoodForestSurface`.** Nothing used them, and they come back with their
   own planner.
 

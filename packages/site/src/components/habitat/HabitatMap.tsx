@@ -8,6 +8,7 @@ import { FarmCard } from "./FarmCard";
 import { NewWormBed, PLACES, Pick, boxOptions } from "./NewWormBed";
 import { PlanFromSets } from "./PlantSets";
 import { BedPeriods, startPeriod } from "./BedPeriods";
+import { Bed3D } from "./Bed3D";
 import { CELL_STATUSES } from "@dlab5/permtek5-core";
 import { useT } from "../../lib/i18n";
 import { ConfirmButton, CropSelect, cropColor, num } from "./common";
@@ -311,6 +312,7 @@ function BedEditor({ bed, habitat, edit, canEdit, months = null }: { bed: Bed; h
         </div>
       </div>
 
+      <Bed3D bed={bed} cells={cells} />
       {refused && <p className="pt-error" role="status">{refused} {t("hab.cell.force")}</p>}
       {crowded.size > 0 && <p className="pt-muted">{t("hab.bed.crowded", { n: crowded.size })}</p>}
       {canEdit && inPeriod?.kind !== "RestKind" && <PlanFromSets key={inPeriod?.id ?? ""} beds={[bed]} habitat={habitat} edit={edit} canEdit={canEdit} periodId={inPeriod?.id} />}

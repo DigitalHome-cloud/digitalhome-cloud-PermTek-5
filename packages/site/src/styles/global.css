@@ -1244,3 +1244,9 @@ a {
 .pt-periods__month--on { outline: 2px solid var(--pt-accent); outline-offset: -2px; font-weight: 600; }
 .pt-periods__edit { display: grid; gap: var(--pt-space-2); background: var(--pt-surface-raised); border-radius: var(--pt-radius-sm); padding: var(--pt-space-3); }
 .pt-bed__cell--CellLost { opacity: 0.35; background-image: repeating-linear-gradient(45deg, transparent 0 3px, var(--pt-danger) 3px 4px); }
+
+/* A bed's target in 3D (Bed3D.tsx) */
+.pt-bed3d { margin: var(--pt-space-2) 0; }
+.pt-bed3d > summary { cursor: pointer; font-weight: 600; }
+.pt-bed3d__view { width: 100%; min-height: 260px; border-radius: var(--pt-radius-sm); overflow: hidden; background: var(--pt-bg-sunken); margin-top: var(--pt-space-2); }
+.pt-bed3d__view canvas { display: block; width: 100%; touch-action: none; }

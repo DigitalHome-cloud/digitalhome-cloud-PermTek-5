@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import {
-  checkHabitat, emptyHabitat, habitatFromTtl, habitatToTtl, minDepthCm, newWormBedFarm, planFarm, plantSets,
+  GANTRY5, checkHabitat, emptyHabitat, tooTallForGantry, habitatFromTtl, habitatToTtl, minDepthCm, newWormBedFarm, planFarm, plantSets,
   wormBedParts, wormBoxCm, wormBoxYear,
 } from "../dist/index.js";
 
@@ -61,4 +61,10 @@ test("a space's own set keeps its explanation in every language", async () => {
     members: [{ cropId: "crop-parsley", share: 1 }] };
   const back = habitatFromTtl(await habitatToTtl({ ...emptyHabitat(), plantSets: [own] }));
   assert.deepEqual(back.plantSets, [own]);
+});
+
+test("a crop taller than the gantry's raised tool is in its way", () => {
+  assert.equal(GANTRY5.toolClearanceCm, 42);
+  assert.equal(tooTallForGantry("crop-tomato"), true, "a staked tomato");
+  assert.equal(tooTallForGantry("crop-lettuce"), false);
 });

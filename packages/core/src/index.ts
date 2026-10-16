@@ -68,7 +68,7 @@ export { PLANNED_SURFACES, plantSetById, plantSets, setName, setText } from "./p
 export type { PlantSet, SetMember, SurfaceCategory } from "./plantSets.js";
 export { checkPeriod, defaultPeriods, freeMonths, newPeriod, periodAt, periodCells, periodCrops, periodFits, periodsOf, standingCells } from "./periods.js";
 export type { PeriodWarning } from "./periods.js";
-export { WORMBED5_SIZES, WORM_BOX, minDepthCm, newWormBedFarm, wormBedParts, wormBoxCm, wormBoxYear } from "./wormbed5.js";
+export { GANTRY5, WORMBED5_SIZES, WORM_BOX, tooTallForGantry, minDepthCm, newWormBedFarm, wormBedParts, wormBoxCm, wormBoxYear } from "./wormbed5.js";
 export type { WormBedSize } from "./wormbed5.js";
 export { cropSeasons, givesWay, standingIn, yearPlan } from "./season.js";
 export type { CropSeason, GoesIn, Planting, YearPlan } from "./season.js";

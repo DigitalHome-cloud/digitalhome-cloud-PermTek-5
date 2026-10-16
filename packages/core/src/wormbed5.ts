@@ -36,6 +36,16 @@ export function minDepthCm(cropId: string): number | undefined {
  * ~35 kg of suitable scraps (H6), so ~0.19 m² per person. At least 30 cm (a smaller box loses its warmth), at most
  * a quarter of the bed's length.
  */
+/**
+ * The Gantry5-gen1's room over the soil, as the twin edge builds it (permtek5-twin-edge world.py: RAIL_Z, SOIL_Z,
+ * TIP_HOME): its rails 65 cm above the soil, its raised tool 42 cm. A plant taller than the tool's room is in the
+ * way of the robot's travel.
+ */
+export const GANTRY5 = { railAboveSoilCm: 65, toolClearanceCm: 42 } as const;
+
+/** Whether a crop grows taller than the gantry's raised tool. */
+export const tooTallForGantry = (cropId: string): boolean => (cropById(cropId)?.mix?.heightCm ?? 0) > GANTRY5.toolClearanceCm;
+
 export const WORM_BOX = { kgPerM2Year: 90 / 0.48, kgPerPersonYear: 35, minCm: 30, maxShare: 0.25, castingsPerKg: 0.22, bedKgPerM2: 1.6 } as const;
 
 /** The worm box's length along the bed, cm, for the scraps of `people`. */

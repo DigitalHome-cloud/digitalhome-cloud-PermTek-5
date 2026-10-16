@@ -8,9 +8,10 @@
  * planFromSets() in planting.ts turns sets into a bed.
  */
 import { PLANT_SETS } from "./plantSets.generated.js";
+import type { Texts } from "./learning.js";
 
-export type SurfaceCategory = "RectangleBedSurface" | "BedFarmSurface" | "GreenhouseSurface" | "FoodForestSurface";
-/** The categories there is a planner for; greenhouses and food forests come later. */
+export type SurfaceCategory = "RectangleBedSurface" | "BedFarmSurface";
+/** The categories there is a planner for: a bed, and a farm of beds. Others come once these are right (docs/adr/0028). */
 export const PLANNED_SURFACES: SurfaceCategory[] = ["RectangleBedSurface", "BedFarmSurface"];
 
 export interface SetMember { cropId: string; share: number }
@@ -18,8 +19,11 @@ export interface SetMember { cropId: string; share: number }
 export interface PlantSet {
   /** Local id ("set-kitchen-herbs") for the library's sets; a full IRI for a space's own. */
   id: string;
-  names: { en?: string; de?: string; fr?: string };
-  about?: string;
+  names: Texts;
+  /** What the set is, in a line. */
+  about?: Texts;
+  /** Why these crops go together, and what to watch: the set's page explains it (docs/adr/0028). */
+  why?: Texts;
   for: string[];
   members: SetMember[];
   /** Proposed and not yet reviewed (a person's or the edge agent's). */
@@ -32,5 +36,7 @@ export const plantSets = (): PlantSet[] => PLANT_SETS;
 export const plantSetById = (id: string, own: PlantSet[] = []): PlantSet | undefined =>
   own.find((s) => s.id === id) ?? PLANT_SETS.find((s) => s.id === id);
 
-export const setName = (s: PlantSet, lang: string): string =>
-  (s.names as Record<string, string | undefined>)[lang] ?? s.names.en ?? s.id;
+export const setText = (t: Texts | undefined, lang: string): string =>
+  (t as Record<string, string | undefined> | undefined)?.[lang] ?? t?.en ?? "";
+
+export const setName = (s: PlantSet, lang: string): string => setText(s.names, lang) || s.id;

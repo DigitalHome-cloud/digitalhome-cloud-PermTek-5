@@ -19,15 +19,24 @@ Site (one per home)
       └─ learning   (plan-do-check-act cycles: hypotheses, measures, checks: ADR 0026)
 ```
 
-A plain bed, or a **farm of beds** (rectangle beds in rows with paths), stands
-in an area without a guild and is worked by hand. Each is a surface category
-with its own limits (ADR 0027). Greenhouses and food forests come later.
+A **farm of WormBed5** is several WormBed5 of one size in rows, with paths
+between them. Each bed is its own guild, with its own worm box and robot.
+
+The Map starts empty and is guided (ADR 0028):
+1. **What:** one WormBed5, or a farm of them.
+2. **Where:** the area, its sun and its wind.
+3. **Size:** from the sizes offered.
+4. **Worm box:** sized by the household that feeds it.
+5. **Planting:** from plant sets, each explained on its own page.
+
+Plain beds, trees and greenhouses are not offered for now. Beds and trees
+already on a map still show.
 
 ## 1. Type and instance
 
 | | Fixed by the guild **type** | Set per **instance** |
 |---|---|---|
-| Parts | bed, worm box, tank, robot, sensor set | length, width, depth, substrate, tank pipes, worm box length |
+| Parts | bed, worm box, tank, robot, sensor set | length, width, depth (from the sizes offered), substrate, tank pipes, worm box (from the household's size) |
 | Jobs | plant, water, probe, photograph, feed the worms, stamp weeds | which cells, how much, when |
 | Rules | what is watched and how the guild reacts | thresholds tuned to the place |
 | Scenarios | the walkthroughs and chaos runs that apply | — |

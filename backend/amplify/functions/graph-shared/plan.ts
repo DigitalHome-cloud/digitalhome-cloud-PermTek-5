@@ -8,19 +8,20 @@ import * as bundled from "./planner.generated";
 interface Placement { row: number; col: number; cropId: string }
 interface Bed { id: string; name: string; lengthCm: number; widthCm: number; cellCm: number; guildId?: string; farmId?: string }
 interface Cell { id: string; bedId: string; row: number; col: number; cropId: string }
-interface PlantSet { id: string; names: Record<string, string>; members: { cropId: string; share: number }[]; draft?: boolean }
+interface PlantSet { id: string; names: Record<string, string>; about?: Record<string, string>; members: { cropId: string; share: number }[]; draft?: boolean }
 interface SetChoice { setId: string; share: number }
 interface SetPlan { cells: Placement[]; crops: unknown[]; sets: unknown[]; goodPairs: number; badPairs: number; cover: number }
 interface Habitat { beds: Bed[]; cells: Cell[]; farms?: { id: string; name: string }[]; plantSets?: PlantSet[] }
 const { habitatFromTtl, planFarm, planFromSets, plantSets, setName } = bundled as unknown as {
   habitatFromTtl(ttl: string): Habitat;
   planFromSets(bed: Bed, choices: SetChoice[], existing: Cell[], opts: { seed: number }, own: PlantSet[]): SetPlan;
-  planFarm(beds: Bed[], choices: SetChoice[], existing: Cell[], opts: { seed: number }, own: PlantSet[]): { bedId: string; choices: SetChoice[]; plan: SetPlan }[];
+  planFarm(beds: Bed[], choices: SetChoice[], existing: Cell[], opts: { seed: number; same?: boolean }, own: PlantSet[]): { bedId: string; choices: SetChoice[]; plan: SetPlan }[];
   plantSets(): PlantSet[];
   setName(s: PlantSet, lang: string): string;
 };
 
-export interface PlanRequest { bedId?: string; farmId?: string; sets?: { setId: string; share: number }[]; seed?: number }
+/** `same`: a farm plants every bed from all the sets, instead of sharing them out (docs/adr/0028). */
+export interface PlanRequest { bedId?: string; farmId?: string; sets?: { setId: string; share: number }[]; seed?: number; same?: boolean }
 
 const short = (iri: string) => iri.slice(iri.lastIndexOf("/") + 1);
 
@@ -28,7 +29,7 @@ export function planForEdge(ttl: string, req: PlanRequest): { status: number; bo
   const h = habitatFromTtl(ttl);
   const own = h.plantSets ?? [];
   const sets = [...plantSets(), ...own].map((s) => ({
-    id: s.id, name: setName(s, "en"), names: s.names, draft: !!s.draft, members: s.members,
+    id: s.id, name: setName(s, "en"), names: s.names, about: s.about?.en ?? "", draft: !!s.draft, members: s.members,
   }));
   if (!req.sets?.length) {
     return { status: 200, body: {
@@ -42,7 +43,7 @@ export function planForEdge(ttl: string, req: PlanRequest): { status: number; bo
   const unknown = req.sets.filter((s) => !known.has(s.setId)).map((s) => s.setId);
   if (unknown.length) return { status: 400, body: { error: "invalid_request", message: `no such plant set: ${unknown.join(", ")}` } };
   const choices = req.sets.map((s) => ({ setId: s.setId, share: Math.max(0, Math.min(5, Number(s.share) || 1)) }));
-  const opts = { seed: Number.isInteger(req.seed) ? Number(req.seed) : 5 };
+  const opts = { seed: Number.isInteger(req.seed) ? Number(req.seed) : 5, same: req.same === true };
   const find = <T extends { id: string }>(id: string | undefined, list: T[]): T | undefined => list.find((x) => x.id === id || short(x.id) === id);
   const farm = find(req.farmId, h.farms ?? []);
   const bed = find(req.bedId, h.beds);

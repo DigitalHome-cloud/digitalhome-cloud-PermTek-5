@@ -1414,7 +1414,16 @@ var PLANT_SETS = [
       "en": "Courgettes and beans",
       "fr": "Courgettes et haricots"
     },
-    "about": "Heavy-feeding cucurbits with beans that fix nitrogen, dill and marigold for the insects.",
+    "about": {
+      "de": "Stark zehrende Kürbisgewächse mit Bohnen, die Stickstoff binden.",
+      "en": "Heavy-feeding cucurbits with beans that fix nitrogen.",
+      "fr": "Des cucurbitacées gourmandes avec des haricots qui fixent l'azote."
+    },
+    "why": {
+      "de": "Zucchini sind Starkzehrer und breiten sich weit aus; sie bekommen den größten Anteil und kommen zuerst. Buschbohnen binden mit ihren Wurzelknöllchen Stickstoff aus der Luft und geben einen Teil an den Boden ab. Gurke ist hier flacher Bodendecker: Sie darf unter höheren Pflanzen laufen und beschattet den Boden. Dill und Tagetes blühen und holen die Bestäuber, die Kürbisgewächse für Früchte brauchen. Bohnen und Zwiebeln werden getrennt gehalten; mischen Sie dieses Set nicht mit Wurzeln und Zwiebeln in einem Beet. Zucchini wollen 35 cm, Gurken weniger, und beide viel Wasser: Der Wurmhumus passt am besten zu ihnen.",
+      "en": "Courgettes are heavy feeders and spread wide, so they take the largest share and go in first. Bush beans fix nitrogen from the air with their root nodules and give some of it back to the soil. Cucumber is a low ground cover here: it may run under taller plants and shades the soil. Dill and marigold flower and bring the pollinators the cucurbits need for fruit. Beans and onions are kept apart, so do not mix this set with Roots and onions in one bed. Courgettes want 35 cm, cucumbers less, and both plenty of water: the worm box's castings suit them best.",
+      "fr": "Les courgettes sont gourmandes et s'étalent : elles ont la plus grande part et viennent en premier. Les haricots nains fixent l'azote de l'air par leurs nodosités et en rendent une partie au sol. Le concombre couvre ici le sol : il peut courir sous les plantes plus hautes et ombrage la terre. L'aneth et l'œillet d'Inde fleurissent et attirent les pollinisateurs dont les cucurbitacées ont besoin. Haricots et oignons sont tenus à l'écart : ne mélangez pas cet ensemble avec Racines et oignons dans une planche. Les courgettes veulent 35 cm, les concombres moins, et tous deux beaucoup d'eau : le lombricompost leur convient le mieux."
+    },
     "for": [
       "BedFarmSurface",
       "RectangleBedSurface"
@@ -1449,7 +1458,16 @@ var PLANT_SETS = [
       "en": "Kitchen herbs",
       "fr": "Herbes aromatiques"
     },
-    "about": "Herbs a kitchen uses every week, close at hand. Rosemary takes the most room and goes in first; chives and parsley fill in.",
+    "about": {
+      "de": "Kräuter, die eine Küche jede Woche braucht, griffbereit.",
+      "en": "Herbs a kitchen uses every week, close at hand.",
+      "fr": "Les herbes qu'une cuisine utilise chaque semaine, à portée de main."
+    },
+    "why": {
+      "de": "Rosmarin und Thymian sind Halbsträucher des Mittelmeers, die es trocken und mager mögen; Basilikum, Petersilie, Dill und Schnittlauch wollen mehr Wasser. In einem Beet teilen sie sich den Platz nach Höhe: Rosmarin braucht am meisten und kommt zuerst, Thymian breitet sich flach aus, die anderen füllen die Lücken. Dill und Petersilie blühen und nähren Schwebfliegen und kleine Wespen. Sie sind verwandt (Doldenblütler), daher hält der Planer sie auseinander. Ein Beet von 15 cm trägt Schnittlauch, Petersilie und Thymian; Basilikum und Dill wollen 25 cm, der tief wurzelnde Rosmarin 35 cm.",
+      "en": "Rosemary and thyme are Mediterranean shrubs that like it dry and lean; basil, parsley, dill and chives want more water. In one bed they share the room by height: rosemary takes the most room and goes in first, thyme spreads low, and the others fill the gaps. Dill and parsley flower and feed hoverflies and small wasps. Dill and parsley are relatives (Apiaceae) and share pests, so the planner keeps them apart. A 15 cm bed grows chives, parsley and thyme; basil and dill want 25 cm, and rosemary, which roots deep, 35 cm.",
+      "fr": "Le romarin et le thym sont des arbrisseaux méditerranéens qui aiment le sec et le pauvre ; basilic, persil, aneth et ciboulette veulent plus d'eau. Dans une planche, ils se partagent la place selon leur hauteur : le romarin prend le plus de place et vient en premier, le thym s'étale au ras du sol, les autres comblent les vides. L'aneth et le persil fleurissent et nourrissent syrphes et petites guêpes. Ils sont parents (Apiacées), le planificateur les tient donc à l'écart. Une planche de 15 cm porte ciboulette, persil et thym ; basilic et aneth veulent 25 cm, et le romarin, qui s'enracine profond, 35 cm."
+    },
     "for": [
       "BedFarmSurface",
       "RectangleBedSurface"
@@ -1488,7 +1506,16 @@ var PLANT_SETS = [
       "en": "Mediterranean summer",
       "fr": "Été méditerranéen"
     },
-    "about": "Warm-season fruit crops with the herbs they are traditionally grown with. For a sunny, sheltered bed.",
+    "about": {
+      "de": "Wärmeliebendes Fruchtgemüse mit seinen Kräutern, für ein sonniges, geschütztes Beet.",
+      "en": "Warm-season fruit crops with their herbs, for a sunny, sheltered bed.",
+      "fr": "Des légumes-fruits d'été avec leurs herbes, pour une planche ensoleillée et abritée."
+    },
+    "why": {
+      "de": "Aubergine und Paprika sind Verwandte der Tomate (Nachtschattengewächse) und wollen noch mehr Wärme: Ein Dach in voller Sonne, windgeschützt, passt. Sie brauchen am meisten Platz und kommen zuerst. Basilikum wächst gut daneben und wird den ganzen Sommer geerntet; Thymian bedeckt den Boden darunter und verträgt die Hitze. Tagetes lenkt Blattläuse von den Paprika ab und nährt ihre Gegenspieler. Alle sind frostempfindlich: erst nach dem letzten Frost auspflanzen. Sie wollen 35 cm Substrat und gleichmäßig Wasser; ein Beet mit Tankrohren ist am besten.",
+      "en": "Aubergine and sweet pepper are relatives of the tomato (Solanaceae) that want even more warmth: a roof in full sun, out of the wind, suits them. They take the most room and go in first. Basil grows well beside them and is harvested all summer; thyme covers the soil underneath and stands the heat. Marigold draws aphids away from the peppers and feeds their predators. All of them are frost-tender: plant out only after the last frost. They want 35 cm of substrate and steady water, so a bed with tank pipes is best.",
+      "fr": "L'aubergine et le poivron sont parents de la tomate (Solanacées) et veulent encore plus de chaleur : un toit en plein soleil, à l'abri du vent, leur convient. Ils prennent le plus de place et viennent en premier. Le basilic pousse bien à côté et se récolte tout l'été ; le thym couvre le sol dessous et supporte la chaleur. L'œillet d'Inde détourne les pucerons des poivrons et nourrit leurs prédateurs. Tous craignent le gel : plantez après les dernières gelées. Ils veulent 35 cm de substrat et de l'eau régulière ; une planche avec tuyaux-réservoirs est l'idéal."
+    },
     "for": [
       "BedFarmSurface",
       "RectangleBedSurface"
@@ -1523,7 +1550,16 @@ var PLANT_SETS = [
       "en": "Roots and onions",
       "fr": "Racines et oignons"
     },
-    "about": "Carrots beside onions and garlic: each is said to keep the other's fly away.",
+    "about": {
+      "de": "Möhren neben Zwiebeln und Knoblauch.",
+      "en": "Carrots beside onions and garlic.",
+      "fr": "Des carottes à côté des oignons et de l'ail."
+    },
+    "why": {
+      "de": "Das älteste Begleitpaar: Möhren neben Zwiebeln, die sich gegenseitig die Fliege mit ihrem Geruch fernhalten sollen. Knoblauch tut dasselbe und braucht wenig Platz. Radieschen werden mit den Möhren gesät: Sie keimen zuerst, markieren die Reihen und werden geerntet, bevor die Möhren den Platz brauchen. Möhren wurzeln tief und wollen 35 cm lockeres Substrat (kurze Sorten kommen mit 25 aus); Zwiebeln und Knoblauch kommen mit weniger aus. Keine davon mag frischen Mist; das Set passt in ein Beet, das im Vorjahr Starkzehrer trug.",
+      "en": "The oldest companion pair: carrots beside onions, each said to keep the other's fly away by its smell. Garlic does the same and takes little room. Radish is sown with the carrots: it comes up first, marks the rows and is pulled before the carrots need the room. Carrots root deep and want 35 cm of loose substrate (short varieties manage with 25); onions and garlic are content with less. None of them likes fresh manure, so this set suits a bed that had heavy feeders the year before.",
+      "fr": "Le plus vieux couple de compagnes : carottes et oignons, chacun éloignant par son odeur la mouche de l'autre. L'ail fait de même et prend peu de place. Le radis est semé avec les carottes : il lève le premier, marque les rangs et part avant que les carottes aient besoin de place. Les carottes s'enracinent profond et veulent 35 cm de substrat meuble (les variétés courtes se contentent de 25) ; oignons et ail se contentent de moins. Aucun n'aime le fumier frais : l'ensemble convient à une planche qui portait des gourmands l'année d'avant."
+    },
     "for": [
       "BedFarmSurface",
       "RectangleBedSurface"
@@ -1554,7 +1590,16 @@ var PLANT_SETS = [
       "en": "Salad bed",
       "fr": "Planche à salades"
     },
-    "about": "Leaves and quick roots, sown again as they are cut. Radish marks the rows and is pulled first.",
+    "about": {
+      "de": "Blätter und schnelle Wurzeln, nachgesät, sobald geerntet wird.",
+      "en": "Leaves and quick roots, sown again as they are cut.",
+      "fr": "Des feuilles et des racines rapides, ressemées au fil des récoltes."
+    },
+    "why": {
+      "de": "Alle fünf wurzeln flach, bleiben niedrig und wachsen schnell; sie passen zu den 15 cm eines leichten Dachbeets. Salat bekommt den größten Anteil, weil er am meisten gegessen wird. Radieschen sind nach vier Wochen reif und machen Platz für die nächste Saat; Frühlingszwiebeln sollen manche Schädlinge mit ihrem Geruch fernhalten. Spinat und Rucola schießen bei Hitze: im Frühjahr und Herbst säen, Salat den Sommer über. Nichts wird hoch, das Beet beschattet sich nicht selbst.",
+      "en": "All five are shallow-rooted, short and quick, so they suit the 15 cm of a light roof bed. Lettuce takes the largest share because it is eaten most. Radish is ready in four weeks and leaves room for the next sowing; spring onions are said to keep some pests off with their smell. Spinach and rocket bolt in heat: sow them in spring and autumn, and lettuce through the summer. Nothing here is tall, so the bed does not shade itself.",
+      "fr": "Les cinq ont des racines courtes, restent bas et poussent vite ; ils vont aux 15 cm d'une planche légère sur le toit. La laitue a la plus grande part parce qu'on en mange le plus. Le radis est prêt en quatre semaines et laisse place au semis suivant ; l'odeur de l'oignon blanc éloignerait certains ravageurs. Épinard et roquette montent en graines à la chaleur : semez-les au printemps et en automne, la laitue tout l'été. Rien n'est haut, la planche ne s'ombrage pas."
+    },
     "for": [
       "BedFarmSurface",
       "RectangleBedSurface"
@@ -1589,7 +1634,16 @@ var PLANT_SETS = [
       "en": "Tomato and friends",
       "fr": "La tomate et ses amis"
     },
-    "about": "Tomatoes with their traditional companions: basil and marigold against pests, carrots and chives in the gaps, thyme under them.",
+    "about": {
+      "de": "Tomaten mit ihren überlieferten Begleitern.",
+      "en": "Tomatoes with their traditional companions.",
+      "fr": "Des tomates avec leurs compagnes traditionnelles."
+    },
+    "why": {
+      "de": "Tomaten sind hoch und brauchen am meisten Platz, deshalb kommen sie zuerst, an die Seite, die den Rest nicht beschattet. Basilikum und Tagetes sind die klassischen Begleiter: Basilikum soll die Weiße Fliege fernhalten, Tagetes zieht Schädlinge und ihre Gegenspieler an. Thymian ist Bodendecker: er darf unter einer Tomate wachsen und hält den Boden bedeckt. Möhren und Schnittlauch füllen die Lücken und lockern den Boden. Große Tomaten brauchen 35 cm Substrat; für ein Beet von 15 cm wählen Sie ein anderes Set.",
+      "en": "Tomatoes are tall and take the most room, so they go in first, along the side that does not shade the rest. Basil and marigold are the classic companions: basil is said to keep whitefly away, and marigold draws pests and their predators. Thyme is a ground cover: it may grow under a tomato and keeps the soil covered. Carrots and chives fill the gaps and loosen the soil. Full-size tomatoes want 35 cm of substrate; in a 15 cm bed choose another set.",
+      "fr": "Les tomates sont hautes et prennent le plus de place : elles viennent en premier, du côté qui n'ombrage pas le reste. Le basilic et l'œillet d'Inde sont les compagnes classiques : le basilic éloignerait l'aleurode, l'œillet attire ravageurs et prédateurs. Le thym couvre le sol : il peut pousser sous une tomate. Carottes et ciboulette comblent les vides et ameublissent la terre. Les grandes tomates veulent 35 cm de substrat ; pour une planche de 15 cm, choisissez un autre ensemble."
+    },
     "for": [
       "BedFarmSurface",
       "RectangleBedSurface"
@@ -1626,7 +1680,8 @@ var PLANT_SETS = [
 // ../packages/core/src/plantSets.ts
 var plantSets = () => PLANT_SETS;
 var plantSetById = (id, own = []) => own.find((s) => s.id === id) ?? PLANT_SETS.find((s) => s.id === id);
-var setName = (s, lang) => s.names[lang] ?? s.names.en ?? s.id;
+var setText = (t, lang) => t?.[lang] ?? t?.en ?? "";
+var setName = (s, lang) => setText(s.names, lang) || s.id;
 
 // ../packages/core/src/planting.ts
 var GROUND_MAX_CM = 40;
@@ -2022,7 +2077,7 @@ function shareOut(bedIds, choices) {
   return out;
 }
 function planFarm(beds, choices, existing = [], opts = {}, own = []) {
-  const shares = shareOut(beds.map((b) => b.id), choices);
+  const shares = opts.same ? new Map(beds.map((b) => [b.id, choices.filter((c) => c.share > 0)])) : shareOut(beds.map((b) => b.id), choices);
   return beds.map((b) => ({ bedId: b.id, choices: shares.get(b.id) ?? [], plan: planFromSets(b, shares.get(b.id) ?? [], existing, opts, own) }));
 }
 
@@ -2130,19 +2185,23 @@ function habitatFromTtl(ttl) {
   }));
   const memberIds = /* @__PURE__ */ new Set();
   const plantSets2 = ofType("PlantSet").map((id) => {
-    const names = {};
-    for (const n of store.getObjects(namedNode(id), namedNode(LABEL), null)) names[n.language || "en"] = n.value;
+    const own = (pr) => {
+      const out = {};
+      for (const n of store.getObjects(namedNode(id), namedNode(pr), null)) out[n.language || "en"] = n.value;
+      return out;
+    };
+    const names = own(LABEL), about = own(COMMENT), why = own(PERMA + "rationale");
     const members = store.getObjects(namedNode(id), p("member"), null).map((m) => m.value).sort((a, b) => Number(a.split("/member-")[1] ?? 0) - Number(b.split("/member-")[1] ?? 0)).map((m) => {
       memberIds.add(m);
       return { cropId: (str(m, "memberCrop") ?? "").slice(CROP_IRI.length), share: num(m, "share") ?? 1 };
     });
-    const about = store.getObjects(namedNode(id), namedNode(COMMENT), null)[0]?.value;
     return {
       id,
       names,
       members,
       for: store.getObjects(namedNode(id), p("setFor"), null).map(local).filter((x) => !!x).sort(),
-      ...about && { about },
+      ...Object.keys(about).length && { about },
+      ...Object.keys(why).length && { why },
       ...str(id, "draft") === "true" && { draft: true }
     };
   });

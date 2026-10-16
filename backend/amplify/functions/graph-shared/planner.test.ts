@@ -28,3 +28,16 @@ test("without sets it says what can be planned; with sets it proposes, and saves
   assert.equal(planForEdge(TTL, { bedId: "bed-b", sets: [{ setId: "set-nope", share: 1 }] }).status, 400);
   assert.equal(planForEdge(TTL, { bedId: "bed-x", sets: [{ setId: "set-kitchen-herbs", share: 1 }] }).status, 404);
 });
+
+test("a farm plants every bed from all the sets when asked for the same, else shares them out", () => {
+  const farm = `${TTL}
+id:farm-f a perma:BedFarm ; rdfs:label "Roof beds" ; perma:inZone id:zone-z ; perma:bedRows 1 ; perma:bedsPerRow 2 ; perma:pathCm 60 ;
+  perma:bedLengthCm 300 ; perma:bedWidthCm 100 ; perma:cellSizeCm 10 .
+id:bed-f1 a perma:GrowingBed ; rdfs:label "Roof beds 1.1" ; perma:inZone id:zone-z ; perma:inFarm id:farm-f ; perma:lengthCm 300 ; perma:widthCm 100 ; perma:cellSizeCm 10 .
+id:bed-f2 a perma:GrowingBed ; rdfs:label "Roof beds 1.2" ; perma:inZone id:zone-z ; perma:inFarm id:farm-f ; perma:lengthCm 300 ; perma:widthCm 100 ; perma:cellSizeCm 10 .`;
+  const sets = [{ setId: "set-salad-bed", share: 1 }, { setId: "set-kitchen-herbs", share: 1 }];
+  const sets_of = (same: boolean) => (planForEdge(farm, { farmId: "farm-f", sets, same }).body.plans as { sets: unknown[] }[]).map((p) => p.sets.length);
+  assert.deepEqual(sets_of(true), [2, 2]);
+  assert.deepEqual(sets_of(false), [1, 1]);
+  assert.ok((planForEdge(TTL, {}).body.sets as { about: string }[]).every((s) => s.about), "each library set says what it is");
+});

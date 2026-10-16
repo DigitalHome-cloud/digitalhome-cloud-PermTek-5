@@ -1,6 +1,6 @@
 # ADR 0027 — Plant sets, layers and surface categories
 
-Status: **Accepted** · 2026-10-15 · Builds on [ADR 0021](0021-recipes-drive-a-mixed-planting.md), [ADR 0016](0016-habitat-model-zones-beds-cells-trees.md), [ADR 0020](0020-perma5guild-one-edge-per-guild.md)
+Status: **Accepted** · 2026-10-15 · Amended by [ADR 0028](0028-a-guided-wormbed5-map.md) · Builds on [ADR 0021](0021-recipes-drive-a-mixed-planting.md), [ADR 0016](0016-habitat-model-zones-beds-cells-trees.md), [ADR 0020](0020-perma5guild-one-edge-per-guild.md)
 
 ## Context
 
@@ -53,7 +53,7 @@ licence kept in the file that uses them.
 |---|---|
 | `RectangleBedSurface` | One bed of square cells, up to 30 × 10 m |
 | `BedFarmSurface` | Rectangle beds of one size in rows, with paths of 20–200 cm, up to 50 beds (`perma:BedFarm`, a bed's `perma:inFarm`) |
-| `GreenhouseSurface`, `FoodForestSurface` | Listed but not planned yet: they need their own planner (canopy, not cells) |
+| `GreenhouseSurface`, `FoodForestSurface` | Removed by ADR 0028 until beds and farms are right; they will need their own planner (canopy, not cells) |
 
 The shapes and `checkHabitat` hold the limits (`SURFACE_LIMITS`).
 

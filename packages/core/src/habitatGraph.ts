@@ -85,7 +85,8 @@ export function habitatToTtl(h: Habitat): Promise<string> {
   for (const ps of h.plantSets ?? []) {
     add(ps.id, "a", p("PlantSet"));
     for (const [lang, text] of Object.entries(ps.names)) if (text) qs.push(quad(namedNode(ps.id), namedNode(LABEL), literal(text, lang)));
-    if (ps.about) qs.push(quad(namedNode(ps.id), namedNode(COMMENT), literal(ps.about, "en")));
+    for (const [lang, text] of Object.entries(ps.about ?? {})) if (text) qs.push(quad(namedNode(ps.id), namedNode(COMMENT), literal(text, lang)));
+    for (const [lang, text] of Object.entries(ps.why ?? {})) if (text) qs.push(quad(namedNode(ps.id), p("rationale"), literal(text, lang)));
     for (const f of ps.for) add(ps.id, "setFor", p(f));
     if (ps.draft) add(ps.id, "draft", literal("true", namedNode(XSD + "boolean")));
     ps.members.forEach((m, i) => {
@@ -251,16 +252,19 @@ export function habitatFromTtl(ttl: string): Habitat {
   }));
   const memberIds = new Set<string>();
   const plantSets: PlantSet[] = ofType("PlantSet").map((id) => {
-    const names: PlantSet["names"] = {};
-    for (const n of store.getObjects(namedNode(id), namedNode(LABEL), null)) names[(((n as { language?: string }).language) || "en") as keyof PlantSet["names"]] = n.value;
+    const own = (pr: string) => {
+      const out: Texts = {};
+      for (const n of store.getObjects(namedNode(id), namedNode(pr), null)) out[((n as { language?: string }).language || "en") as Lang] = n.value;
+      return out;
+    };
+    const names = own(LABEL), about = own(COMMENT), why = own(PERMA + "rationale");
     const members = store.getObjects(namedNode(id), p("member"), null).map((m) => m.value)
       .sort((a, b) => Number(a.split("/member-")[1] ?? 0) - Number(b.split("/member-")[1] ?? 0))
       .map((m) => { memberIds.add(m); return { cropId: (str(m, "memberCrop") ?? "").slice(CROP_IRI.length), share: num(m, "share") ?? 1 }; });
-    const about = store.getObjects(namedNode(id), namedNode(COMMENT), null)[0]?.value;
     return {
       id, names, members,
       for: store.getObjects(namedNode(id), p("setFor"), null).map(local).filter((x): x is string => !!x).sort(),
-      ...(about && { about }),
+      ...(Object.keys(about).length && { about }), ...(Object.keys(why).length && { why }),
       ...(str(id, "draft") === "true" && { draft: true }),
     };
   });

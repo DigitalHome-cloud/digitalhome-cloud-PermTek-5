@@ -500,8 +500,13 @@ export function shareOut(bedIds: string[], choices: SetChoice[]): Map<string, Se
   return out;
 }
 
-export function planFarm(beds: Bed[], choices: SetChoice[], existing: Cell[] = [], opts: PlantingOptions = {}, own: PlantSet[] = []):
+/** A farm's options: `same` plants every bed from all the chosen sets, instead of sharing the sets out (docs/adr/0028). */
+export interface FarmOptions extends PlantingOptions { same?: boolean }
+
+export function planFarm(beds: Bed[], choices: SetChoice[], existing: Cell[] = [], opts: FarmOptions = {}, own: PlantSet[] = []):
   { bedId: string; choices: SetChoice[]; plan: SetPlan }[] {
-  const shares = shareOut(beds.map((b) => b.id), choices);
+  const shares = opts.same
+    ? new Map(beds.map((b) => [b.id, choices.filter((c) => c.share > 0)]))
+    : shareOut(beds.map((b) => b.id), choices);
   return beds.map((b) => ({ bedId: b.id, choices: shares.get(b.id) ?? [], plan: planFromSets(b, shares.get(b.id) ?? [], existing, opts, own) }));
 }

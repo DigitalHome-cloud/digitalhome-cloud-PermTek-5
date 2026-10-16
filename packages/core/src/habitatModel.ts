@@ -204,6 +204,43 @@ export function wormBinCols(b: Bed): number {
 
 export const zoneOffset = (h: Habitat, zoneId: string) => h.zones.find((z) => z.id === zoneId)?.offsetC ?? 0;
 
+/** What goes when an area is removed: its guilds, farms, beds, their planted cells, its trees, the guilds' water and learning. */
+export function zoneContents(h: Habitat, zoneId: string) {
+  const guilds = new Set((h.guilds ?? []).filter((g) => g.zoneId === zoneId).map((g) => g.id));
+  const beds = new Set(h.beds.filter((b) => b.zoneId === zoneId || (b.guildId !== undefined && guilds.has(b.guildId))).map((b) => b.id));
+  const stores = new Set((h.stores ?? []).filter((s) => guilds.has(s.guildId)).map((s) => s.id));
+  return {
+    guilds, beds, stores,
+    farms: new Set((h.farms ?? []).filter((f) => f.zoneId === zoneId).map((f) => f.id)),
+    cells: h.cells.filter((c) => beds.has(c.bedId)).length,
+    plants: h.plants.filter((p) => p.zoneId === zoneId).length,
+    water: [...(h.catchments ?? []), ...(h.stores ?? []), ...(h.valves ?? [])].filter((x) => guilds.has(x.guildId)).length,
+    cycles: (h.cycles ?? []).filter((c) => guilds.has(c.aboutId) || c.aboutId === zoneId).length,
+  };
+}
+
+/**
+ * The habitat without the area and everything in it (zoneContents). Water of a guild elsewhere that stood in this
+ * area stays, back in its guild's own area; valves to a store that went go too.
+ */
+export function removeZone(h: Habitat, zoneId: string): Habitat {
+  const gone = zoneContents(h, zoneId);
+  const away = <T extends { zoneId?: string }>(x: T): T => (x.zoneId === zoneId ? (({ zoneId: _, ...rest }) => rest as T)(x) : x);
+  return {
+    ...h,
+    zones: h.zones.filter((z) => z.id !== zoneId),
+    guilds: (h.guilds ?? []).filter((g) => !gone.guilds.has(g.id)),
+    beds: h.beds.filter((b) => !gone.beds.has(b.id)),
+    cells: h.cells.filter((c) => !gone.beds.has(c.bedId)),
+    plants: h.plants.filter((p) => p.zoneId !== zoneId),
+    ...(h.farms && { farms: h.farms.filter((f) => !gone.farms.has(f.id)) }),
+    ...(h.catchments && { catchments: h.catchments.filter((c) => !gone.guilds.has(c.guildId) && !gone.stores.has(c.storeId)).map(away) }),
+    ...(h.stores && { stores: h.stores.filter((s) => !gone.stores.has(s.id)).map(away) }),
+    ...(h.valves && { valves: h.valves.filter((v) => !gone.guilds.has(v.guildId) && !gone.stores.has(v.from) && !gone.stores.has(v.to)) }),
+    ...(h.cycles && { cycles: h.cycles.filter((c) => !gone.guilds.has(c.aboutId) && c.aboutId !== zoneId) }),
+  };
+}
+
 export interface Problem {
   code: "cellOutside" | "cellTwice" | "cellInBin" | "noZone" | "noBed" | "noGuild" | "guildBeds" | "unknownCrop"
     | "waterNoGuild" | "valveEnds" | "wormIntoClean" | "rainNoStore" | "noFarm" | "farmTooBig" | "setEmpty";

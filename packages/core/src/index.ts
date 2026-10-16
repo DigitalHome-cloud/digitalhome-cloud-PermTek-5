@@ -37,7 +37,7 @@ export { FROST_RISK_MIN_C, activitiesIn, deriveWindows } from "./calendar.js";
 export type { CropCalendar } from "./calendar.js";
 export {
   CELL_STATUSES, EXPOSURES, GUILD_ROBOT, GUILD_TYPES, HABITAT_IRI, ROBOT_NAME, STORE_KINDS, SUBSTRATE_KINDS, VALVE_KINDS, WATER_KINDS, ZONE_KINDS,
-  SURFACE_LIMITS, bedGrid, checkHabitat, defaultOffset, emptyHabitat, farmBeds, farmLayout, footprint, newFarm, newGuild, guildForBed, WORMBED5, newId, sowingJob, wormBinCols, zoneOffset,
+  SURFACE_LIMITS, bedGrid, checkHabitat, defaultOffset, emptyHabitat, farmBeds, farmLayout, footprint, newFarm, newGuild, guildForBed, WORMBED5, newId, removeZone, sowingJob, wormBinCols, zoneContents, zoneOffset,
 } from "./habitatModel.js";
 export type {
   Bed, BedFarm, Cell, CellStatus, Exposure, GardenPlant, Guild, GuildType, Habitat, Problem, RainCatchment, RobotModel, SowingJob, StoreKind, SubstrateKind,

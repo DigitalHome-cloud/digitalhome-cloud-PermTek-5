@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { test } from "node:test";
 
-import { WORMBED5_WATER, checkHabitat, defaultWater, habitatFromTtl, habitatToTtl, newGuild, rainLitres, useMmPerDay, waterBudget } from "../dist/index.js";
+import { WORMBED5_WATER, checkHabitat, defaultWater, habitatFromTtl, habitatToTtl, newGuild, rainLitres, removeZone, useMmPerDay, waterBudget, zoneContents } from "../dist/index.js";
 
 // docs/adr/0025: a guild's water, rain caught and stored, worm liquid kept apart from clean water.
 const DEMO = fs.readFileSync(new URL("../../ontology/abox/examples/citydemo-habitat.ttl", import.meta.url), "utf8");
@@ -69,4 +69,25 @@ test("CityDemo's water budget: rain covers part of the summer need, all of the w
   assert.equal(jan.rainSharePct, 100);
   assert.ok(b.seasonSharePct >= 30 && b.seasonSharePct <= 100, `April-September share ${b.seasonSharePct} %: within H7's 30-100`);
   assert.equal(waterBudget(h, h.guilds[0].id, []).seasonSharePct, null, "no climate: no share");
+});
+
+test("removing an area takes what is in it; a garden tank of a guild elsewhere stays, in its guild's area (ADR 0028)", () => {
+  const h = habitatFromTtl(DEMO);
+  const garden = h.zones.find((z) => z.id.endsWith("zone-z-citygarden")), roof = h.zones.find((z) => z.id.endsWith("zone-z-cityroof"));
+  const inGarden = zoneContents(h, garden.id);
+  assert.equal(inGarden.plants, 3, "the three fruit trees");
+  assert.equal(inGarden.guilds.size + inGarden.beds.size + inGarden.water, 0, "the guild, its bed and its water are on the roof");
+  const noGarden = removeZone(h, garden.id);
+  assert.deepEqual(noGarden.zones.map((z) => z.id), [roof.id]);
+  assert.equal(noGarden.plants.length, 0);
+  assert.equal(noGarden.stores.length, h.stores.length);
+  assert.equal(noGarden.stores.find((s) => s.kind === "GardenTank").zoneId, undefined);
+  assert.deepEqual(checkHabitat(noGarden), []);
+
+  const inRoof = zoneContents(h, roof.id);
+  assert.ok(inRoof.guilds.size === 1 && inRoof.beds.size === 1 && inRoof.cells > 0 && inRoof.water === h.stores.length + h.catchments.length + h.valves.length);
+  const noRoof = removeZone(h, roof.id);
+  assert.equal(noRoof.guilds.length + noRoof.beds.length + noRoof.cells.length + noRoof.stores.length + noRoof.valves.length + noRoof.catchments.length, 0);
+  assert.equal(noRoof.cycles?.length ?? 0, 0);
+  assert.deepEqual(checkHabitat(noRoof), []);
 });

@@ -1,7 +1,7 @@
 import * as React from "react";
 import {
   EXPOSURES, ROBOT_NAME, SUBSTRATE_KINDS, WORMBED5_SIZES, bedGrid, bedLoad, loadClass, guildForBed, wormBinCols, cropById, cropName, footprint, newId, sowingJob,
-  crowdedCells, layerOf, plantingConflict, wormBoxCm, wormBoxYear,
+  crowdedCells, layerOf, plantingConflict, removeZone, wormBoxCm, wormBoxYear, zoneContents,
 } from "@dlab5/permtek5-core";
 import type { Bed, Cell, CellStatus, ClimateMonth, Exposure, GardenPlant, Guild, Habitat, SubstrateKind, Zone, ZoneKind } from "@dlab5/permtek5-core";
 import { FarmCard } from "./FarmCard";
@@ -49,9 +49,11 @@ function ZoneCard({ zone, habitat, edit, canEdit, months }: { zone: Zone; habita
   const set = (patch: Partial<Zone>) => edit((h) => ({ ...h, zones: h.zones.map((z) => (z.id === zone.id ? { ...z, ...patch } : z)) }));
   const beds = habitat.beds.filter((b) => b.zoneId === zone.id);
   const plants = habitat.plants.filter((p) => p.zoneId === zone.id);
-  const empty = !beds.length && !plants.length && !(habitat.guilds ?? []).some((g) => g.zoneId === zone.id) && !(habitat.farms ?? []).some((f) => f.zoneId === zone.id);
   const toggle = (e: Exposure) => set({ exposure: zone.exposure.includes(e) ? zone.exposure.filter((x) => x !== e) : [...zone.exposure, e].sort() });
   const farms = (habitat.farms ?? []).filter((f) => f.zoneId === zone.id);
+  // what goes with the area when it is removed (docs/adr/0028)
+  const inside = zoneContents(habitat, zone.id);
+  const empty = !inside.guilds.size && !inside.farms.size && !inside.beds.size && !inside.plants;
   // a farm's guilds show in the farm
   const inFarm = new Set(beds.filter((b) => b.farmId && farms.some((f) => f.id === b.farmId)).map((b) => b.guildId));
   const guilds = (habitat.guilds ?? []).filter((g) => g.zoneId === zone.id && !inFarm.has(g.id));
@@ -92,16 +94,22 @@ function ZoneCard({ zone, habitat, edit, canEdit, months }: { zone: Zone; habita
       {plainBeds.map((b) => <BedEditor key={b.id} bed={b} habitat={habitat} edit={edit} canEdit={canEdit} />)}
       {plants.length > 0 && <GardenPlants zone={zone} plants={plants} edit={edit} canEdit={canEdit} />}
 
-      {canEdit && empty && (
+      {canEdit && (
         <p className="pt-habitat__actions">
-          <button className="pt-button pt-button--ghost" onClick={() => edit((h) => ({ ...h, zones: h.zones.filter((z) => z.id !== zone.id) }))}>
-            {t("hab.remove.zone")}
-          </button>
+          {empty
+            ? <button className="pt-button pt-button--ghost" onClick={() => edit((h) => removeZone(h, zone.id))}>{t("hab.remove.zone")}</button>
+            : <ConfirmButton label={t("hab.remove.zone")} says={t("hab.remove.zone.says", { name: zone.name, what: zoneParts(inside).map(([k, n]) => t(`hab.remove.zone.${k}`, { n })).join(", ") })}
+                onConfirm={() => edit((h) => removeZone(h, zone.id))} />}
         </p>
       )}
     </section>
   );
 }
+
+/** What an area holds, for the remove confirm: only the kinds it has. */
+const zoneParts = (i: ReturnType<typeof zoneContents>): [string, number][] =>
+  ([["guilds", i.guilds.size], ["farms", i.farms.size], ["beds", i.beds.size], ["cells", i.cells], ["plants", i.plants], ["water", i.water], ["cycles", i.cycles]] as [string, number][])
+    .filter(([, n]) => n > 0);
 
 /**
  * A Perma5Guild (docs/adr/0020): the area's working unit. Its type says what it

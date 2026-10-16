@@ -44,6 +44,26 @@
           "crop"
         ],
         "note": "Cells and plants point at crops of the shared library: names in four languages, what a crop needs, how deep and how far apart to sow."
+      },
+      {
+        "id": "year",
+        "label": "A bed's year",
+        "focus": [
+          "bed",
+          "period",
+          "cell"
+        ],
+        "note": "A bed's year is split into growing periods and a rest. Each growing period has its plant sets and its target: the cells planned in it."
+      },
+      {
+        "id": "views",
+        "label": "Views, not truth",
+        "focus": [
+          "edge",
+          "runstage",
+          "graph"
+        ],
+        "note": "An edge writes a run as an OpenUSD stage to replay or film. It is made from the map and the run, never stored back."
       }
     ]
   },
@@ -193,7 +213,7 @@
       "id": "cell",
       "type": "database",
       "label": "Planting cell",
-      "sublabel": "row · col · status · sown",
+      "sublabel": "row · col · status · period",
       "pos": [
         1020,
         520
@@ -217,6 +237,34 @@
         64
       ],
       "tag": "one edge each"
+    },
+    {
+      "id": "period",
+      "type": "database",
+      "label": "Growing period",
+      "sublabel": "months · kind · sets",
+      "pos": [
+        1020,
+        60
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "runstage",
+      "type": "external",
+      "label": "Run stage · USD",
+      "sublabel": "derived · never stored",
+      "pos": [
+        300,
+        520
+      ],
+      "size": [
+        150,
+        64
+      ]
     }
   ],
   "boundaries": [
@@ -247,6 +295,20 @@
         "bed",
         "plant",
         "cell"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "An edge's views",
+      "wraps": [
+        "runstage"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "A site's map · its beds' years",
+      "wraps": [
+        "period"
       ]
     }
   ],
@@ -353,6 +415,39 @@
         615,
         442
       ]
+    },
+    {
+      "id": "year",
+      "from": "bed",
+      "to": "period",
+      "label": "year",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "inperiod",
+      "from": "cell",
+      "to": "period",
+      "label": "in period",
+      "fromSide": "right",
+      "toSide": "right",
+      "labelAt": [
+        1194,
+        442
+      ]
+    },
+    {
+      "id": "writes",
+      "from": "edge",
+      "to": "runstage",
+      "label": "writes",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        375,
+        442
+      ]
     }
   ],
   "cards": [
@@ -361,8 +456,8 @@
       "title": "The levels",
       "items": [
         "Site: one per home, its admins and members",
-        "Area: the roof, the garden, a balcony",
-        "Perma5Guild: bed, worm box, tank, robot; one edge each"
+        "Area → Perma5Guild: bed, worm box, tank, robot; one edge each",
+        "A bed's year: growing periods, each its own target, and a rest"
       ]
     },
     {
@@ -380,7 +475,7 @@
       "items": [
         "Every save carries the version it started from",
         "Shapes refuse a map that does not fit the model",
-        "A group's readers are a sign-in group of its own"
+        "A Webots world or a USD run stage is a view: the map stays the truth"
       ]
     }
   ]

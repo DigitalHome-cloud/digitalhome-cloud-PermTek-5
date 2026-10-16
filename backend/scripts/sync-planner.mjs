@@ -17,7 +17,8 @@ export function bundle() {
       contents: `export { habitatFromTtl } from "./habitatGraph.ts";
 export { planFromSets, planFarm } from "./planting.ts";
 export { plantSets, setName } from "./plantSets.ts";
-export { cropById, cropName } from "./library.ts";`,
+export { cropById, cropName } from "./library.ts";
+export { periodAt, periodsOf } from "./periods.ts";`,
       resolveDir: core, loader: "ts",
     },
     bundle: true, format: "esm", platform: "node", target: "es2022", write: false, external: ["n3"],

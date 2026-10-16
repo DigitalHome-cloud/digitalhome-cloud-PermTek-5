@@ -198,3 +198,21 @@ perma:draft true ; perma:member ${member} .`;
     assert.equal((await validateHabitat(set(bad))).conforms, false, bad);
   }
 });
+
+test("a growing period: a name, its bed, months 1..12, a kind from the scheme, set choices with a share; a cell names at most one", async () => {
+  const period = (extra) => `${H}id:period-p-1 a perma:GrowingPeriod ; rdfs:label "Summer" ; perma:ofBed id:bed-b-1 ;
+perma:setChoice [ perma:plantSet crop:set-salad-bed ; perma:share 1.0 ] ; ${extra} .`;
+  const ok = await validateHabitat(period("perma:fromMonth 4 ; perma:toMonth 9 ; perma:periodKind perma:GrowingKind"));
+  assert.ok(ok.conforms, messages(ok));
+  const winter = await validateHabitat(period("perma:fromMonth 10 ; perma:toMonth 3 ; perma:periodKind perma:RestKind"));
+  assert.ok(winter.conforms, messages(winter));
+  for (const bad of ["perma:fromMonth 0 ; perma:toMonth 9 ; perma:periodKind perma:GrowingKind",
+    "perma:fromMonth 4 ; perma:toMonth 13 ; perma:periodKind perma:GrowingKind",
+    "perma:fromMonth 4 ; perma:toMonth 9 ; perma:periodKind perma:CellSown",
+    "perma:fromMonth 4 ; perma:toMonth 9"]) {
+    assert.equal((await validateHabitat(period(bad))).conforms, false, bad);
+  }
+  const lost = await validateHabitat(`${H}id:cell-c-1 a perma:PlantingCell ; perma:inBed id:bed-b-1 ; perma:row 0 ; perma:col 0 ;
+perma:grows crop:crop-lettuce ; perma:cellStatus perma:CellLost ; perma:inPeriod id:bed-b-1 .`);
+  assert.equal(lost.conforms, false, "a cell's period is a period");
+});

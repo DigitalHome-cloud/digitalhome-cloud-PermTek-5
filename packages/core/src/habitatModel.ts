@@ -15,11 +15,11 @@ export const HABITAT_IRI = "https://permtek-5.digitalhome.cloud/id/";
 
 export type ZoneKind = "RoofZone" | "GroundZone" | "BalconyZone" | "GreenhouseZone";
 export type Exposure = "FullSun" | "HalfShade" | "Shade" | "Windy";
-export type CellStatus = "CellPlanned" | "CellSown" | "CellGrowing" | "CellHarvested";
+export type CellStatus = "CellPlanned" | "CellSown" | "CellGrowing" | "CellHarvested" | "CellLost";
 
 export const ZONE_KINDS: ZoneKind[] = ["RoofZone", "GroundZone", "BalconyZone", "GreenhouseZone"];
 export const EXPOSURES: Exposure[] = ["FullSun", "HalfShade", "Shade", "Windy"];
-export const CELL_STATUSES: CellStatus[] = ["CellPlanned", "CellSown", "CellGrowing", "CellHarvested"];
+export const CELL_STATUSES: CellStatus[] = ["CellPlanned", "CellSown", "CellGrowing", "CellHarvested", "CellLost"];
 
 /** Ids are full IRIs in the app's id space, minted (ADR-0003). */
 export interface Zone { id: string; name: string; kind: ZoneKind; exposure: Exposure[]; areaM2?: number; offsetC?: number }
@@ -76,6 +76,19 @@ export interface Cell {
   id: string; bedId: string; row: number; col: number; cropId: string; status: CellStatus; sownOn?: string;
   /** Only when this cell differs from the crop's sowing depth / seeds per point. */
   depthMm?: number; seeds?: number;
+  /** The growing period whose target this cell is (periods.ts); none: the bed as it stands. */
+  periodId?: string;
+}
+
+/** A stretch of a bed's year (docs/adr/0029, periods.ts): growing, from its plant sets, or rest. */
+export type PeriodKind = "GrowingKind" | "RestKind";
+export const PERIOD_KINDS: PeriodKind[] = ["GrowingKind", "RestKind"];
+export interface BedPeriod {
+  id: string; bedId: string; name: string; kind: PeriodKind;
+  /** 1..12; `toMonth` below `fromMonth` lies in the next year. */
+  fromMonth: number; toMonth: number;
+  /** The plant sets it is planted from, by setId as planFromSets takes them; a rest period's is its cover crop. */
+  sets: { setId: string; share: number }[];
 }
 export interface GardenPlant {
   id: string; name: string; zoneId: string; cropId: string;
@@ -112,6 +125,8 @@ export interface Habitat {
   cycles?: LearningCycle[];
   /** Farms of beds (docs/adr/0027). Absent when none. */
   farms?: BedFarm[];
+  /** The beds' growing periods (periods.ts). Absent when none. */
+  periods?: BedPeriod[];
   /** The space's own plant sets, and the edge agent's drafts (plantSets.ts). Absent when none. */
   plantSets?: PlantSet[];
   /** Triples about anything else in the graph, as N-Triples: kept as they are on every save. */
@@ -120,7 +135,7 @@ export interface Habitat {
 
 export const emptyHabitat = (): Habitat => ({ zones: [], guilds: [], beds: [], cells: [], plants: [], rest: "" });
 
-export const newId = (kind: "zone" | "guild" | "bed" | "cell" | "plant" | "recipe" | "rain" | "store" | "valve" | "cycle" | "hyp" | "measure" | "check" | "farm" | "set") =>
+export const newId = (kind: "zone" | "guild" | "bed" | "cell" | "plant" | "recipe" | "rain" | "store" | "valve" | "cycle" | "hyp" | "measure" | "check" | "farm" | "set" | "period") =>
   `${HABITAT_IRI}${kind}-${mintId(kind[0])}`;
 
 /** A roof is about a degree warmer than the street; elsewhere start at 0. */
@@ -232,6 +247,7 @@ export function removeZone(h: Habitat, zoneId: string): Habitat {
     guilds: (h.guilds ?? []).filter((g) => !gone.guilds.has(g.id)),
     beds: h.beds.filter((b) => !gone.beds.has(b.id)),
     cells: h.cells.filter((c) => !gone.beds.has(c.bedId)),
+    ...(h.periods && { periods: h.periods.filter((p) => !gone.beds.has(p.bedId)) }),
     plants: h.plants.filter((p) => p.zoneId !== zoneId),
     ...(h.farms && { farms: h.farms.filter((f) => !gone.farms.has(f.id)) }),
     ...(h.catchments && { catchments: h.catchments.filter((c) => !gone.guilds.has(c.guildId) && !gone.stores.has(c.storeId)).map(away) }),
@@ -243,8 +259,16 @@ export function removeZone(h: Habitat, zoneId: string): Habitat {
 
 export interface Problem {
   code: "cellOutside" | "cellTwice" | "cellInBin" | "noZone" | "noBed" | "noGuild" | "guildBeds" | "unknownCrop"
-    | "waterNoGuild" | "valveEnds" | "wormIntoClean" | "rainNoStore" | "noFarm" | "farmTooBig" | "setEmpty";
+    | "waterNoGuild" | "valveEnds" | "wormIntoClean" | "rainNoStore" | "noFarm" | "farmTooBig" | "setEmpty"
+    | "periodMonths" | "periodsOverlap" | "noPeriod";
   id: string;
+}
+
+/** A period's months in order, over New Year when `toMonth` is below `fromMonth` (11..2 is 11, 12, 1, 2). */
+export function monthsOf(p: { fromMonth: number; toMonth: number }): number[] {
+  const out: number[] = [];
+  for (let m = p.fromMonth, n = 0; n < 12; m = (m % 12) + 1, n++) { out.push(m); if (m === p.toMonth) break; }
+  return out;
 }
 
 /** What SHACL cannot check, reported all at once. */
@@ -288,15 +312,30 @@ export function checkHabitat(h: Habitat): Problem[] {
     if (!from || !to || v.from === v.to) problems.push({ code: "valveEnds", id: v.id });
     else if (from.holds.includes("WormLiquid") && !to.holds.includes("WormLiquid")) problems.push({ code: "wormIntoClean", id: v.id });
   }
+  // the beds' periods: months 1..12, no two of a bed in the same month; a cell's period is its bed's
+  const periods = new Map((h.periods ?? []).map((p) => [p.id, p]));
+  const taken = new Map<string, string>();
+  for (const p of periods.values()) {
+    if (!beds.has(p.bedId)) problems.push({ code: "noBed", id: p.id });
+    const ok = [p.fromMonth, p.toMonth].every((m) => Number.isInteger(m) && m >= 1 && m <= 12);
+    if (!ok) { problems.push({ code: "periodMonths", id: p.id }); continue; }
+    for (const m of monthsOf(p)) {
+      const key = `${p.bedId}|${m}`;
+      if (taken.has(key) && taken.get(key) !== p.id) { problems.push({ code: "periodsOverlap", id: p.id }); break; }
+      taken.set(key, p.id);
+    }
+  }
   const seen = new Set<string>();
   for (const c of h.cells) {
+    if (c.periodId && periods.get(c.periodId)?.bedId !== c.bedId) problems.push({ code: "noPeriod", id: c.id });
     const b = beds.get(c.bedId);
     if (!b) { problems.push({ code: "noBed", id: c.id }); continue; }
     const { rows, cols } = bedGrid(b);
     if (c.row < 0 || c.col < 0 || c.row >= rows || c.col >= cols) problems.push({ code: "cellOutside", id: c.id });
     else if (c.col >= cols - wormBinCols(b)) problems.push({ code: "cellInBin", id: c.id });
     // one plant per layer in a cell: a ground cover may share it with a tall plant (planting.ts, layerOf)
-    const key = `${c.bedId}|${c.row}|${c.col}|${layerOf(c.cropId) === "ground" ? "ground" : "up"}`;
+    // ...within its period: another period's target may use the same cell
+    const key = `${c.bedId}|${c.periodId ?? ""}|${c.row}|${c.col}|${layerOf(c.cropId) === "ground" ? "ground" : "up"}`;
     if (seen.has(key)) problems.push({ code: "cellTwice", id: c.id });
     seen.add(key);
     if (!cropById(c.cropId)) problems.push({ code: "unknownCrop", id: c.id });

@@ -6,6 +6,7 @@ import type { ClimateMonth } from "./habitat.js";
 import { activitiesIn, deriveWindows, type CropCalendar } from "./calendar.js";
 import { cropById, crops, isWoody, type Activity } from "./library.js";
 import { zoneOffset, type Habitat } from "./habitatModel.js";
+import { standingCells } from "./periods.js";
 
 export interface NowItem {
   activity: Activity;
@@ -33,8 +34,10 @@ export function whatNow(h: Habitat, months: ClimateMonth[] | null, month: number
 
   for (const bed of h.beds) {
     const groups = new Map<string, string[]>();
-    for (const c of h.cells.filter((x) => x.bedId === bed.id)) {
-      const phase = c.status === "CellPlanned" ? "plan" : c.status === "CellHarvested" ? "done" : "grow";
+    // what stands this month: a bed's other periods are its other times of year (docs/adr/0029)
+    const standing = standingCells(h, bed.id, month);
+    for (const c of standing) {
+      const phase = c.status === "CellPlanned" ? "plan" : c.status === "CellHarvested" || c.status === "CellLost" ? "done" : "grow";
       const k = `${c.cropId}|${phase}`;
       groups.set(k, [...(groups.get(k) ?? []), c.id]);
     }
@@ -48,7 +51,7 @@ export function whatNow(h: Habitat, months: ClimateMonth[] | null, month: number
       }
     }
     // What else the bed could take this month.
-    const present = new Set(h.cells.filter((x) => x.bedId === bed.id && x.status !== "CellHarvested").map((x) => x.cropId));
+    const present = new Set(standing.filter((x) => x.status !== "CellHarvested" && x.status !== "CellLost").map((x) => x.cropId));
     for (const crop of crops()) {
       if (isWoody(crop) || present.has(crop.id)) continue;
       const c = cal(crop.id, bed.zoneId);

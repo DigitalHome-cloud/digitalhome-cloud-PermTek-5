@@ -1232,3 +1232,15 @@ a {
 .pt-sets__about { font-weight: 500; }
 .pt-sets__pairs { margin: 0; padding-left: 1.25rem; display: grid; gap: 0.25rem; }
 .pt-table__scroll { overflow-x: auto; }
+
+/* A bed's year in periods (docs/adr/0029): twelve months, growing in green, rest in grey */
+.pt-periods { display: grid; gap: var(--pt-space-2); margin: var(--pt-space-3) 0; }
+.pt-periods__title { margin: 0; font-size: 0.95rem; }
+.pt-periods__strip { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 2px; }
+.pt-periods__month { font: inherit; font-size: 0.75rem; padding: 0.35rem 0; border: 1px solid var(--pt-border); border-radius: var(--pt-radius-sm);
+  background: var(--pt-bg-sunken); color: var(--pt-text-muted); cursor: default; text-align: center; min-width: 0; overflow: hidden; }
+.pt-periods__month--GrowingKind { background: color-mix(in srgb, var(--pt-success) 30%, transparent); color: var(--pt-text); cursor: pointer; }
+.pt-periods__month--RestKind { background: color-mix(in srgb, var(--pt-text-muted) 22%, transparent); color: var(--pt-text); cursor: pointer; }
+.pt-periods__month--on { outline: 2px solid var(--pt-accent); outline-offset: -2px; font-weight: 600; }
+.pt-periods__edit { display: grid; gap: var(--pt-space-2); background: var(--pt-surface-raised); border-radius: var(--pt-radius-sm); padding: var(--pt-space-3); }
+.pt-bed__cell--CellLost { opacity: 0.35; background-image: repeating-linear-gradient(45deg, transparent 0 3px, var(--pt-danger) 3px 4px); }

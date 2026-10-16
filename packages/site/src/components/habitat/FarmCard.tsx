@@ -55,14 +55,14 @@ export function FarmCard({ farm, habitat, edit, canEdit, months = null }: {
       </svg>
       <p className="pt-muted">{t("farm.hint")}</p>
       {guild && <GuildCard guild={guild} habitat={habitat} edit={edit} canEdit={canEdit} months={months} inFarm />}
-      {bed && !guild && <BedEditor bed={bed} habitat={habitat} edit={edit} canEdit={canEdit} />}
+      {bed && !guild && <BedEditor bed={bed} habitat={habitat} edit={edit} canEdit={canEdit} months={months} />}
       {canEdit && <PlanFromSets beds={beds} habitat={habitat} edit={edit} canEdit={canEdit} />}
       {canEdit && (
         <p className="pt-habitat__actions">
           <ConfirmButton label={t("farm.remove")} says={t("farm.remove.says", { beds: beds.length, cells: cells.length })}
             onConfirm={() => edit((x) => ({
               ...x, farms: (x.farms ?? []).filter((f) => f.id !== farm.id), beds: x.beds.filter((b) => !ids.has(b.id)),
-              cells: x.cells.filter((c) => !ids.has(c.bedId)),
+              cells: x.cells.filter((c) => !ids.has(c.bedId)), periods: (x.periods ?? []).filter((p) => !ids.has(p.bedId)),
               // a WormBed5 farm's guilds go with their beds, and their water and learning
               guilds: (x.guilds ?? []).filter((g) => !guilds.has(g.id)),
               catchments: (x.catchments ?? []).filter((c) => !guilds.has(c.guildId)), stores: (x.stores ?? []).filter((c) => !guilds.has(c.guildId)),

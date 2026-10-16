@@ -3,8 +3,9 @@ import {
   layerOf,
   bedGrid, cropById, cropName, crops, cropsWanted, deriveWindows, footprint, givesWay, newId, parseIngredients, plantCounts, recipeName, scorePlanting, sharedRecipes,
   standingIn, suggestPlanting, wormBinCols, yearPlan, zoneOffset,
+  standingCells,
 } from "@dlab5/permtek5-core";
-import type { Bed, ClimateMonth, Habitat, Placement, PlantingSuggestion, Recipe, RecipeLine, YearPlan } from "@dlab5/permtek5-core";
+import type { Bed, Cell, ClimateMonth, Habitat, Placement, PlantingSuggestion, Recipe, RecipeLine, YearPlan } from "@dlab5/permtek5-core";
 import { useT } from "../../lib/i18n";
 import { CropSelect, cropColor } from "./common";
 
@@ -138,7 +139,8 @@ function PlantFor({ habitat, recipes, edit, canEdit, months, areaName }: {
   const [shown, setShown] = React.useState(true);
   const [cover, setCover] = React.useState("crop-white-clover");
   const bed: Bed = habitat.beds.find((b) => b.id === bedId) ?? habitat.beds[0];
-  const here = habitat.cells.filter((c) => c.bedId === bed.id);
+  // what stands now: a bed's other periods are other times of its year (docs/adr/0029)
+  const here = standingCells(habitat, bed.id, new Date().getMonth() + 1);
   const wanted = cropsWanted(recipes);
   const weights = Object.fromEntries(wanted.map((w) => [w.cropId, w.recipes]));
   const ids = [...wanted.map((w) => w.cropId), ...(helpers ? HELPERS : [])];
@@ -247,7 +249,7 @@ function YearInBed({ bed, habitat, ids, weights, months, seed, tallSide, edit, c
   const [month, setMonth] = React.useState(() => new Date().getMonth() + 1);
   const [at, setAt] = React.useState(0);
   const [cover, setCover] = React.useState("crop-white-clover");
-  const here = habitat.cells.filter((c) => c.bedId === bed.id);
+  const here = standingCells(habitat, bed.id, month);
   const plan: YearPlan = React.useMemo(
     () => yearPlan(bed, ids, months, zoneOffset(habitat, bed.zoneId), month, here, weights, { seed, tallSide }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -342,7 +344,8 @@ function YearInBed({ bed, habitat, ids, weights, months, seed, tallSide, edit, c
   );
 }
 
-export function Preview({ bed, suggestion, habitat }: { bed: Bed; suggestion: { cells: Placement[] }; habitat: Habitat }) {
+/** A suggestion over what the bed already holds: `existing`, or what stands this month. */
+export function Preview({ bed, suggestion, habitat, existing }: { bed: Bed; suggestion: { cells: Placement[] }; habitat: Habitat; existing?: Cell[] }) {
   const { t, lang } = useT();
   const { rows, cols } = bedGrid(bed);
   const binFrom = cols - wormBinCols(bed);
@@ -353,7 +356,8 @@ export function Preview({ bed, suggestion, habitat }: { bed: Bed; suggestion: { 
   };
   // upright plants first; a ground cover then shows its own spread where it is free, and its centre under a tall plant
   const ground = (id: string) => layerOf(id) === "ground";
-  const all = [...habitat.cells.filter((c) => c.bedId === bed.id).map((c) => ({ ...c, old: true })), ...suggestion.cells.map((p) => ({ ...p, old: false }))];
+  const old = existing ?? standingCells(habitat, bed.id, new Date().getMonth() + 1);
+  const all = [...old.map((c) => ({ ...c, old: true })), ...suggestion.cells.map((p) => ({ ...p, old: false }))];
   for (const c of all.filter((c) => !ground(c.cropId))) paint(c.row, c.col, c.cropId, c.old);
   for (const c of all.filter((c) => ground(c.cropId))) {
     const f = footprint(c.cropId, bed), r0 = c.row - Math.floor((f - 1) / 2), c0 = c.col - Math.floor((f - 1) / 2);

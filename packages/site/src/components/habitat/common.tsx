@@ -68,3 +68,7 @@ export function ConfirmButton({ label, says, onConfirm }: { label: string; says:
     </span>
   );
 }
+
+/** A month's name (1..12) in the page's language, short ("Apr") or long. */
+export const monthName = (m: number, lang: string, long = false) =>
+  new Date(2001, m - 1, 1).toLocaleString(lang, { month: long ? "long" : "short" });

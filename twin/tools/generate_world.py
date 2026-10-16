@@ -11,7 +11,8 @@ Needs: Python 3, shapely, Pillow  (pip install shapely pillow)
 The site file (see sites/permademo/site.json) describes the site in local metres:
   - garden parts A and B; zones 1/2/3 are cut from A by area along an axis
   - terrain = a plane through a high and a low point, plus levelled pads for
-    the tank and the pond. Not surveyed.
+    the tank and the pond. Not surveyed. Or, with terrain.dem, the real relief
+    from an elevation model (tools/dem.py, ADR 0030); --plane ignores it
   - fascines on contour in zone 2 (slope > 15 % on clay -> fascines instead
     of swales), each with passages for rovers
   - house, optional pool, pond, oaks, orchard trees, IR posts, UWB anchors
@@ -42,6 +43,8 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, ROOT)
 from stigmergy.nav import NavGrid  # noqa: E402
 from stigmergy.vegetation import props as veg_props  # noqa: E402
+sys.path.insert(0, os.path.join(ROOT, "tools"))
+from dem import Dem  # noqa: E402
 SITES = os.path.join(ROOT, "sites")
 DEFAULT_SITE = "permademo"
 
@@ -52,7 +55,7 @@ def site_path(name_or_path):
     return p if os.path.isfile(p) else name_or_path
 
 
-def generate(site_path, ros=False):
+def generate(site_path, ros=False, plane=False):
     site_dir = os.path.dirname(os.path.abspath(site_path))
     with open(site_path) as fh:
         site = json.load(fh)
@@ -70,17 +73,29 @@ def generate(site_path, ros=False):
 
     # -------------------------------------------------------------- elevation
     HX, HY = TERRAIN["high"]["pos"]
-    BX, BY = TERRAIN["low"]["pos"]
-    Z_HIGH = TERRAIN["high"]["z"]
-    L = math.hypot(HX - BX, HY - BY)
-    DOWN = ((BX - HX) / L, (BY - HY) / L)                 # unit vector downhill
-    UP = (-DOWN[0], -DOWN[1])
+    # the real relief from an elevation model (ADR 0030), or the plane through the two surveyed points
+    DEM = Dem.load(site_dir, TERRAIN["dem"]) if TERRAIN.get("dem") and not plane else None
+    if DEM:
+        GRADE, UP, _ = DEM.fall_line(TERRAIN["bbox"])      # the fall line of the plane that fits the relief best
+        DOWN = (-UP[0], -UP[1])
+        Z_HIGH = DEM.z(HX, HY) - Z_OFFSET
+    else:
+        BX, BY = TERRAIN["low"]["pos"]
+        Z_HIGH = TERRAIN["high"]["z"]
+        L = math.hypot(HX - BX, HY - BY)
+        DOWN = ((BX - HX) / L, (BY - HY) / L)             # unit vector downhill
+        UP = (-DOWN[0], -DOWN[1])
+        GRADE = (Z_HIGH - TERRAIN["low"]["z"]) / L
     CONTOUR = (-UP[1], UP[0])                             # along the contour
-    GRADE = (Z_HIGH - TERRAIN["low"]["z"]) / L
     GX, GY = UP[0] * GRADE, UP[1] * GRADE                 # dz/dx, dz/dy
 
-    def plane_z(x, y):
+    def fit_z(x, y):
+        """The slope plane: what the rovers know of the terrain (site_config.json)."""
         return Z_HIGH + GX * (x - HX) + GY * (y - HY)
+
+    def plane_z(x, y):
+        """The ground before pads, benches and the pond are shaped: the relief, or the plane."""
+        return DEM.z(x, y) - Z_OFFSET if DEM else fit_z(x, y)
 
     PADS = []        # (x, y, flat radius, blend width, z)
     PONDS = []
@@ -377,7 +392,7 @@ def generate(site_path, ros=False):
               f"B {ZONE_B.area:.0f} m2 ({ZONE_B.area / b_expected - 1:+.1%})")
     print(f"zones 1/2/3/4 = {ZONES['zone1'][1].area:.0f} / {ZONES['zone2'][1].area:.0f} / "
           f"{ZONES['zone3'][1].area:.0f} / {ZONE_B.area:.0f} m2; fence {FENCE.exterior.length:.0f} m around {FENCE.area:.0f} m2")
-    print(f"slope: {GRADE:.1%} along the fall line (bearing {math.degrees(math.atan2(DOWN[0], DOWN[1])) % 360:.0f} deg), "
+    print(("slope from the elevation model: " if DEM else "slope: ") + f"{GRADE:.1%} along the fall line (bearing {math.degrees(math.atan2(DOWN[0], DOWN[1])) % 360:.0f} deg), "
           f"garden from {min(plane_z(*p) for p in GARDEN.exterior.coords) + Z_OFFSET:.1f} "
           f"to {max(plane_z(*p) for p in GARDEN.exterior.coords) + Z_OFFSET:.1f} m")
     print("fascines: " + ", ".join(f"{c['name']} {c['length']} m" for c in CONTOURS))
@@ -387,10 +402,13 @@ def generate(site_path, ros=False):
     nx = int((tx1 - tx0) / spacing) + 1
     ny = int((ty1 - ty0) / spacing) + 1
     x_max, y_max = tx0 + (nx - 1) * spacing, ty0 + (ny - 1) * spacing
-    rows = []
-    for j in range(ny):
-        y = ty0 + j * spacing
-        rows.append(" ".join(f"{ground_z(tx0 + i * spacing, y):.3f}" for i in range(nx)))
+    heights = [[ground_z(tx0 + i * spacing, ty0 + j * spacing) for i in range(nx)] for j in range(ny)]
+    rows = [" ".join(f"{z:.3f}" for z in row) for row in heights]
+    # the same ground for the garden film (tools/garden_film.py): a generated output, like the world
+    import numpy as np
+    os.makedirs(os.path.join(ROOT, "worlds"), exist_ok=True)
+    np.savez_compressed(os.path.join(ROOT, "worlds", "terrain.npz"), heights=np.array(heights, dtype="f4"),
+                        x0=tx0, y0=ty0, spacing=spacing, z_offset=Z_OFFSET, source="dem" if DEM else "plane")
 
     os.makedirs(os.path.join(ROOT, "worlds", "textures"), exist_ok=True)
     tex_path = os.path.join(ROOT, "worlds", "textures", "ground.jpg")
@@ -637,10 +655,11 @@ DirectionalLight {
                 obstacles.append([round(p.x, 2), round(p.y, 2), 0.15])
     cfg = {
         "note": f"Generated by tools/generate_world.py from the site file of {site['name']}. "
-                "Elevations from 2 points, not surveyed.",
+                + ("The world's ground is an elevation model; the terrain here is the plane fitted to it."
+                   if DEM else "Elevations from 2 points, not surveyed."),
         "frame": f"local ENU metres; z = elevation - {Z_OFFSET:g} m",
         "time_scale": TIME_SCALE,
-        "terrain": {"type": "plane", "ref": [round(HX, 3), round(HY, 3)], "z_ref": Z_HIGH,
+        "terrain": {"type": "plane", "source": "dem" if DEM else "points", "ref": [round(HX, 3), round(HY, 3)], "z_ref": round(Z_HIGH, 3),
                     "grad": [round(GX, 5), round(GY, 5)], "grade": round(GRADE, 4), "z_offset": Z_OFFSET},
         "bbox": [round(tx0, 2), round(ty0, 2), round(x_max, 2), round(y_max, 2)],
         "zones": {zid: {"label": zl, "area_m2": round(zg.area, 1), "polygon": coords(zg)}
@@ -704,5 +723,7 @@ if __name__ == "__main__":
                     help="a site under sites/ by name (default: permademo), or a path to a private site file")
     ap.add_argument("--ros", action="store_true",
                     help="rovers and garden as <extern> controllers for ROS 2 (writes worlds/site_ros.wbt)")
+    ap.add_argument("--plane", action="store_true",
+                    help="ignore the site's elevation model: the plane through its two surveyed points")
     a = ap.parse_args()
-    generate(site_path(a.site), ros=a.ros)
+    generate(site_path(a.site), ros=a.ros, plane=a.plane)

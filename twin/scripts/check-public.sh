@@ -25,6 +25,7 @@ for f in "${files[@]}"; do
   case "$f" in
     tools/plan/*|twin/tools/plan/*|worlds/*|twin/worlds/*|data/*|twin/data/*|site_config.json|twin/site_config.json)
       say "generated or private file tracked: $f" ;;
+    sites/permademo-relief/dem.tif|twin/sites/permademo-relief/dem.tif) ;;   # an INVENTED relief (tools/make_demo_dem.py)
     *.jpg|*.jpeg|*.tif|*.tiff|*.geojson|*.kml|*.gpx|*.dxf) say "map-like file: $f (only demo images under docs/ are allowed)" ;;
   esac
 done
@@ -46,6 +47,9 @@ if s.get("z_offset", 0) != 0:
     bad.append("z_offset must be 0 in a public site (no real elevation)")
 if "ground_image" in s:
     bad.append("ground_image (a site plan) is not allowed in a public site")
+dem = (s.get("terrain") or {}).get("dem")
+if dem and [float(v) for v in dem.get("origin", [])] != [100000.0, 100000.0]:
+    bad.append("terrain.dem.origin locates a place: a public site uses the invented origin [100000, 100000]")
 for b in bad:
     print(f"check-public: {sys.argv[1]}: {b}", file=sys.stderr)
 sys.exit(1 if bad else 0)

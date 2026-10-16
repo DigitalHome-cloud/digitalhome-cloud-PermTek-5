@@ -52,6 +52,7 @@ Local metres only (x east, y north), no geographic coordinates:
 | Key | What |
 |---|---|
 | `terrain.high`, `terrain.low`, `terrain.bbox` | the slope is a plane through two points; the modelled area |
+| `terrain.dem` | the real relief: an elevation model (`file`, a GeoTIFF beside the site file; `origin`, the projected easting and northing of the local 0, 0). The world's ground follows it; the rovers get the plane fitted to it. `--plane` ignores it (ADR 0030) |
 | `garden.a`, `garden.b`, `garden.axis`, `garden.zone_areas_m2` | outlines; zones 1/2/3 are cut from A along the axis by area, B is zone 4 |
 | `pond`, `pool`, `oaks`, `orchard` | features; fascines and their fruit trees are derived in zone 2 |
 | `posts`, `anchors` | where IR posts and UWB anchors go (next to a tree, a fascine, or a zone edge) |
@@ -63,6 +64,36 @@ Local metres only (x east, y north), no geographic coordinates:
 
 Everything the generator writes (`worlds/`, `site_config.json`) and run output
 (`data/`) is ignored by git.
+
+### Real relief from IGN (France)
+
+```bash
+python3 tools/fetch_ign.py --site ../private/site.json   # LiDAR HD 0.5 m (else RGE ALTI 1 m) and BD ORTHO 20 cm
+python3 tools/generate_world.py --site ../private/site.json
+```
+
+- **What it needs:** the private site file first needs `terrain.dem.origin`, the Lambert-93 easting and northing of
+  its local 0, 0.
+- **What it writes:** `fetch_ign.py` asks IGN's Géoplateforme for the site's extent. It writes `dem.tif` and
+  `ortho.jpg` beside the site file, and sets `terrain.dem` and `ground_image`.
+- **Where it may write:** it refuses a folder inside this repository.
+- **Licence:** IGN data is under the Licence Ouverte 2.0, and the site file's `info` credits it.
+- **permademo-relief:** this public site runs PermaDemo on an invented relief (`sites/permademo-relief/dem.tif`, made
+  by `tools/make_demo_dem.py`, with a made-up origin), so the same path is exercised. PermaDemo itself, the
+  reference, stays on its plane.
+
+### A film of the garden
+
+```bash
+<python with bpy> tools/garden_film.py --quality draft --still-only     # a still; without --still-only a 20 s film
+```
+
+- **What it shows:** Blender flies once round the generator's ground (`worlds/terrain.npz`), with the ground texture
+  draped over it (the aerial photo, if the site has one). The trees, posts, tank, nest, pond and fascines from
+  `site_config.json` stand on it.
+- **Where it goes:** `worlds/films/`, which is never published.
+- **What runs it:** any Python with Blender's `bpy` (`pip install bpy`, or the twin edge's `.venv-bpy`). The generator
+  itself never needs Blender: Webots gets an ElevationGrid.
 
 ## Real sites
 

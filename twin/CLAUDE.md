@@ -68,6 +68,9 @@ and an Inspection suggested.
    Narrowing zone 4 made it worse (51 stuck events in 110 h): fix the planner
    (issue 3), not the site.
 5. Not modelled: wheel slip on wet clay, soil probe force, vegetation growth, IR collisions between posts.
+6. On a relief (`--site permademo-relief`, ADR 0030) the rovers get stuck more often (5 against 2 events in the first
+   12 garden hours) and rover1 leaves the frame near the nest from about hour 7. The dock line and the fascines follow
+   the fitted plane's contour, not the real ground's. Follow the model's contours there before using a real relief.
 
 ## Next steps
 

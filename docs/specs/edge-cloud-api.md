@@ -49,6 +49,7 @@ An operator cannot link an edge into a tenant.
 | `graphs/list` | `{}` | `{graphs: [{name, version, triples, updatedAt, updatedBy}]}` — one per space of the tenant |
 | `graphs/get` | `{name}` (a space id) | `{name, version, ttl}`; version 0 and empty Turtle when there is none yet |
 | `graphs/put` | `{name, ttl, baseVersion}` | 200 `{status: "ok", name, version, triples}`; **409** `{error: "version_conflict", current: {name, version, ttl, …}}` when someone saved since `baseVersion` (merge and put again); **422** `{error: "invalid", problems}` when the shapes refuse it; 404 `not_found` for a space outside the tenant |
+| `care` | `{spaceId, guildId, today, lastDone: {taskId: day}, active, applied}` | 200 `{done: [taskId…], due}` — the guild's care record (ADR 0031): the cloud works out what is due on the edge's own `today` and keeps it with the edge; `done` are a person's Done presses in the site for the edge to carry out and name back in `applied`; 400 for a malformed report, 404 for a space outside the tenant |
 | `models` | `{set}` | `{set, files: [{name, sha256, size, url}]}` — 15-minute links; 404 `no_models` when the site offers none |
 
 `403 {error: "no_tenant"}`: an edge linked before it had a tenant; link it again.

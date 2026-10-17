@@ -27,9 +27,37 @@ export interface CareTask {
   readonly auto?: boolean;
 }
 
+/** What the edge's autopilot does in a rehearsal in place of a person (docs/adr/0031): refill what runs low, do the
+ * person's due tasks, then confirm the robot's proposals in `order`; the `daily` jobs only look, once a day. */
+export interface AutopilotPolicy {
+  readonly order: readonly string[];
+  readonly daily: readonly string[];
+  readonly refills: { readonly hopperGrams: number; readonly brownsGrams: number; readonly tankShare: number };
+  readonly fills: { readonly hopper: Readonly<Record<string, number>>; readonly brownsGrams: number };
+}
+
 export interface CareGuide {
   readonly id: string;
   readonly tasks: readonly CareTask[];
+  readonly autopilot?: Partial<AutopilotPolicy>;
+}
+
+const AUTOPILOT_DEFAULTS: AutopilotPolicy = {
+  order: ["harvest", "clear", "period", "water", "valve", "feed", "care", "rest", "tap", "topdress", "plant", "stamp", "scan", "probe", "photo"],
+  daily: ["scan", "probe", "photo"],
+  refills: { hopperGrams: 300, brownsGrams: 200, tankShare: 0.2 },
+  fills: { hopper: { vegetable: 600, fruit: 300, coffee: 100 }, brownsGrams: 1000 },
+};
+
+/** The guide's autopilot policy, each part falling back to the defaults. */
+export function autopilotPolicy(guide: CareGuide = CARE_GUIDE as unknown as CareGuide): AutopilotPolicy {
+  const a = guide.autopilot ?? {};
+  return {
+    order: a.order ?? AUTOPILOT_DEFAULTS.order,
+    daily: a.daily ?? AUTOPILOT_DEFAULTS.daily,
+    refills: { ...AUTOPILOT_DEFAULTS.refills, ...a.refills },
+    fills: { ...AUTOPILOT_DEFAULTS.fills, ...a.fills },
+  };
 }
 
 export type CareReason = "never" | "rhythm" | "season" | "brought";

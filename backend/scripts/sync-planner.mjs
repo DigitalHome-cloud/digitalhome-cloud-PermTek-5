@@ -1,5 +1,6 @@
 // Generate amplify/functions/graph-shared/planner.generated.ts from packages/core: the bed planner
-// (docs/adr/0027) that /edge/v1/plan runs for an edge's agent. Amplify's backend build installs backend/
+// (docs/adr/0027) that /edge/v1/plan runs for an edge's agent, and the care calendar's rules (docs/adr/0031) that
+// /edge/v1/care runs on an edge's care record. Amplify's backend build installs backend/
 // only, so the Lambdas cannot import the workspace package; they carry this bundled copy (n3 stays a
 // dependency of backend/). graph-shared/planner.test.ts fails when it drifts.
 import fs from "node:fs";
@@ -18,7 +19,9 @@ export function bundle() {
 export { planFromSets, planFarm } from "./planting.ts";
 export { plantSets, setName } from "./plantSets.ts";
 export { cropById, cropName } from "./library.ts";
-export { periodAt, periodsOf } from "./periods.ts";`,
+export { periodAt, periodsOf } from "./periods.ts";
+export { autopilotPolicy, careDue } from "./maintenance.ts";
+export { CARE_GUIDE } from "./careGuide.generated.ts";`,
       resolveDir: core, loader: "ts",
     },
     bundle: true, format: "esm", platform: "node", target: "es2022", write: false, external: ["n3"],

@@ -1,11 +1,13 @@
-// The edge side of A-Box sync, /tenant (which tenant and spaces this edge serves), and /plan (the cloud's bed
-// planner for the edge's agent, docs/adr/0027). An edge reads a graph with its
+// The edge side of A-Box sync, /tenant (which tenant and spaces this edge serves), /plan (the cloud's bed
+// planner for the edge's agent, docs/adr/0027) and /care (the guild's care record, docs/adr/0031). An edge reads a graph with its
 // version, merges locally statement by statement against the version it
 // last synced, and writes back naming the version it read. If someone saved
 // meanwhile, it gets 409 and the current document, and merges again.
+import { UpdateItemCommand } from "@aws-sdk/client-dynamodb";
 import type { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import { extractBearer, json, parseJsonBody, versionGate } from "../edge-shared/http";
-import { verifyDeviceToken } from "../edge-shared/registry";
+import { ddb, EDGE_REGISTRY_TABLE, marshall, verifyDeviceToken } from "../edge-shared/registry";
+import { careState, readReport, stillPending } from "../graph-shared/care";
 import { BadGraphRequest, getGraph, listGraphs, saveGraph } from "../graph-shared/store";
 import { planForEdge, type PlanRequest } from "../graph-shared/plan";
 import { getSpace, getTenant, spacesOfTenant } from "../shared/spaces";
@@ -31,6 +33,24 @@ export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGateway
       return json(200, { tenant: t ? { id: t.id, name: t.name } : { id: tenant, name: tenant }, spaces });
     }
     if (event.rawPath.endsWith("/graphs/list")) return json(200, { graphs: await listGraphs(tenant) });
+    if (event.rawPath.endsWith("/care")) {
+      // the guild's care (docs/adr/0031): what is due, kept with this edge; the site's Done presses go back
+      const rep = readReport(body as Record<string, unknown>);
+      if (typeof rep === "string") return json(400, { error: "invalid_request", message: rep });
+      const careSpace = await getSpace(rep.spaceId);
+      if (!careSpace || careSpace.tenantId !== tenant) return json(404, { error: "not_found", message: "no such space in this tenant" });
+      const state = careState(rep);
+      const applied = rep.applied.length ? " DELETE care_done_pending :applied" : "";
+      await ddb.send(new UpdateItemCommand({
+        TableName: EDGE_REGISTRY_TABLE,
+        Key: marshall({ edge_id: verified.row.edge_id }),
+        UpdateExpression: `SET care = :care${applied}`,
+        ConditionExpression: "#s = :linked",
+        ExpressionAttributeNames: { "#s": "status" },
+        ExpressionAttributeValues: marshall({ ":care": state, ":linked": "linked", ...(applied ? { ":applied": new Set(rep.applied) } : {}) }),
+      }));
+      return json(200, { done: stillPending(verified.row.care_done_pending, rep.applied), due: state.due.length });
+    }
     const space = await getSpace(String(body.name || ""));
     if (!space || space.tenantId !== tenant) return json(404, { error: "not_found", message: "no such space in this tenant" });
     if (event.rawPath.endsWith("/graphs/get")) {

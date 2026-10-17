@@ -4,6 +4,7 @@ import { tenants } from "../functions/tenants/resource";
 import { graphs } from "../functions/graphs/resource";
 import { edgeDeviceApproval } from "../functions/edgeDeviceApproval/resource";
 import { edgeRelease } from "../functions/edgeRelease/resource";
+import { care } from "../functions/care/resource";
 
 /**
  * DynamoDB holds *metadata and structural references only*.
@@ -223,6 +224,26 @@ const schema = a.schema({
     .returns(a.json())
     .authorization((allow) => [allow.authenticated()])
     .handler(a.handler.function(edgeRelease)),
+
+  /**
+   * A guild's care (docs/adr/0031), as its edge last reported it: what is due today, the keeper's reactions, and
+   * the Done presses still waiting for the edge. guildCare: the space's readers. markCareDone: a person's task
+   * only, by the tenant's admins; the edge carries it out on its next report. Robot jobs are confirmed on the edge.
+   * Checked in the handler. Returns [{edgeId, hostname, care, pending}] / {edgeId, hostname, care, pending}.
+   */
+  guildCare: a
+    .query()
+    .arguments({ spaceId: a.string().required() })
+    .returns(a.json())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(care)),
+
+  markCareDone: a
+    .mutation()
+    .arguments({ edgeId: a.string().required(), taskId: a.string().required() })
+    .returns(a.json())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(care)),
 
   /* ---------------------------------------------------------------------- *
    * Managing tenants and spaces (ADR-0005). `authenticated` only says who

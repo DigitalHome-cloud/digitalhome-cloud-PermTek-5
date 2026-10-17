@@ -3,7 +3,7 @@ import { activitiesIn, cropById, cropName, deriveWindows, whatNow, zoneOffset } 
 import type { Activity, ClimateMonth, CropCalendar, Habitat } from "@dlab5/permtek5-core";
 import { useT } from "../../lib/i18n";
 import { cropColor } from "./common";
-import { CareNow, CareYear, hasCare } from "./CareCalendar";
+import { CareNow, CareToday, CareYear, hasCare } from "./CareCalendar";
 
 const ORDER: Activity[] = ["SowIndoors", "SowOutdoors", "PlantOut", "Flowering", "WinterPrune", "SummerPrune", "Harvest"];
 
@@ -81,7 +81,9 @@ export function HabitatCalendar({ habitat, months, areaName }: { habitat: Habita
 }
 
 /** This month's work, and what the beds could still take. */
-export function HabitatNow({ habitat, months, areaName }: { habitat: Habitat; months: ClimateMonth[] | null; areaName: string | null }) {
+export function HabitatNow({ habitat, months, areaName, spaceId, canEdit = false }: {
+  habitat: Habitat; months: ClimateMonth[] | null; areaName: string | null; spaceId?: string; canEdit?: boolean;
+}) {
   const { t, lang } = useT();
   const [month, setMonth] = React.useState(new Date().getMonth() + 1);
   const names = monthNames(lang);
@@ -128,6 +130,7 @@ export function HabitatNow({ habitat, months, areaName }: { habitat: Habitat; mo
           </p>
         </>
       )}
+      {hasCare(habitat) && spaceId && <CareToday habitat={habitat} spaceId={spaceId} canEdit={canEdit} />}
       {hasCare(habitat) && <CareNow month={month} />}
     </div>
   );

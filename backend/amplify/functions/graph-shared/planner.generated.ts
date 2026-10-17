@@ -2390,7 +2390,537 @@ function habitatFromTtl(ttl) {
 // ../packages/core/src/periods.ts
 var periodsOf = (h, bedId) => (h.periods ?? []).filter((p2) => p2.bedId === bedId).sort((a, b) => a.fromMonth - b.fromMonth);
 var periodAt = (h, bedId, month) => periodsOf(h, bedId).find((p2) => monthsOf(p2).includes(month));
+
+// ../packages/core/src/careGuide.generated.ts
+var CARE_GUIDE = {
+  "id": "wormbed5-care",
+  "version": 2,
+  "guildType": "WormBed5",
+  "about": {
+    "en": "What keeps a WormBed5 working, and who does it: the robot or you. Rhythms in days, seasonal tasks by month; a reaction of the keeper brings a task forward. Rules of thumb; correct them against your own bed.",
+    "de": "Was eine WormBed5 am Laufen hält und wer es tut: der Roboter oder du. Rhythmen in Tagen, Saisonarbeiten nach Monat; eine Reaktion des Wächters zieht eine Aufgabe vor. Faustregeln; am eigenen Beet zu prüfen.",
+    "fr": "Ce qui fait tourner une WormBed5, et qui s'en charge : le robot ou vous. Des rythmes en jours, des tâches de saison par mois ; une réaction du gardien avance une tâche. Des règles empiriques, à corriger d'après votre lit."
+  },
+  "who": {
+    "robot": {
+      "en": "robot",
+      "de": "Roboter",
+      "fr": "robot"
+    },
+    "person": {
+      "en": "you",
+      "de": "du",
+      "fr": "vous"
+    }
+  },
+  "tasks": [
+    {
+      "id": "feed",
+      "who": "robot",
+      "label": {
+        "en": "Feed the worms",
+        "de": "Würmer füttern",
+        "fr": "Nourrir les vers"
+      },
+      "why": {
+        "en": "The feeder proposes a day's eating from the box's weight; you confirm.",
+        "de": "Der Fütterer schlägt aus dem Gewicht der Kiste eine Tagesration vor; du bestätigst.",
+        "fr": "Le nourrisseur propose une ration du jour d'après le poids du bac ; vous confirmez."
+      },
+      "everyDays": 1,
+      "job": "feed",
+      "auto": true
+    },
+    {
+      "id": "probe",
+      "who": "robot",
+      "label": {
+        "en": "Probe the soil's moisture",
+        "de": "Bodenfeuchte messen",
+        "fr": "Mesurer l'humidité du sol"
+      },
+      "why": {
+        "en": "One pass over the planted cells; watering follows from it.",
+        "de": "Eine Runde über die bepflanzten Zellen; danach richtet sich das Gießen.",
+        "fr": "Un passage sur les cellules plantées ; l'arrosage en découle."
+      },
+      "everyDays": 1,
+      "job": "probe"
+    },
+    {
+      "id": "bedding",
+      "who": "robot",
+      "label": {
+        "en": "Dry bedding into the box",
+        "de": "Trockene Einstreu in die Kiste",
+        "fr": "Litière sèche dans le bac"
+      },
+      "why": {
+        "en": "One part browns to three parts scraps keeps the box airy.",
+        "de": "Ein Teil Braunes auf drei Teile Reste hält die Kiste luftig.",
+        "fr": "Une part de brun pour trois parts de restes garde le bac aéré."
+      },
+      "everyDays": 7,
+      "job": "care:bedding",
+      "bringForwardOn": [
+        "box-wet",
+        "airless"
+      ]
+    },
+    {
+      "id": "sump",
+      "who": "robot",
+      "label": {
+        "en": "Let the sump run into the tank",
+        "de": "Sumpf in den Tank ablassen",
+        "fr": "Vider le puisard dans la cuve"
+      },
+      "why": {
+        "en": "A full sump backs up into the worms' bin.",
+        "de": "Ein voller Sumpf staut in die Wurmkiste zurück.",
+        "fr": "Un puisard plein refoule dans le bac des vers."
+      },
+      "everyDays": 7,
+      "job": "tap",
+      "bringForwardOn": [
+        "sump-full"
+      ]
+    },
+    {
+      "id": "mist",
+      "who": "robot",
+      "label": {
+        "en": "Keep the worm box moist",
+        "de": "Die Wurmkiste feucht halten",
+        "fr": "Garder le bac à vers humide"
+      },
+      "why": {
+        "en": "Worms breathe through their skin and need the bedding as damp as a wrung-out sponge (60–80 %). The mist line under the lid tops it up with rainwater, the box closed; when the probe reads it moist enough, there is nothing to do.",
+        "de": "Würmer atmen über die Haut und brauchen die Einstreu so feucht wie ein ausgedrückter Schwamm (60–80 %). Die Sprühleitung unter dem Deckel füllt mit Regenwasser nach, die Kiste bleibt zu; meldet der Fühler genug Feuchte, ist nichts zu tun.",
+        "fr": "Les vers respirent par la peau et veulent une litière humide comme une éponge essorée (60–80 %). La rampe de brumisation sous le couvercle complète à l'eau de pluie, bac fermé ; si la sonde la dit assez humide, il n'y a rien à faire."
+      },
+      "everyDays": 3,
+      "job": "valve:mist",
+      "bringForwardOn": [
+        "box-dry",
+        "heat"
+      ]
+    },
+    {
+      "id": "weeds",
+      "who": "robot",
+      "label": {
+        "en": "Look the bed over for weeds",
+        "de": "Beet nach Unkraut absuchen",
+        "fr": "Chercher les herbes indésirables"
+      },
+      "why": {
+        "en": "Small ones are stamped under; big ones are for your hands.",
+        "de": "Kleine werden eingedrückt, große sind für deine Hände.",
+        "fr": "Les petites sont enfoncées ; les grandes sont pour vos mains."
+      },
+      "everyDays": 7,
+      "job": "scan"
+    },
+    {
+      "id": "photos",
+      "who": "robot",
+      "label": {
+        "en": "Photograph the plants",
+        "de": "Pflanzen fotografieren",
+        "fr": "Photographier les plantes"
+      },
+      "why": {
+        "en": "A weekly picture of each planted cell shows how it grows.",
+        "de": "Ein Bild pro Woche von jeder bepflanzten Zelle zeigt, wie sie wächst.",
+        "fr": "Une photo par semaine de chaque cellule plantée montre sa croissance."
+      },
+      "everyDays": 7,
+      "job": "photo"
+    },
+    {
+      "id": "harvest",
+      "who": "robot",
+      "label": {
+        "en": "Harvest the castings onto the bed",
+        "de": "Wurmhumus aufs Beet bringen",
+        "fr": "Récolter le lombricompost sur le lit"
+      },
+      "why": {
+        "en": "Rest one half for ten days, then the robot carries its castings to the cells that had least.",
+        "de": "Eine Hälfte zehn Tage ruhen lassen; dann trägt der Roboter den Humus zu den Zellen, die am wenigsten hatten.",
+        "fr": "Laisser reposer une moitié dix jours ; le robot porte ensuite le compost aux cellules qui en ont eu le moins."
+      },
+      "everyDays": 90,
+      "job": "topdress",
+      "bringForwardOn": [
+        "box-full",
+        "crowded"
+      ]
+    },
+    {
+      "id": "hopper",
+      "who": "person",
+      "label": {
+        "en": "Fill the hopper",
+        "de": "Trichter füllen",
+        "fr": "Remplir la trémie"
+      },
+      "why": {
+        "en": "Scraps by the feeding guide, and dry bedding in its own compartment.",
+        "de": "Reste nach dem Fütterungsplan, trockene Einstreu ins eigene Fach.",
+        "fr": "Des restes selon le guide, et de la litière sèche dans son compartiment."
+      },
+      "everyDays": 7
+    },
+    {
+      "id": "look",
+      "who": "person",
+      "label": {
+        "en": "Look at the worm box",
+        "de": "Wurmkiste anschauen",
+        "fr": "Regarder le bac à vers"
+      },
+      "why": {
+        "en": "Smell, flies, mould, worms climbing the walls: what no sensor sees.",
+        "de": "Geruch, Fliegen, Schimmel, Würmer an den Wänden: was kein Sensor sieht.",
+        "fr": "Odeur, mouches, moisissure, vers sur les parois : ce qu'aucun capteur ne voit."
+      },
+      "everyDays": 7,
+      "bringForwardOn": [
+        "dying-back"
+      ]
+    },
+    {
+      "id": "buffer",
+      "who": "person",
+      "label": {
+        "en": "Eggshell or lime into the box",
+        "de": "Eierschalen oder Kalk in die Kiste",
+        "fr": "Coquilles d'œuf ou chaux dans le bac"
+      },
+      "why": {
+        "en": "A spoonful of ground eggshell keeps the bedding from turning sour.",
+        "de": "Ein Löffel gemahlene Eierschale hält die Einstreu davon ab, sauer zu werden.",
+        "fr": "Une cuillère de coquilles moulues empêche la litière de s'acidifier."
+      },
+      "everyDays": 30,
+      "bringForwardOn": [
+        "sour"
+      ]
+    },
+    {
+      "id": "ph-probe",
+      "who": "person",
+      "label": {
+        "en": "Clean and check the pH probe",
+        "de": "pH-Sonde reinigen und prüfen",
+        "fr": "Nettoyer et vérifier la sonde pH"
+      },
+      "why": {
+        "en": "A dirty probe drifts; a drifting probe holds feeding for nothing.",
+        "de": "Eine verschmutzte Sonde driftet und hält das Füttern grundlos an.",
+        "fr": "Une sonde sale dérive et bloque la nourriture pour rien."
+      },
+      "everyDays": 30,
+      "bringForwardOn": [
+        "sensor"
+      ]
+    },
+    {
+      "id": "rails",
+      "who": "person",
+      "label": {
+        "en": "Wipe the gantry's rails",
+        "de": "Schienen des Portals abwischen",
+        "fr": "Essuyer les rails du portique"
+      },
+      "why": {
+        "en": "Grit on the rails wears the wheels and spoils the positions.",
+        "de": "Sand auf den Schienen nutzt die Rollen ab und verdirbt die Positionen.",
+        "fr": "Le sable sur les rails use les roues et fausse les positions."
+      },
+      "everyDays": 30
+    },
+    {
+      "id": "hopper-clean",
+      "who": "person",
+      "label": {
+        "en": "Clean the hopper",
+        "de": "Trichter reinigen",
+        "fr": "Nettoyer la trémie"
+      },
+      "why": {
+        "en": "Old scraps stick and jam the scoop.",
+        "de": "Alte Reste kleben und blockieren die Schaufel.",
+        "fr": "Les vieux restes collent et bloquent la pelle."
+      },
+      "everyDays": 30,
+      "bringForwardOn": [
+        "hopper-jam"
+      ]
+    },
+    {
+      "id": "wrap",
+      "who": "person",
+      "label": {
+        "en": "Wrap the worm box for winter",
+        "de": "Wurmkiste für den Winter einpacken",
+        "fr": "Emballer le bac pour l'hiver"
+      },
+      "why": {
+        "en": "Before the first frost; wrapped, the box loses its warmth five times more slowly.",
+        "de": "Vor dem ersten Frost; eingepackt verliert die Kiste ihre Wärme fünfmal langsamer.",
+        "fr": "Avant le premier gel ; emballé, le bac perd sa chaleur cinq fois plus lentement."
+      },
+      "months": [
+        10,
+        11
+      ],
+      "bringForwardOn": [
+        "frost"
+      ]
+    },
+    {
+      "id": "mulch",
+      "who": "person",
+      "label": {
+        "en": "Renew the mulch",
+        "de": "Mulch erneuern",
+        "fr": "Renouveler le paillis"
+      },
+      "why": {
+        "en": "A thin layer keeps the soil covered and fed over winter; over 3 cm the robot cannot sow.",
+        "de": "Eine dünne Schicht hält den Boden über den Winter bedeckt und genährt; über 3 cm kann der Roboter nicht säen.",
+        "fr": "Une fine couche couvre et nourrit le sol l'hiver ; au-delà de 3 cm le robot ne peut pas semer."
+      },
+      "months": [
+        10,
+        11
+      ]
+    },
+    {
+      "id": "cover",
+      "who": "person",
+      "label": {
+        "en": "Sow a cover crop where the bed is cleared",
+        "de": "Gründüngung säen, wo das Beet frei ist",
+        "fr": "Semer un engrais vert là où le lit est libre"
+      },
+      "why": {
+        "en": "No bare soil over winter.",
+        "de": "Kein nackter Boden über den Winter.",
+        "fr": "Pas de sol nu en hiver."
+      },
+      "months": [
+        9,
+        10
+      ]
+    },
+    {
+      "id": "unwrap",
+      "who": "person",
+      "label": {
+        "en": "Unwrap the worm box",
+        "de": "Wurmkiste auspacken",
+        "fr": "Déballer le bac"
+      },
+      "why": {
+        "en": "Once the frosts are past, or the box overheats on the first warm day.",
+        "de": "Wenn die Fröste vorbei sind, sonst überhitzt die Kiste am ersten warmen Tag.",
+        "fr": "Une fois les gelées passées, sinon le bac surchauffe au premier jour chaud."
+      },
+      "months": [
+        3,
+        4
+      ]
+    },
+    {
+      "id": "pipes",
+      "who": "person",
+      "label": {
+        "en": "Check the tank pipes and the overflow",
+        "de": "Tankrohre und Überlauf prüfen",
+        "fr": "Vérifier les tuyaux de la cuve et le trop-plein"
+      },
+      "why": {
+        "en": "After winter: no cracks, and the overflow runs free.",
+        "de": "Nach dem Winter: keine Risse, und der Überlauf ist frei.",
+        "fr": "Après l'hiver : pas de fissure, et le trop-plein s'écoule."
+      },
+      "months": [
+        3,
+        4
+      ],
+      "bringForwardOn": [
+        "tank-falling",
+        "overflow"
+      ]
+    },
+    {
+      "id": "clean-out",
+      "who": "person",
+      "label": {
+        "en": "Clean out the worm box",
+        "de": "Wurmkiste ausräumen",
+        "fr": "Vider le bac à vers"
+      },
+      "why": {
+        "en": "Once a year: old castings out, fresh bedding in, the worms kept.",
+        "de": "Einmal im Jahr: alter Humus raus, frische Einstreu rein, die Würmer bleiben.",
+        "fr": "Une fois par an : vieux compost dehors, litière neuve, les vers restent."
+      },
+      "months": [
+        4
+      ]
+    },
+    {
+      "id": "frame",
+      "who": "person",
+      "label": {
+        "en": "Check the frame, the roof drain and the waterproofing",
+        "de": "Rahmen, Dachablauf und Abdichtung prüfen",
+        "fr": "Vérifier le cadre, l'évacuation et l'étanchéité"
+      },
+      "why": {
+        "en": "Before the autumn storms, and after any storm.",
+        "de": "Vor den Herbststürmen und nach jedem Sturm.",
+        "fr": "Avant les tempêtes d'automne, et après chaque tempête."
+      },
+      "months": [
+        9
+      ],
+      "bringForwardOn": [
+        "storm"
+      ]
+    },
+    {
+      "id": "probes",
+      "who": "person",
+      "label": {
+        "en": "Replace worn probes",
+        "de": "Abgenutzte Sonden ersetzen",
+        "fr": "Remplacer les sondes usées"
+      },
+      "why": {
+        "en": "Moisture and pH probes age in compost; a year is a fair life.",
+        "de": "Feuchte- und pH-Sonden altern im Kompost; ein Jahr ist eine faire Lebensdauer.",
+        "fr": "Les sondes d'humidité et de pH vieillissent dans le compost ; un an est une durée honnête."
+      },
+      "everyDays": 365
+    }
+  ],
+  "jobs": {
+    "en": "The robot's tasks name the twin edge's job that does them (feed, probe, care:bedding, tap, valve:mist, scan, photo, topdress): when that job is done, so is the task."
+  },
+  "autopilot": {
+    "about": {
+      "en": `What the edge's autopilot does in a rehearsal, in place of a person: it refills what runs low, does the person's tasks that are due, then confirms the robot's proposals in this order. The "daily" jobs only look; they run once a simulated day. The cloud reads the same rules to show the care that is due.`,
+      "de": "Was der Autopilot der Edge in einer Probe an Stelle einer Person tut: Er füllt nach, was knapp wird, erledigt die fälligen Aufgaben der Person und bestätigt dann die Vorschläge des Roboters in dieser Reihenfolge. Die „täglichen“ Aufträge schauen nur; sie laufen einmal pro simuliertem Tag. Die Cloud liest dieselben Regeln, um die fällige Pflege zu zeigen.",
+      "fr": "Ce que le pilote automatique de l'edge fait lors d'une répétition, à la place d'une personne : il remplit ce qui manque, fait les tâches dues de la personne, puis confirme les propositions du robot dans cet ordre. Les travaux « quotidiens » ne font que regarder ; ils tournent une fois par jour simulé. Le cloud lit les mêmes règles pour montrer les soins dus."
+    },
+    "order": [
+      "harvest",
+      "clear",
+      "period",
+      "water",
+      "valve",
+      "feed",
+      "care",
+      "rest",
+      "tap",
+      "topdress",
+      "plant",
+      "stamp",
+      "scan",
+      "probe",
+      "photo"
+    ],
+    "daily": [
+      "scan",
+      "probe",
+      "photo"
+    ],
+    "refills": {
+      "hopperGrams": 300,
+      "brownsGrams": 200,
+      "tankShare": 0.2
+    },
+    "fills": {
+      "hopper": {
+        "vegetable": 600,
+        "fruit": 300,
+        "coffee": 100
+      },
+      "brownsGrams": 1e3
+    }
+  }
+};
+
+// ../packages/core/src/maintenance.ts
+var AUTOPILOT_DEFAULTS = {
+  order: ["harvest", "clear", "period", "water", "valve", "feed", "care", "rest", "tap", "topdress", "plant", "stamp", "scan", "probe", "photo"],
+  daily: ["scan", "probe", "photo"],
+  refills: { hopperGrams: 300, brownsGrams: 200, tankShare: 0.2 },
+  fills: { hopper: { vegetable: 600, fruit: 300, coffee: 100 }, brownsGrams: 1e3 }
+};
+function autopilotPolicy(guide = CARE_GUIDE) {
+  const a = guide.autopilot ?? {};
+  return {
+    order: a.order ?? AUTOPILOT_DEFAULTS.order,
+    daily: a.daily ?? AUTOPILOT_DEFAULTS.daily,
+    refills: { ...AUTOPILOT_DEFAULTS.refills, ...a.refills },
+    fills: { ...AUTOPILOT_DEFAULTS.fills, ...a.fills }
+  };
+}
+var DAY_MS = 864e5;
+var day = (d) => {
+  const x = typeof d === "string" ? /* @__PURE__ */ new Date(`${d}T00:00:00`) : new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  return x;
+};
+var iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+var daysBetween = (a, b) => Math.round((day(b).getTime() - day(a).getTime()) / DAY_MS);
+function seasonStart(months, today) {
+  const m = today.getMonth() + 1;
+  if (!months.includes(m)) return null;
+  let first = m, year = today.getFullYear();
+  for (let i = 0; i < 11; i++) {
+    const prev = first === 1 ? 12 : first - 1;
+    if (!months.includes(prev)) break;
+    if (prev === 12) year -= 1;
+    first = prev;
+  }
+  return new Date(year, first - 1, 1);
+}
+function careDue(guide = CARE_GUIDE, lastDone = {}, today = /* @__PURE__ */ new Date(), active = []) {
+  const now = day(today);
+  return guide.tasks.map((task) => {
+    const last = lastDone[task.id] ? day(lastDone[task.id]) : null;
+    let reason = null;
+    let nextOn = null;
+    let overdueDays = 0;
+    if (task.everyDays) {
+      const next = last ? new Date(last.getFullYear(), last.getMonth(), last.getDate() + task.everyDays) : now;
+      nextOn = iso(next);
+      if (!last) reason = "never";
+      else if (daysBetween(next, now) >= 0) {
+        reason = "rhythm";
+        overdueDays = daysBetween(next, now);
+      }
+    }
+    if (!reason && task.months?.length) {
+      const start = seasonStart(task.months, now);
+      if (start && (!last || last < start)) reason = "season";
+    }
+    if (!reason && task.bringForwardOn?.some((r) => active.includes(r)) && (!last || daysBetween(last, now) >= 1)) reason = "brought";
+    if (!task.everyDays && !task.months?.length && reason === null && !last && !task.bringForwardOn?.length) reason = "never";
+    return { task, due: reason !== null, reason, nextOn, overdueDays };
+  });
+}
 export {
+  CARE_GUIDE,
+  autopilotPolicy,
+  careDue,
   cropById,
   cropName,
   habitatFromTtl,

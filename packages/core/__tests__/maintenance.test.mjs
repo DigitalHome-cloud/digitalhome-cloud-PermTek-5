@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { CARE_GUIDE, careDue, careInMonth, careRhythms } from "../dist/index.js";
+import { CARE_GUIDE, autopilotPolicy, careDue, careInMonth, careRhythms } from "../dist/index.js";
 
 // docs/adr/0024: the care calendar. Dates are local days.
 const byId = (list) => Object.fromEntries(list.map((d) => [d.task.id, d]));
@@ -51,4 +51,18 @@ test("the year view and the rhythms", () => {
   const r = careRhythms(CARE_GUIDE);
   assert.equal(r[0].everyDays, 1);
   assert.ok(r.every((t, i) => i === 0 || r[i - 1].everyDays <= t.everyDays));
+});
+
+test("the autopilot's policy is the guide's, and falls back to the defaults part by part (docs/adr/0031)", () => {
+  const p = autopilotPolicy();
+  assert.deepEqual(p.order.slice(0, 3), ["harvest", "clear", "period"], "harvest first: ripe plants are lost otherwise");
+  assert.deepEqual(p.daily, ["scan", "probe", "photo"]);
+  for (const d of p.daily) assert.ok(p.order.includes(d), d);
+  assert.equal(p.refills.tankShare, 0.2);
+  assert.equal(Object.values(p.fills.hopper).reduce((a, b) => a + b, 0), 1000);
+  for (const l of ["en", "de", "fr"]) assert.ok(CARE_GUIDE.autopilot.about[l], l);
+  const own = autopilotPolicy({ id: "x", tasks: [], autopilot: { refills: { tankShare: 0.5 } } });
+  assert.equal(own.refills.tankShare, 0.5);
+  assert.equal(own.refills.hopperGrams, 300, "an unset level keeps its default");
+  assert.deepEqual(own.order, p.order);
 });

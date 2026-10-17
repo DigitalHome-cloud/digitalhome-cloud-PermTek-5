@@ -1,0 +1,38 @@
+part,name,qty,size,material,made,supplier,eur_each
+x-rail,x rail,2,1190 mm,V-slot 2040 extrusion,cut to length,as 2020; longer than 3 m: two pieces joined over a post,16.66
+y-bridge,y bridge,1,800 mm,V-slot 2060 extrusion,cut to length,as 2020,15.2
+z-column,z column,1,330 mm,V-slot 2020 extrusion,cut to length,"OpenBuilds-type V-slot, cut to length (Dold Mechatronik, Ooznest, AliExpress)",2.97
+post,post under the x rails,4,310 mm,V-slot 2040 extrusion,cut to length,as 2020; longer than 3 m: two pieces joined over a post,4.34
+x-carriage,"x carriage plate (rides a 2040 rail, carries the bridge)",2,150 x 100 mm,Birch plywood 12 mm,cut from dxf/x-carriage.dxf (or print stl/),timber merchant; cut on a CNC or by jigsaw from the DXF printed 1:1,2.0
+y-carriage,"y carriage plate (rides the 2060 bridge, carries the z column)",1,130 x 120 mm,Birch plywood 12 mm,cut from dxf/y-carriage.dxf (or print stl/),timber merchant; cut on a CNC or by jigsaw from the DXF printed 1:1,2.0
+z-carriage,"z plate (rides the 2020 column, holds the lead-screw nut and the tool plate)",1,90 x 70 mm,Birch plywood 12 mm,cut from dxf/z-carriage.dxf (or print stl/),timber merchant; cut on a CNC or by jigsaw from the DXF printed 1:1,2.0
+motor-x,x motor mount,1,90 x 70 mm,Birch plywood 12 mm,cut from dxf/motor-x.dxf (or print stl/),timber merchant; cut on a CNC or by jigsaw from the DXF printed 1:1,2.0
+motor-y,y motor mount,1,90 x 70 mm,Birch plywood 12 mm,cut from dxf/motor-y.dxf (or print stl/),timber merchant; cut on a CNC or by jigsaw from the DXF printed 1:1,2.0
+motor-z,z motor mount on the column's top,1,70 x 70 mm,Birch plywood 12 mm,cut from dxf/motor-z.dxf (or print stl/),timber merchant; cut on a CNC or by jigsaw from the DXF printed 1:1,2.0
+tool,"tool plate: nozzle, soil probe, camera",1,110 x 80 mm,Birch plywood 12 mm,cut from dxf/tool.dxf (or print stl/),timber merchant; cut on a CNC or by jigsaw from the DXF printed 1:1,2.0
+v-wheel,"Mini V wheel kit (wheel, bearings, spacer)",16,,,buy,OpenBuilds-type,2.5
+eccentric-spacer,Eccentric spacer 6 mm,8,,,buy,OpenBuilds-type,1.2
+nema17,"Stepper NEMA17, 48 mm, 2 A",3,,,buy,StepperOnline or 3D-printer shops,15
+gt2-pulley,"GT2 pulley 20 teeth, 5 mm bore",2,,,buy,3D-printer shops,2
+gt2-idler,"GT2 idler 20 teeth, 5 mm bore",2,,,buy,3D-printer shops,2
+belt,"GT2 belts, x and y",1,4580 mm,"GT2 belt, 6 mm, fibreglass",cut to length,3D-printer shops,11.45
+t8-screw,Lead screw T8 x 8 with brass nut and coupler,1,230 mm,,buy,3D-printer shops,18
+end-switch,"End switch (micro switch, normally closed wiring)",3,one per axis; the second x side squares the bridge,,buy,electronics shops,1.5
+drag-chain,"drag chains, x and y",1,1400 mm,Drag chain 10 x 20 mm,cut to length,3D-printer shops,8.4
+cable,"motor, switch and sensor cable",1,9460 mm,"Shielded 4-core cable for steppers, UV-stable sheath",cut to length,electronics shops,17.03
+corner-bracket,Corner bracket for 20-series extrusion,12,,,buy,OpenBuilds-type,1.5
+controller,"FluidNC controller, ESP32 with TMC2209 drivers (e.g. the Jackpot board)",1,,,buy,FluidNC's board makers,85
+pi5,"Raspberry Pi 5, 8 GB, with case, cooler and 27 W supply",1,,,buy,Raspberry Pi resellers,120
+pi-ssd,microSD 64 GB (or an NVMe hat and SSD),1,,,buy,Raspberry Pi resellers,15
+psu-24v,"Power supply 24 V, 150 W (e.g. Mean Well LRS-150-24)",1,,,buy,electronics shops,28
+estop,"E-stop mushroom, twist to release, NC contact",1,,,buy,electrical wholesaler,15
+contactor,"Contactor 2 NO, 24 V DC coil: the e-stop cuts motor and valve power through it",1,,,buy,electrical wholesaler,22
+valve,"Solenoid valve 1/2 inch, normally closed, 24 V DC, brass",1,,,buy,irrigation shops,16
+valve-relay,Relay module for the valve (driven by the controller's coolant output),1,,,buy,electronics shops,5
+flow-meter,"Flow meter 1/2 inch, Hall pulses (YF-S201 class)",1,,,buy,electronics shops,6
+nozzle,"Watering nozzle, brass, with 8 mm hose",1,,,buy,irrigation shops,6
+soil-probe,"Soil moisture and temperature probe, capacitive, I2C",1,,,buy,Adafruit STEMMA soil sensor class,12
+camera,Raspberry Pi Camera Module 3 with a 1 m ribbon,1,,,buy,Raspberry Pi resellers,32
+enclosure,"Enclosure IP65, about 300 x 200 x 120 mm, with cable glands",1,,,buy,electrical wholesaler,30
+fasteners,"Fastener kit: M5 bolts and T-nuts, M3 for motors, M2 for the camera",1,,,buy,hardware store,25
+total,"estimate, 2026-10-17 (estimates, not quotes)",,,,,,681.83

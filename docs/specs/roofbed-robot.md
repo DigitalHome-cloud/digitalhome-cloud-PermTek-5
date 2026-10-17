@@ -21,6 +21,9 @@ and only does what its owner confirmed.
 
 ## 2. Hardware (to be chosen)
 
+The first build is a bench gantry, and both sizes are drawn as code with their BOM: see
+[gantry5-prototype.md](gantry5-prototype.md), `hardware/gantry5/` and ADR 0032.
+
 - **Frame**: aluminium extrusion; x rails on the bed's long sides, a y bridge,
   a z column. Travel a little larger than the bed, so tools can park outside.
 - **Drive**: belts on x and y, a lead screw on z; steppers with encoders or
@@ -125,16 +128,18 @@ when the edge is generated.)
    person confirms them on its page, and a sown cell is written into the
    area's A-Box. Still to do: pair it with stage, sync a real habitat, and
    see the sown cell on the PermTek-5 map.
-3. Hardware: frame and axes, homing and limits, e-stop. Then the watering
-   nozzle (the most useful tool), then the probe, the camera, the seeder.
-   The real driver offers the topics the twin's driver offers.
+3. Hardware, **bench first** (ADR 0032, `gantry5-prototype.md`): a 1 m ×
+   0.6 m gantry on a table with frame and axes, homing and limits, the
+   e-stop, then the watering nozzle (the most useful tool), the probe, the
+   camera. The real driver offers the topics the twin's driver offers. Then
+   the full size: our own frame or a FarmBot Express driven by the edge.
 4. First season on the real bed, with every job confirmed by hand before any
    standing rule.
 
 ## Open questions
 
-- Motion board: ros2_control with a custom hardware interface, or GRBL-class
-  firmware behind a driver?
+- Motion board: **answered for the bench** (ADR 0032): an ESP32 with FluidNC,
+  G-code over USB from a ROS node on the Pi.
 - Seeds: one tray per crop, or a seed changer?
 - Do standing rules live in the A-Box (visible in the app) or only on the edge?
 - Photos: the template's object routes, or a route of their own with a size cap?

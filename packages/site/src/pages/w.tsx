@@ -151,7 +151,7 @@ function ViewBody({ view, space }: { view: View; space: Space }) {
       {!canEdit && <p className="pt-muted">{t("hab.readonly")}</p>}
       {view === "overview" && <HabitatMap habitat={h} edit={hab.edit} canEdit={canEdit} replace={hab.replace} months={area.months} />}
       {view === "calendar" && <HabitatCalendar habitat={h} months={area.months} areaName={area.areaName} />}
-      {view === "now" && <HabitatNow habitat={h} months={area.months} areaName={area.areaName} />}
+      {view === "now" && <HabitatNow habitat={h} months={area.months} areaName={area.areaName} spaceId={space.id} canEdit={canEdit} />}
       {view === "recipes" && <HabitatRecipes habitat={h} edit={hab.edit} canEdit={canEdit} months={area.months} areaName={area.areaName} />}
       {view === "learn" && <HabitatLearn habitat={h} edit={hab.edit} canEdit={canEdit} months={area.months} />}
       {(view === "import" || view === "export") && <HabitatTransfer habitat={h} canEdit={canEdit} replace={hab.replace} mode={view} />}

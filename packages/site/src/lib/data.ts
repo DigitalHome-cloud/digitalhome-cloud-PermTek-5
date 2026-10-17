@@ -82,6 +82,10 @@ const REVOKE_EDGE = /* GraphQL */ `
   }
 `;
 const EDGE_RELEASE = /* GraphQL */ `query EdgeRelease { edgeRelease }`;
+const GUILD_CARE = /* GraphQL */ `query GuildCare($spaceId: String!) { guildCare(spaceId: $spaceId) }`;
+const MARK_CARE_DONE = /* GraphQL */ `
+  mutation MarkCareDone($edgeId: String!, $taskId: String!) { markCareDone(edgeId: $edgeId, taskId: $taskId) }
+`;
 
 const GET_GRAPH = /* GraphQL */ `
   query GetGraph($name: ID!) { getGraph(name: $name) { name ttl version updatedAt updatedBy } }
@@ -263,11 +267,36 @@ export interface EdgeRelease {
 
 /** The edge installer and package, as 15-minute links (tenant admins, operators). */
 export async function edgeRelease(): Promise<EdgeRelease> {
-  const raw = (await call<{ edgeRelease: unknown }>(EDGE_RELEASE)).edgeRelease;
-  // AWSJSON arrives as a string; tolerate one encoded twice
+  return awsJson<EdgeRelease>((await call<{ edgeRelease: unknown }>(EDGE_RELEASE)).edgeRelease);
+}
+
+/** AWSJSON arrives as a string; tolerate one encoded twice. */
+function awsJson<T>(raw: unknown): T {
   let v: unknown = raw;
   for (let i = 0; i < 2 && typeof v === "string"; i++) v = JSON.parse(v);
-  return v as EdgeRelease;
+  return v as T;
+}
+
+/* -- A guild's care (docs/adr/0031) ---------------------------------------- */
+
+export interface CareDueItem { id: string; who: string; reason: string; overdueDays: number }
+export interface GuildCare {
+  edgeId: string;
+  hostname: string | null;
+  /** What the guild's edge last reported; its `today` is the edge's care date (a twin's is simulated). */
+  care: { guildId: string; today: string; active: string[]; due: CareDueItem[]; reportedAt: string } | null;
+  /** Done presses waiting for the edge to carry them out. */
+  pending: string[];
+}
+
+/** The care the space's guild edges last reported (the space's readers). */
+export async function guildCare(spaceId: string): Promise<GuildCare[]> {
+  return awsJson<GuildCare[]>((await call<{ guildCare: unknown }>(GUILD_CARE, { spaceId })).guildCare) ?? [];
+}
+
+/** A person did a care task; the edge records it on its next report (the tenant's admins). */
+export async function markCareDone(edgeId: string, taskId: string): Promise<GuildCare> {
+  return awsJson<GuildCare>((await call<{ markCareDone: unknown }>(MARK_CARE_DONE, { edgeId, taskId })).markCareDone);
 }
 
 /* -- A-Boxes (ADR-0007) ---------------------------------------------------- */

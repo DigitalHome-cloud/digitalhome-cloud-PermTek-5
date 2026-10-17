@@ -235,6 +235,9 @@ Wikidata, to TAXREF. Next, in this order, **when the library is scaled beyond th
 Decided: **where the graph lives** → one A-Box per space in S3 (template ADR-0007), Oxigraph only on the nest.
 Decided: **real terrain** → IGN LiDAR HD (0.5 m, else RGE ALTI 1 m) into the twin's ElevationGrid, fetched into the
 private pack by `twin/tools/fetch_ign.py`; Blender only for the garden film (ADR 0030, 2026-10-16).
+Decided: **the care autopilot** → the autopilot's policy is data in the care guide; the edge reports its care
+record and the cloud works out what is due, shown in the Now view; robot jobs stay confirmed on the edge
+(ADR 0031, 2026-10-17; drawing in `docs/autopilot.architecture.json`, served at `/autopilot/`).
 
 ## Parking lot
 
@@ -244,7 +247,7 @@ Ideas agreed to be worth doing, deliberately not now. Each says why it waits and
 | --- | --- | --- |
 | **Publish a twin run to the cloud** (2026-10-16): an edge uploads a chosen run (its `run.usda` or track, ADR 0029) so the site can show and share it | runs, pictures and the logbook stay on the edge PC by design; publishing must be a person's explicit choice per run, with its own privacy check | someone wants to share or compare runs away from the edge |
 | **USD physics and other simulators** (2026-10-16): UsdPhysics for the gantry and bed, so Isaac Sim, Gazebo or MuJoCo could run them | Webots is enough at one guild; Isaac Sim needs an RTX GPU this PC lacks | many guilds at once, or training a robot policy in simulation; then generate it from bed.json next to the `.wbt` |
-
+| **Standing permission for routine robot jobs** (2026-10-17): looks (scan, probe, photo), maybe watering within limits, without a Confirm, per bed, revocable, logged as the autopilot's; the keeper's holds and lockout always win | rule 1 says a person accepts; the cloud's care plan (ADR 0031) shows first what a guild really needs, and a real bed says which routines are safe | a guild runs a season with the care plan and the same routine jobs are confirmed every day; then its own ADR |
 
 **Risks**
 

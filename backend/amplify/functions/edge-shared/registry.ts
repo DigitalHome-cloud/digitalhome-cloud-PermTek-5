@@ -17,6 +17,7 @@ export const EDGE_REGISTRY_TABLE = process.env.EDGE_REGISTRY_TABLE_NAME!;
 export interface EdgeRow {
   edge_id: string;
   machine_id?: string;
+  hostname?: string;
   home_id?: string | null;
   linked_by_cognito_sub?: string;
   /** ADR-0005: every call is limited to this tenant's spaces. */
@@ -31,6 +32,10 @@ export interface EdgeRow {
   last_heartbeat_at?: string;
   telemetry_snapshot?: Record<string, unknown>;
   delta_history?: Record<string, unknown>[];
+  /** The guild's care as the edge last reported it (docs/adr/0031, graph-shared/care.ts CareState). */
+  care?: Record<string, unknown>;
+  /** A person's Done presses in the site, waiting for the edge (a string set). */
+  care_done_pending?: Set<string>;
   linked_at?: string;
   revoked_at?: string | null;
   revoked_reason?: string | null;

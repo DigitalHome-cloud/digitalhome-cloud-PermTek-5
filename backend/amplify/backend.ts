@@ -23,6 +23,7 @@ import { edgeDeviceApproval } from "./functions/edgeDeviceApproval/resource";
 import { edgeGraphs } from "./functions/edgeGraphs/resource";
 import { edgeModels } from "./functions/edgeModels/resource";
 import { edgeRelease } from "./functions/edgeRelease/resource";
+import { care } from "./functions/care/resource";
 import { MIN_EDGE_VERSION } from "./functions/edge-shared/http";
 
 const backend = defineBackend({
@@ -40,6 +41,7 @@ const backend = defineBackend({
   edgeGraphs,
   edgeModels,
   edgeRelease,
+  care,
 });
 
 /* ------------------------------------------------------------------------ *
@@ -200,7 +202,7 @@ edgeRegistryTable.addGlobalSecondaryIndex({
 });
 
 for (const fn of [backend.edgeDeviceAuthz, backend.edgeToken, backend.edgeTokenRotate, backend.edgeTelemetry,
-                  backend.edgeDeviceApproval, backend.edgeGraphs, backend.edgeModels]) {
+                  backend.edgeDeviceApproval, backend.edgeGraphs, backend.edgeModels, backend.care]) {
   fn.addEnvironment("DEVICE_CODES_TABLE_NAME", deviceCodesTable.tableName);
   fn.addEnvironment("EDGE_REGISTRY_TABLE_NAME", edgeRegistryTable.tableName);
 }
@@ -236,7 +238,11 @@ spaceRead(backend.edgeDeviceApproval.resources.lambda, backend.edgeDeviceApprova
 // device token.
 allow(backend.graphs.resources.lambda, ["dynamodb:GetItem", "dynamodb:PutItem"], [graphTable.tableArn]);
 allow(backend.edgeGraphs.resources.lambda, ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:Scan"], [graphTable.tableArn]);
-allow(backend.edgeGraphs.resources.lambda, ["dynamodb:GetItem"], [edgeRegistryTable.tableArn]);
+// A guild's care for the site (docs/adr/0031): read by a space's readers, Done by the tenant's admins.
+allow(backend.care.resources.lambda, ["dynamodb:Scan", "dynamodb:GetItem", "dynamodb:UpdateItem"], [edgeRegistryTable.tableArn]);
+spaceRead(backend.care.resources.lambda, backend.care);
+// /edge/v1/care keeps the guild's care on the edge's own row (docs/adr/0031)
+allow(backend.edgeGraphs.resources.lambda, ["dynamodb:GetItem", "dynamodb:UpdateItem"], [edgeRegistryTable.tableArn]);
 allow(backend.edgeModels.resources.lambda, ["dynamodb:GetItem"], [edgeRegistryTable.tableArn]);
 for (const f of [backend.graphs, backend.edgeGraphs]) {
   f.addEnvironment("GRAPH_TABLE_NAME", graphTable.tableName);
@@ -245,7 +251,7 @@ for (const f of [backend.graphs, backend.edgeGraphs]) {
 
 // Admin operations require two-step sign-in: they ask Cognito whether the
 // caller has TOTP set up. Wildcard pool, for the cycle described above.
-for (const fn of [backend.graphs.resources.lambda, backend.edgeDeviceApproval.resources.lambda]) {
+for (const fn of [backend.graphs.resources.lambda, backend.edgeDeviceApproval.resources.lambda, backend.care.resources.lambda]) {
   allow(fn, ["cognito-idp:AdminGetUser"], [anyUserPool(fn)]);
 }
 
@@ -268,6 +274,7 @@ const routes: Array<[string, lambda.IFunction]> = [
   ["/edge/v1/graphs/get", backend.edgeGraphs.resources.lambda],
   ["/edge/v1/graphs/put", backend.edgeGraphs.resources.lambda],
   ["/edge/v1/plan", backend.edgeGraphs.resources.lambda],
+  ["/edge/v1/care", backend.edgeGraphs.resources.lambda],
   ["/edge/v1/models", backend.edgeModels.resources.lambda],
 ];
 for (const [path, fn] of routes) {

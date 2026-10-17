@@ -1,6 +1,6 @@
 # ADR 0024 — The care calendar: what keeps a guild working, and who does it
 
-Status: **Accepted** · 2026-10-14 · Builds on [ADR 0020](0020-perma5guild-one-edge-per-guild.md), [ADR 0023](0023-worm-population.md)
+Status: **Accepted** · 2026-10-14 · Builds on [ADR 0020](0020-perma5guild-one-edge-per-guild.md), [ADR 0023](0023-worm-population.md). Consequences amended by [ADR 0031](0031-the-cloud-plans-the-care.md)
 
 ## Context
 

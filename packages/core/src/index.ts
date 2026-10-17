@@ -52,8 +52,8 @@ export { habitatFromTtl, habitatToTtl } from "./habitatGraph.js";
 export { whatNow } from "./now.js";
 export { FEEDING_GUIDE } from "./feedingGuide.generated.js";
 export { CARE_GUIDE } from "./careGuide.generated.js";
-export { careDue, careInMonth, careRhythms } from "./maintenance.js";
-export type { CareDue, CareGuide, CareReason, CareTask, CareWho } from "./maintenance.js";
+export { autopilotPolicy, careDue, careInMonth, careRhythms } from "./maintenance.js";
+export type { AutopilotPolicy, CareDue, CareGuide, CareReason, CareTask, CareWho } from "./maintenance.js";
 export type { NowItem } from "./now.js";
 export { CITYDEMO_TTL } from "./example.generated.js";
 export {

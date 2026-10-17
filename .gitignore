@@ -216,3 +216,7 @@ src/aws-exports.js
 # the ontology tools' Python environment
 packages/ontology/.venv/
 .pytest_cache/
+
+# hardware/: the CAD's local venv and its generated drawings (STEP, STL, DXF); the BOM and cut list CSVs are committed
+hardware/**/.venv/
+hardware/**/build/

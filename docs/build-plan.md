@@ -238,6 +238,9 @@ private pack by `twin/tools/fetch_ign.py`; Blender only for the garden film (ADR
 Decided: **the care autopilot** → the autopilot's policy is data in the care guide; the edge reports its care
 record and the cloud works out what is due, shown in the Now view; robot jobs stay confirmed on the edge
 (ADR 0031, 2026-10-17; drawing in `docs/autopilot.architecture.json`, served at `/autopilot/`).
+Decided: **the first physical gantry** → a bench gantry (1 m × 0.6 m, FluidNC on an ESP32, a hardware e-stop)
+before the roof; the full size after it, our own frame or a FarmBot Express; the hardware as build123d code with
+its BOM and cut list in `hardware/gantry5/` (ADR 0032, `docs/specs/gantry5-prototype.md`, 2026-10-17).
 
 ## Parking lot
 

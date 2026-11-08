@@ -1,0 +1,355 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "The care autopilot",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1240,
+      660
+    ],
+    "views": [
+      {
+        "id": "rules",
+        "label": "One set of rules",
+        "focus": [
+          "guide",
+          "planner",
+          "edge"
+        ],
+        "note": "The care guide holds the tasks, their rhythms and the autopilot's order. The cloud and the edge read the same file."
+      },
+      {
+        "id": "state",
+        "label": "The edge reports",
+        "focus": [
+          "keeper",
+          "edge",
+          "edgeapi",
+          "registry"
+        ],
+        "note": "The guild's edge sends its care record and the keeper's reactions when they change, at least hourly. Rehearsals send nothing."
+      },
+      {
+        "id": "plan",
+        "label": "The cloud plans",
+        "focus": [
+          "guide",
+          "planner",
+          "registry",
+          "today"
+        ],
+        "note": "On each report the planner works out what is due on the edge's own date: chores for the person, jobs for the robot."
+      },
+      {
+        "id": "confirm",
+        "label": "A person confirms",
+        "focus": [
+          "today",
+          "edgeapi",
+          "edge",
+          "person",
+          "robot"
+        ],
+        "note": "A Done on a chore goes back to the edge's record. Robot jobs are confirmed on the edge, never from the cloud."
+      },
+      {
+        "id": "rehearsal",
+        "label": "Rehearsal stays on the edge",
+        "focus": [
+          "twin",
+          "person",
+          "edge"
+        ],
+        "note": "In a twin rehearsal the edge autopilot plays the person and confirms. Nothing is written back."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "guide",
+      "type": "database",
+      "label": "Care guide",
+      "sublabel": "tasks · order",
+      "pos": [
+        60,
+        80
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "planner",
+      "type": "backend",
+      "label": "Care planner",
+      "sublabel": "careDue · each report",
+      "pos": [
+        300,
+        80
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "registry",
+      "type": "database",
+      "label": "Edge registry",
+      "sublabel": "care state · plan",
+      "pos": [
+        300,
+        300
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "edgeapi",
+      "type": "security",
+      "label": "Edge API",
+      "sublabel": "telemetry",
+      "pos": [
+        540,
+        300
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "today",
+      "type": "frontend",
+      "label": "Today's care",
+      "sublabel": "site · Now view",
+      "pos": [
+        540,
+        520
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "keeper",
+      "type": "security",
+      "label": "Keeper",
+      "sublabel": "holds · lockout",
+      "pos": [
+        800,
+        80
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "edge",
+      "type": "backend",
+      "label": "Guild edge",
+      "sublabel": "record · proposals",
+      "pos": [
+        800,
+        300
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "robot",
+      "type": "external",
+      "label": "Robot",
+      "sublabel": "gantry jobs",
+      "pos": [
+        800,
+        520
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "person",
+      "type": "external",
+      "label": "Person",
+      "sublabel": "chores · Confirm",
+      "pos": [
+        1040,
+        300
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "twin",
+      "type": "backend",
+      "label": "Twin autopilot",
+      "sublabel": "rehearsal only",
+      "pos": [
+        1040,
+        520
+      ],
+      "size": [
+        150,
+        64
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "PermTek-5 cloud",
+      "wraps": [
+        "guide",
+        "planner",
+        "registry",
+        "edgeapi",
+        "today"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "At the guild",
+      "wraps": [
+        "keeper",
+        "edge",
+        "robot",
+        "person",
+        "twin"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "rules",
+      "from": "guide",
+      "to": "planner",
+      "label": "rules"
+    },
+    {
+      "id": "plans",
+      "from": "planner",
+      "to": "registry",
+      "label": "today's plan",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        375,
+        222
+      ]
+    },
+    {
+      "id": "heartbeat",
+      "from": "edge",
+      "to": "edgeapi",
+      "label": "state ⇄ plan",
+      "variant": "security"
+    },
+    {
+      "id": "store",
+      "from": "edgeapi",
+      "to": "registry",
+      "label": "store"
+    },
+    {
+      "id": "shows",
+      "from": "registry",
+      "to": "today",
+      "label": "shows",
+      "fromSide": "bottom",
+      "toSide": "left"
+    },
+    {
+      "id": "answer",
+      "from": "today",
+      "to": "edgeapi",
+      "label": "Done",
+      "fromSide": "top",
+      "toSide": "bottom",
+      "variant": "emphasis"
+    },
+    {
+      "id": "holds",
+      "from": "keeper",
+      "to": "edge",
+      "label": "holds win",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "variant": "security",
+      "labelAt": [
+        875,
+        222
+      ]
+    },
+    {
+      "id": "jobs",
+      "from": "edge",
+      "to": "robot",
+      "label": "confirmed jobs",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        875,
+        442
+      ]
+    },
+    {
+      "id": "confirms",
+      "from": "person",
+      "to": "edge",
+      "label": "Confirm · Done",
+      "variant": "emphasis"
+    },
+    {
+      "id": "stands",
+      "from": "twin",
+      "to": "person",
+      "label": "plays the part",
+      "fromSide": "top",
+      "toSide": "bottom",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Step 1: rules as data",
+      "items": [
+        "Order, daily looks and refill levels move into the care guide",
+        "The edge and the cloud read the same file",
+        "No change in what the autopilot does"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Step 2: the cloud plans",
+      "items": [
+        "The edge reports its care record and the keeper's reactions",
+        "The cloud works out what is due on each report",
+        "Robot jobs are confirmed on the edge, never from the cloud"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Later: standing permission",
+      "items": [
+        "Routine looks without a Confirm, per bed, revocable",
+        "Needs its own ADR",
+        "The keeper's holds and lockout always win"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "name": "digitalhome-cloud-PermTek-5",
+  "private": true,
+  "description": "D-LAB-5 fullstack template — Gatsby 5 frontend, Amplify Gen 2 backend, one Cognito gate",
+  "license": "GPL-3.0-or-later",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build:core && npm run build:web",
+    "build:core": "npm run build -w @dlab5/permtek5-core",
+    "build:web": "npm run build -w @dlab5/permtek5-site",
+    "dev": "bash scripts/dev.sh",
+    "demo": "python3 scripts/demo.py",
+    "dev:web": "npm run develop -w @dlab5/permtek5-site",
+    "start:web": "npm run serve -w @dlab5/permtek5-site",
+    "clean:web": "npm run clean -w @dlab5/permtek5-site",
+    "test": "npm run test --workspaces --if-present",
+    "backend:install": "npm --prefix backend install",
+    "backend:sandbox": "npm --prefix backend run sandbox",
+    "backend:sync-outputs": "npm --prefix backend run sync-outputs",
+    "backend:typecheck": "npm --prefix backend run typecheck",
+    "verify:auth": "node scripts/verify-auth.mjs",
+    "rename": "node scripts/rename.mjs",
+    "check:gpl": "node scripts/check-gpl-compatibility.mjs",
+    "verify:edge": "node scripts/verify-edge.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

@@ -29,7 +29,7 @@ owner switches; simple solutions, plain words, no marketing tone.
 
 The decisions live in `stigmergy/` (plain Python, tested by `pytest tests`).
 `controllers/` adapts them to plain Webots; `ros2/permaculture_twin` adapts
-them to ROS 2 (ADR 0007, step 1). Change behaviour in `stigmergy/`, never in
+them to ROS 2 (ADR 0014, step 1). Change behaviour in `stigmergy/`, never in
 an adapter. Rovers must stay in their own ROS namespace: run
 `tools/check_isolation.py` (or the launch test) after touching the ROS side.
 
@@ -68,6 +68,9 @@ and an Inspection suggested.
    Narrowing zone 4 made it worse (51 stuck events in 110 h): fix the planner
    (issue 3), not the site.
 5. Not modelled: wheel slip on wet clay, soil probe force, vegetation growth, IR collisions between posts.
+6. On a relief (`--site permademo-relief`, ADR 0030) the rovers get stuck more often (5 against 2 events in the first
+   12 garden hours) and rover1 leaves the frame near the nest from about hour 7. The dock line and the fascines follow
+   the fitted plane's contour, not the real ground's. Follow the model's contours there before using a real relief.
 
 ## Next steps
 

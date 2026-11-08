@@ -57,6 +57,6 @@ and private spaces. From it:
 | Build plan, ADRs, workflow, ontology | this repository (PermTek-5) | yes; no site specifics |
 | Twin code + demo site | `twin/` → `permaculture-twin` | yes, GPL-3.0-or-later |
 | Real site file, plan, calendars, original twin, site notes | private site pack, outside this repository | never |
-| Cloud | `repos/permaculture-cloud` (to generate) | GPL template; site data in S3 only |
-| Nest edge | `repos/permaculture-nest-edge` (to generate) | GPL template; privacy contract applies |
+| Cloud | this repository: `backend/`, `packages/` (from template-dlab5-cloud) | GPL template; site data in S3 only |
+| Nest edge | its own repository (to generate from template-dlab5-edge) | GPL template; privacy contract applies |
 | Users, weather, Portal | DHC core / Portal | shared platform |

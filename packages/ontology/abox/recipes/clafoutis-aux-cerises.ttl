@@ -1,0 +1,24 @@
+@prefix perma:  <https://permaculture.digitalhome.cloud/ontology#> .
+@prefix id:     <https://permaculture.digitalhome.cloud/id/> .
+@prefix schema: <https://schema.org/> .
+
+# Added 2026-10-09: third set, from a roof bed and a small orchard.
+
+id:recipe-clafoutis-aux-cerises a schema:Recipe ;
+    schema:name "Clafoutis aux cerises"@fr , "Cherry clafoutis"@en , "Kirsch-Clafoutis"@de ;
+    schema:inLanguage "fr" ;
+    schema:recipeYield "6 parts" ;
+    schema:totalTime "PT1H" ;
+    schema:description "Traditionally with unstoned cherries; sour cherries work with a little more sugar. Frozen cherries go in still frozen."@en ;
+    schema:recipeInstructions (
+        "Beurrer un plat et y répartir les cerises."
+        "Battre les œufs avec le sucre, ajouter la farine, puis le lait et le beurre fondu."
+        "Verser sur les cerises et cuire 35 à 40 minutes à 180 °C."
+    ) ;
+    perma:usesIngredient
+        [ schema:name "500 g de cerises" ; perma:crop id:crop-sweet-cherry ; perma:part perma:Fruit ; perma:acceptsMethod perma:Fresh , perma:Frozen ] ,
+        [ schema:name "3 œufs" ] ,
+        [ schema:name "80 g de sucre" ] ,
+        [ schema:name "80 g de farine" ] ,
+        [ schema:name "30 cl de lait" ] ,
+        [ schema:name "30 g de beurre" ] .

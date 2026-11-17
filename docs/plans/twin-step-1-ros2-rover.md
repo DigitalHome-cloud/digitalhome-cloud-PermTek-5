@@ -1,6 +1,6 @@
 # Twin step 1 — the rover on ROS 2
 
-Part of ADR 0007. Status: **work items 1–7 done; item 8 (switch-over) waits on the coverage criteria, see Results** · 2026-10-07
+Part of ADR 0014. Status: **work items 1–7 done; item 8 (switch-over) waits on the coverage criteria, see Results** · 2026-10-07
 
 ## Goal
 
@@ -66,7 +66,7 @@ Named after the **real** sensors, so a hardware driver can publish the same:
 
 Camera stays off in step 1 (it is only enabled today, never read).
 
-**Isolation rule** (ADR 0007): a rover's nodes may use only `/roverN/*`,
+**Isolation rule** (ADR 0014): a rover's nodes may use only `/roverN/*`,
 `/clock`, `/rosout`, `/parameter_events`. Rovers do not talk to each other;
 they meet only in the store (`data/store_*.jsonl`, read at docking) and on
 the IR posts.
@@ -161,7 +161,7 @@ The coverage criterion fails **on both paths**: a rover returning from zone 4's 
 is driven into the fence by the straight-line planner (twin open issues 3 and 4). The
 174-hour baseline passed it by luck of the seed. This is a planner bug, not a ROS one.
 
-**Next:** twin step 2, *frame and explore* (`docs/workflow.md`, ADR 0007 amended): geofence
+**Next:** twin step 2, *frame and explore* (`docs/workflow.md`, ADR 0014 amended): geofence
 and no-go areas in the site file, a contour-first planner inside them (fixes the fence
 trap), the explore mission. Then rerun the coverage criterion on the ROS path and do item 8
 (switch-over, remove the plain explorer and supervisor).

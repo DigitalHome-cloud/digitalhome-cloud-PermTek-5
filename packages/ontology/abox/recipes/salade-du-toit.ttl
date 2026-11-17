@@ -1,0 +1,30 @@
+@prefix perma:  <https://permaculture.digitalhome.cloud/ontology#> .
+@prefix id:     <https://permaculture.digitalhome.cloud/id/> .
+@prefix schema: <https://schema.org/> .
+
+# Added 2026-10-09: third set, from a roof bed and a small orchard.
+
+id:recipe-salade-du-toit a schema:Recipe ;
+    schema:name "Salade du toit"@fr , "Roof-bed salad"@en , "Dachbeet-Salat"@de ;
+    schema:inLanguage "fr" ;
+    schema:recipeYield "2 personnes" ;
+    schema:totalTime "PT15M" ;
+    schema:description "Whatever the bed gives that week: pick just before eating."@en ;
+    schema:recipeInstructions (
+        "Cueillir les feuilles juste avant le repas, les laver et bien les essorer."
+        "Couper les radis en rondelles, ciseler la ciboulette, le persil et la ciboule."
+        "Mélanger la moutarde, le vinaigre, le sel et le poivre, puis ajouter l'huile."
+        "Assaisonner au dernier moment."
+    ) ;
+    perma:usesIngredient
+        [ schema:name "2 poignées de laitue" ; perma:crop id:crop-lettuce ; perma:part perma:Leaf ; perma:acceptsMethod perma:Fresh ] ,
+        [ schema:name "1 poignée de roquette" ; perma:crop id:crop-rocket ; perma:part perma:Leaf ; perma:acceptsMethod perma:Fresh ] ,
+        [ schema:name "1 poignée de jeunes épinards" ; perma:crop id:crop-spinach ; perma:part perma:Leaf ; perma:acceptsMethod perma:Fresh ] ,
+        [ schema:name "6 radis" ; perma:crop id:crop-radish ; perma:part perma:Root ; perma:acceptsMethod perma:Fresh ] ,
+        [ schema:name "1 ciboule" ; perma:crop id:crop-spring-onion ; perma:part perma:Leaf ; perma:acceptsMethod perma:Fresh ] ,
+        [ schema:name "1 cuillère de ciboulette" ; perma:crop id:crop-chives ; perma:part perma:Leaf ; perma:acceptsMethod perma:Fresh ] ,
+        [ schema:name "1 cuillère de persil" ; perma:crop id:crop-parsley ; perma:part perma:Leaf ; perma:acceptsMethod perma:Fresh ] ,
+        [ schema:name "1 cuillère à café de moutarde" ] ,
+        [ schema:name "1 cuillère de vinaigre" ] ,
+        [ schema:name "3 cuillères d'huile" ] ,
+        [ schema:name "sel, poivre" ] .

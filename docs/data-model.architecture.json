@@ -1,0 +1,482 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "The PermTek-5 data model",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1240,
+      660
+    ],
+    "views": [
+      {
+        "id": "site",
+        "label": "A site belongs to a home",
+        "focus": [
+          "dhome",
+          "parea",
+          "site",
+          "group",
+          "edge"
+        ],
+        "note": "One site per DigitalHome. Its members form the shared group; private groups are optional. The climate is the home's postal area."
+      },
+      {
+        "id": "map",
+        "label": "Areas, guilds, beds, cells",
+        "focus": [
+          "graph",
+          "area",
+          "guild",
+          "bed",
+          "cell",
+          "plant"
+        ],
+        "note": "An area holds Perma5Guilds: a bed with its worm box, tank and robot. Beds split into cells; trees stand in the area."
+      },
+      {
+        "id": "crops",
+        "label": "One crop library",
+        "focus": [
+          "cell",
+          "plant",
+          "crop"
+        ],
+        "note": "Cells and plants point at crops of the shared library: names in four languages, what a crop needs, how deep and how far apart to sow."
+      },
+      {
+        "id": "year",
+        "label": "A bed's year",
+        "focus": [
+          "bed",
+          "period",
+          "cell"
+        ],
+        "note": "A bed's year is split into growing periods and a rest. Each growing period has its plant sets and its target: the cells planned in it."
+      },
+      {
+        "id": "views",
+        "label": "Views, not truth",
+        "focus": [
+          "edge",
+          "runstage",
+          "graph"
+        ],
+        "note": "An edge writes a run as an OpenUSD stage to replay or film. It is made from the map and the run, never stored back."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "dhome",
+      "type": "database",
+      "label": "DigitalHome",
+      "sublabel": "smartHomeId · owners",
+      "pos": [
+        60,
+        60
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "parea",
+      "type": "database",
+      "label": "Postal area",
+      "sublabel": "weather normals",
+      "pos": [
+        60,
+        300
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "site",
+      "type": "security",
+      "label": "Site",
+      "sublabel": "t-… · admins group",
+      "pos": [
+        300,
+        60
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "edge",
+      "type": "backend",
+      "label": "Edge",
+      "sublabel": "token · version",
+      "pos": [
+        300,
+        300
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "group",
+      "type": "security",
+      "label": "Group",
+      "sublabel": "s-… · shared or private",
+      "pos": [
+        540,
+        60
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "graph",
+      "type": "database",
+      "label": "Graph",
+      "sublabel": "A-Box · version",
+      "pos": [
+        780,
+        60
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "area",
+      "type": "database",
+      "label": "Area",
+      "sublabel": "roof · garden · offset °C",
+      "pos": [
+        540,
+        300
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "tag": "perma:GardenZone"
+    },
+    {
+      "id": "bed",
+      "type": "database",
+      "label": "Growing bed",
+      "sublabel": "length · width · cell cm",
+      "pos": [
+        1020,
+        300
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "plant",
+      "type": "database",
+      "label": "Garden plant",
+      "sublabel": "tree · year · x/y m",
+      "pos": [
+        540,
+        520
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "crop",
+      "type": "database",
+      "label": "Crop",
+      "sublabel": "names · needs · sowing",
+      "pos": [
+        780,
+        520
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "cell",
+      "type": "database",
+      "label": "Planting cell",
+      "sublabel": "row · col · status · period",
+      "pos": [
+        1020,
+        520
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "guild",
+      "type": "database",
+      "label": "Perma5Guild",
+      "sublabel": "type · robot · worms",
+      "pos": [
+        780,
+        300
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "tag": "one edge each"
+    },
+    {
+      "id": "period",
+      "type": "database",
+      "label": "Growing period",
+      "sublabel": "months · kind · sets",
+      "pos": [
+        1020,
+        60
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "runstage",
+      "type": "external",
+      "label": "Run stage · USD",
+      "sublabel": "derived · never stored",
+      "pos": [
+        300,
+        520
+      ],
+      "size": [
+        150,
+        64
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "DigitalHome.Cloud core",
+      "wraps": [
+        "dhome",
+        "parea"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "PermTek-5 · DynamoDB",
+      "wraps": [
+        "site",
+        "edge",
+        "group",
+        "graph"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "A site's map · RDF, checked by SHACL",
+      "wraps": [
+        "area",
+        "guild",
+        "bed",
+        "plant",
+        "cell"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "An edge's views",
+      "wraps": [
+        "runstage"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "A site's map · its beds' years",
+      "wraps": [
+        "period"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "ofhome",
+      "from": "dhome",
+      "to": "site",
+      "label": "smartHomeId",
+      "variant": "emphasis"
+    },
+    {
+      "id": "inarea",
+      "from": "dhome",
+      "to": "parea",
+      "label": "postal code",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        135,
+        212
+      ]
+    },
+    {
+      "id": "has",
+      "from": "site",
+      "to": "group",
+      "label": "has"
+    },
+    {
+      "id": "linked",
+      "from": "edge",
+      "to": "site",
+      "label": "linked to",
+      "fromSide": "top",
+      "toSide": "bottom",
+      "labelAt": [
+        375,
+        212
+      ]
+    },
+    {
+      "id": "abox",
+      "from": "group",
+      "to": "graph",
+      "label": "one"
+    },
+    {
+      "id": "pgrows",
+      "from": "plant",
+      "to": "crop",
+      "label": "grows"
+    },
+    {
+      "id": "cgrows",
+      "from": "cell",
+      "to": "crop",
+      "label": "grows"
+    },
+    {
+      "id": "holds",
+      "from": "graph",
+      "to": "area",
+      "label": "holds",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        735,
+        212
+      ]
+    },
+    {
+      "id": "guilds",
+      "from": "area",
+      "to": "guild",
+      "label": "guilds"
+    },
+    {
+      "id": "beds",
+      "from": "guild",
+      "to": "bed",
+      "label": "bed"
+    },
+    {
+      "id": "cells",
+      "from": "bed",
+      "to": "cell",
+      "label": "cells",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        1095,
+        442
+      ]
+    },
+    {
+      "id": "plants",
+      "from": "area",
+      "to": "plant",
+      "label": "plants",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        615,
+        442
+      ]
+    },
+    {
+      "id": "year",
+      "from": "bed",
+      "to": "period",
+      "label": "year",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "inperiod",
+      "from": "cell",
+      "to": "period",
+      "label": "in period",
+      "fromSide": "right",
+      "toSide": "right",
+      "labelAt": [
+        1194,
+        442
+      ]
+    },
+    {
+      "id": "writes",
+      "from": "edge",
+      "to": "runstage",
+      "label": "writes",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        375,
+        442
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "The levels",
+      "items": [
+        "Site: one per home, its admins and members",
+        "Area → Perma5Guild: bed, worm box, tank, robot; one edge each",
+        "A bed's year: growing periods, each its own target, and a rest"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Linked, not copied",
+      "items": [
+        "The home and its postal area stay in DigitalHome.Cloud",
+        "Crops are IRIs into one shared library",
+        "Positions are metres inside an area, never geographic"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Kept safe",
+      "items": [
+        "Every save carries the version it started from",
+        "Shapes refuse a map that does not fit the model",
+        "A Webots world or a USD run stage is a view: the map stays the truth"
+      ]
+    }
+  ]
+}

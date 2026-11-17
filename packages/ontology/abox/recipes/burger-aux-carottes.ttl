@@ -1,0 +1,27 @@
+@prefix perma:  <https://permaculture.digitalhome.cloud/ontology#> .
+@prefix id:     <https://permaculture.digitalhome.cloud/id/> .
+@prefix schema: <https://schema.org/> .
+
+# Added 2026-10-10: a household's recipe, kept as given (ingredients only; the method was not written down).
+
+id:recipe-burger-aux-carottes a schema:Recipe ;
+    schema:name "Burger aux carottes"@fr , "Carrot-bun burger"@en , "Burger im Möhrenbrötchen"@de ;
+    schema:inLanguage "fr" ;
+    schema:recipeYield "2 burgers" ;
+    schema:description "The bun is made of grated carrot, egg and cheese. Carrot, chives, red onion, rocket, garlic, paprika and gherkins can come from the bed; meat, dairy, egg and lime are bought."@en ;
+    perma:usesIngredient
+        [ schema:name "3 carottes" ; perma:crop id:crop-carrot ; perma:part perma:Root ; perma:acceptsMethod perma:Fresh , perma:Cellar ] ,
+        [ schema:name "1 œuf" ] ,
+        [ schema:name "une poignée de mozzarella râpée" ] ,
+        [ schema:name "ciboulette fraîche" ; perma:crop id:crop-chives ; perma:part perma:Leaf ; perma:acceptsMethod perma:Fresh ] ,
+        [ schema:name "2 tranches de cheddar" ] ,
+        [ schema:name "oignon rouge" ; perma:crop id:crop-onion ; perma:part perma:Bulb ; perma:acceptsMethod perma:Fresh , perma:Cellar ] ,
+        [ schema:name "roquette" ; perma:crop id:crop-rocket ; perma:part perma:Leaf ; perma:acceptsMethod perma:Fresh ] ,
+        [ schema:name "une barquette de viande hachée" ] ,
+        [ schema:name "ail en poudre" ; perma:crop id:crop-garlic ; perma:part perma:Bulb ; perma:acceptsMethod perma:Dried , perma:Fresh , perma:Cellar ] ,
+        [ schema:name "paprika fumé" ; perma:crop id:crop-sweet-pepper ; perma:part perma:Fruit ; perma:acceptsMethod perma:Dried ] ,
+        [ schema:name "sel et poivre" ] ,
+        [ schema:name "3 cuillères à soupe de yaourt grec" ] ,
+        [ schema:name "1 cuillère à café de moutarde" ; perma:crop id:crop-white-mustard ; perma:part perma:Seed ; perma:acceptsMethod perma:Dried ] ,
+        [ schema:name "le jus d'un demi citron vert" ] ,
+        [ schema:name "cornichons en morceaux, et un peu de jus du pot" ; perma:crop id:crop-cucumber ; perma:part perma:Fruit ; perma:acceptsMethod perma:Pickled ] .

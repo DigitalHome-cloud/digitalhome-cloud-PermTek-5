@@ -1,0 +1,6 @@
+part,name,qty,length_mm,stock
+board-long,long side board,2,3090,larch-45x195
+board-end,end board (between the long ones),2,1200,larch-45x195
+post-corner,"corner post, inside",4,195,larch-70x70
+post-tie,"post where a tie rod crosses, inside",4,195,larch-70x70
+tie-rod,"tie rod across, at half the substrate's depth",2,1470,tie-rod-m10

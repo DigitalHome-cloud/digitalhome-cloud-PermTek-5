@@ -1,0 +1,1255 @@
+/*
+ * D-LAB-5 template — component styles.
+ *
+ * Every value here comes from tokens.css. If you find yourself typing a hex
+ * code in this file, the token is missing — add it there, in BOTH themes,
+ * rather than hard-coding it once.
+ *
+ * Naming is .pt-{component}__{part}--{modifier} throughout. It is not
+ * fashionable and it is not enforced by tooling; it is here so that a class in
+ * the markup can be found in this file by reading it.
+ *
+ * NOTE (constraint 13 in the dlab5-cloud-template skill): a change to
+ * this file needs a clean build to
+ * appear. `npm run build` reuses the cached stylesheet and emits an IDENTICAL
+ * content hash, so the page renders with the old CSS and your edit looks like
+ * it did nothing. Run:
+ *     rm -rf packages/site/.cache packages/site/public && npm run build
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#___gatsby,
+#gatsby-focus-wrapper {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--pt-bg);
+  color: var(--pt-text);
+  font-family: var(--pt-font);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+code {
+  font-family: var(--pt-font-mono);
+  font-size: 0.9em;
+  background: var(--pt-bg-sunken);
+  padding: 0.1em 0.35em;
+  border-radius: var(--pt-radius-sm);
+}
+
+a {
+  color: var(--pt-accent);
+}
+
+/* -- the sign-in / notice screen ------------------------------------------ */
+
+.pt-gate {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: var(--pt-space-6);
+}
+
+.pt-gate__card {
+  width: 100%;
+  max-width: 26rem;
+  background: var(--pt-surface);
+  border: 1px solid var(--pt-border);
+  border-radius: var(--pt-radius);
+  box-shadow: var(--pt-shadow);
+  padding: var(--pt-space-8);
+  display: grid;
+  gap: var(--pt-space-4);
+}
+
+.pt-gate__title {
+  margin: 0;
+  font-size: 1.375rem;
+  letter-spacing: -0.01em;
+}
+
+.pt-gate__subtitle {
+  margin: 0;
+  color: var(--pt-text-muted);
+  font-size: 0.875rem;
+}
+
+.pt-gate__error {
+  margin: 0;
+  color: var(--pt-danger);
+  font-size: 0.875rem;
+}
+
+/* -- form primitives ------------------------------------------------------ */
+
+.pt-field {
+  display: grid;
+  gap: var(--pt-space-1);
+  font-size: 0.875rem;
+}
+
+.pt-field > span {
+  color: var(--pt-text-muted);
+}
+
+.pt-field input,
+.pt-field textarea,
+.pt-field select {
+  background: var(--pt-bg-sunken);
+  border: 1px solid var(--pt-border-strong);
+  border-radius: var(--pt-radius-sm);
+  color: var(--pt-text);
+  font: inherit;
+  padding: var(--pt-space-2) var(--pt-space-3);
+}
+
+.pt-field input:focus-visible,
+.pt-field textarea:focus-visible,
+.pt-field select:focus-visible {
+  outline: 2px solid var(--pt-accent);
+  outline-offset: 1px;
+}
+
+/* -- a password field with a reveal toggle -------------------------------- */
+
+/* The input and the eye share a box, so the button can sit inside the field
+   rather than beside it — beside it, the field stops lining up with every
+   other field in the form. */
+.pt-field__control {
+  position: relative;
+  display: block;
+}
+
+.pt-field__control input {
+  width: 100%;
+  /* Room for the button, so a long password scrolls under it rather than
+     behind it. */
+  padding-right: 2.5rem;
+}
+
+.pt-field__reveal {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 2.25rem;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  color: var(--pt-text-muted);
+}
+
+.pt-field__reveal:hover {
+  color: var(--pt-text);
+}
+
+/* It is out of the tab order, so :focus-visible will not fire — but a pointer
+   user still needs to see the state change, and aria-pressed is the thing that
+   is actually true. */
+.pt-field__reveal[aria-pressed="true"] {
+  color: var(--pt-accent);
+}
+
+.pt-button {
+  background: var(--pt-accent-strong);
+  border: 0;
+  border-radius: var(--pt-radius-sm);
+  color: var(--pt-text-inverse);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  padding: var(--pt-space-3) var(--pt-space-4);
+}
+
+.pt-button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.pt-button--ghost {
+  background: none;
+  color: var(--pt-text);
+  border: 1px solid var(--pt-border-strong);
+}
+
+.pt-button--ghost:hover {
+  background: var(--pt-surface);
+  border-color: var(--pt-text-muted);
+}
+
+.pt-linkbutton {
+  background: none;
+  border: 1px solid var(--pt-border-strong);
+  border-radius: var(--pt-radius-sm);
+  color: var(--pt-text-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.875rem;
+  padding: var(--pt-space-1) var(--pt-space-3);
+}
+
+.pt-linkbutton:hover {
+  color: var(--pt-text);
+  border-color: var(--pt-text-muted);
+}
+
+.pt-linkbutton--danger:hover {
+  color: var(--pt-danger);
+  border-color: var(--pt-danger);
+}
+
+/* -- app shell ------------------------------------------------------------ */
+
+.pt-shell {
+  min-height: 100%;
+}
+
+.pt-shell--railed {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+}
+
+.pt-shell__body {
+  min-width: 0;
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.pt-shell__header {
+  display: flex;
+  align-items: center;
+  gap: var(--pt-space-3);
+  padding: var(--pt-space-3) var(--pt-space-6);
+  background: var(--pt-bg-sunken);
+  border-bottom: 1px solid var(--pt-border);
+}
+
+.pt-shell__title {
+  font-weight: 700;
+  font-size: 0.9375rem;
+}
+
+.pt-shell__meta {
+  color: var(--pt-text-muted);
+  font-size: 0.75rem;
+}
+
+.pt-shell__spacer {
+  flex: 1;
+}
+
+.pt-shell__railtoggle {
+  min-width: 2rem;
+  line-height: 1;
+}
+
+.pt-shell__main {
+  padding: var(--pt-space-8) var(--pt-space-6);
+  max-width: 84rem;
+  width: 100%;
+  margin-inline: auto;
+}
+
+.pt-mark {
+  display: grid;
+  place-items: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  flex: none;
+  border-radius: 7px;
+  background: linear-gradient(
+    135deg,
+    var(--pt-accent),
+    var(--pt-accent-strong)
+  );
+  color: var(--pt-text-inverse);
+}
+
+/* -- rail ----------------------------------------------------------------- */
+
+.pt-rail {
+  width: 232px;
+  flex: none;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pt-space-3);
+  padding: var(--pt-space-4) 0;
+  background: var(--pt-rail);
+  border-right: 1px solid var(--pt-border);
+  transition: width 180ms ease;
+}
+
+/* Collapsed to nothing rather than to icons: at this width an icon rail would
+   need its own labelling story, and the toggle is one click away. */
+.pt-rail--closed {
+  width: 0;
+  padding-inline: 0;
+  overflow: hidden;
+  border-right-width: 0;
+}
+
+.pt-rail__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--pt-space-2);
+  padding: 0 var(--pt-space-4) var(--pt-space-3);
+  border-bottom: 1px solid var(--pt-border);
+  color: var(--pt-text);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.pt-rail__brandaccent {
+  color: var(--pt-accent);
+}
+
+.pt-rail__switcher {
+  display: grid;
+  gap: var(--pt-space-1);
+  padding: 0 var(--pt-space-4);
+}
+
+.pt-rail__switcherlabel {
+  font-family: var(--pt-font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pt-text-muted);
+}
+
+.pt-rail__switcher select {
+  width: 100%;
+  background: var(--pt-bg-sunken);
+  border: 1px solid var(--pt-border-strong);
+  border-radius: var(--pt-radius-sm);
+  color: var(--pt-text);
+  font: inherit;
+  font-size: 0.8rem;
+  padding: var(--pt-space-1) var(--pt-space-2);
+}
+
+.pt-rail__section {
+  display: grid;
+  gap: var(--pt-space-2);
+}
+
+.pt-rail__sectionlabel {
+  margin: 0;
+  padding: 0 var(--pt-space-4);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pt-text-muted);
+}
+
+.pt-rail__items {
+  list-style: none;
+  margin: 0;
+  padding: 0 var(--pt-space-3);
+  display: grid;
+  gap: 2px;
+}
+
+.pt-rail__item {
+  display: flex;
+  align-items: center;
+  gap: var(--pt-space-3);
+  padding: var(--pt-space-2) var(--pt-space-3);
+  border: 1px solid transparent;
+  border-radius: var(--pt-radius-sm);
+  color: var(--pt-text);
+  font-size: 0.8rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.pt-rail__item:hover {
+  background: var(--pt-surface);
+  border-color: var(--pt-border);
+}
+
+.pt-rail__item--on {
+  background: var(--pt-surface);
+  border-color: var(--pt-border-strong);
+}
+
+/* A rail entry that is a button must not inherit the browser's button look. */
+.pt-rail__item--button {
+  width: 100%;
+  background: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+  text-align: left;
+}
+
+.pt-rail__dot {
+  margin-left: auto;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--pt-accent);
+}
+
+.pt-rail__who,
+.pt-rail__note {
+  margin: 0;
+  padding: 0 var(--pt-space-4);
+  font-size: 0.6875rem;
+  line-height: 1.55;
+  color: var(--pt-text-muted);
+  overflow-wrap: anywhere;
+}
+
+/* -- the appearance segmented control ------------------------------------- */
+
+.pt-seg {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  margin: 0 var(--pt-space-3);
+  padding: 2px;
+  border: 1px solid var(--pt-border);
+  border-radius: var(--pt-radius-sm);
+  background: var(--pt-bg-sunken);
+}
+
+.pt-seg__option {
+  border: none;
+  border-radius: calc(var(--pt-radius-sm) - 2px);
+  background: none;
+  color: var(--pt-text-muted);
+  font: inherit;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: var(--pt-space-2) 0;
+  cursor: pointer;
+}
+
+.pt-seg__option--on {
+  background: var(--pt-surface-raised);
+  color: var(--pt-text);
+}
+
+/* -- the guest shell ------------------------------------------------------- */
+
+/* Wider than the signed-in rail: this one holds a real form with two fields,
+   not a list of links. */
+.pt-shell--guest .pt-rail {
+  width: 280px;
+}
+
+/* The sign-in form sits inside the rail, so it drops the card treatment it
+   had when it owned the page. */
+.pt-shell--guest .pt-gate__card {
+  max-width: none;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  padding: 0 var(--pt-space-4);
+  gap: var(--pt-space-3);
+}
+
+.pt-shell--guest .pt-gate__title {
+  font-size: 0.9375rem;
+}
+
+.pt-shell--guest .pt-gate__subtitle {
+  font-size: 0.75rem;
+}
+
+/* -- the guest landing ----------------------------------------------------- */
+
+/* One centred column. The rail already carries the form and the explanation,
+   so this side has one job: say what the product is. */
+.pt-guest {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: var(--pt-space-4);
+  text-align: center;
+  min-height: 100%;
+}
+
+.pt-guest__logo {
+  /* The two files are stacked in the same grid cell rather than laid out in a
+     row, so hiding one does not shift the other. */
+  display: grid;
+  width: min(15rem, 60vw);
+}
+
+.pt-guest__logoimg {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: auto;
+  border-radius: var(--pt-radius);
+}
+
+/* Dark is the default, matching :root and what the server emits. Light is the
+   override, keyed on the same attribute the pre-paint script sets — so the
+   right logo is the one that paints, not the one that replaces another. */
+.pt-guest__logoimg--light {
+  display: none;
+}
+
+[data-pt-theme="light"] .pt-guest__logoimg--dark {
+  display: none;
+}
+
+[data-pt-theme="light"] .pt-guest__logoimg--light {
+  display: block;
+}
+
+/* The product line, under the mark. Set apart from the lede below it by
+   weight rather than size, so it reads as a caption to the logo and not as a
+   second heading competing with the one above. */
+.pt-guest__tagline {
+  margin: 0;
+  max-width: 30ch;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* The hero type is reused verbatim from the signed-in home — same sizes, same
+   accent, same measure — so the two screens cannot drift apart. Only the
+   centring is specific to this page, because the guest column is centred and
+   the signed-in hero is not. */
+.pt-guest .pt-hero__lede,
+.pt-guest .pt-hero__title {
+  margin-inline: auto;
+}
+
+/* Deliberately not a .pt-button: it leaves the site, and giving it the same
+   weight as the primary action would make "buy me a coffee" compete with
+   "sign in". */
+.pt-coffee {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pt-space-2);
+  margin-top: var(--pt-space-2);
+  padding: var(--pt-space-2) var(--pt-space-4);
+  border: 1px solid var(--pt-border-strong);
+  border-radius: 999px;
+  color: var(--pt-text-muted);
+  font-size: 0.8125rem;
+  text-decoration: none;
+}
+
+.pt-coffee:hover {
+  color: var(--pt-text);
+  border-color: var(--pt-warning);
+}
+
+/* -- hero, on the signed-in home ------------------------------------------ */
+
+.pt-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 18rem);
+  gap: var(--pt-space-6);
+  align-items: center;
+  margin-bottom: var(--pt-space-6);
+}
+
+.pt-hero__copy {
+  display: grid;
+  gap: var(--pt-space-4);
+  align-content: start;
+  max-width: 40rem;
+}
+
+.pt-hero__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--pt-space-2);
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pt-accent);
+}
+
+.pt-hero__eyebrow::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.pt-hero__title {
+  margin: 0;
+  font-size: clamp(1.875rem, 1.3rem + 2.4vw, 3rem);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+
+.pt-hero__titleaccent {
+  color: var(--pt-accent);
+}
+
+.pt-hero__lede {
+  margin: 0;
+  max-width: 34rem;
+  color: var(--pt-text-muted);
+  line-height: 1.65;
+}
+
+.pt-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pt-space-3);
+}
+
+.pt-hero__art {
+  width: 100%;
+  height: auto;
+  max-height: 13rem;
+  justify-self: end;
+  opacity: 0.9;
+}
+
+/* -- stats ---------------------------------------------------------------- */
+
+.pt-stats {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  border: 1px solid var(--pt-border);
+  border-radius: var(--pt-radius);
+  background: var(--pt-surface);
+  overflow: hidden;
+}
+
+.pt-stat {
+  flex: 1 1 8rem;
+  padding: var(--pt-space-3) var(--pt-space-4);
+  border-right: 1px solid var(--pt-border);
+}
+
+.pt-stat:last-child {
+  border-right: 0;
+}
+
+.pt-stat dt {
+  font-size: 1.25rem;
+  font-weight: 700;
+  /* Tabular figures so a number that changes does not shift the layout. */
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.pt-stat dd {
+  margin: 3px 0 0;
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--pt-text-muted);
+  font-family: var(--pt-font-mono);
+}
+
+/* -- cards ---------------------------------------------------------------- */
+
+.pt-cards__heading {
+  margin: 0 0 var(--pt-space-4);
+  scroll-margin-top: var(--pt-space-6);
+}
+
+.pt-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--pt-space-4);
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+}
+
+.pt-card {
+  display: grid;
+  gap: var(--pt-space-1);
+  background: var(--pt-surface);
+  border: 1px solid var(--pt-border);
+  border-radius: var(--pt-radius);
+  padding: var(--pt-space-4);
+  color: inherit;
+  text-decoration: none;
+}
+
+.pt-card:hover {
+  border-color: var(--pt-accent);
+}
+
+.pt-card__title {
+  font-weight: 600;
+}
+
+.pt-card__body,
+.pt-card__meta {
+  color: var(--pt-text-muted);
+  font-size: 0.875rem;
+}
+
+/* -- a placeholder view --------------------------------------------------- */
+
+/*
+ * Every screen under /w/<slug>/ is one of these until a fork replaces it.
+ * Styled rather than left bare on purpose: an unstyled placeholder reads as a
+ * broken page, and the first real screen should be able to keep the frame and
+ * change only what is inside it.
+ */
+.pt-panel {
+  background: var(--pt-surface);
+  border: 1px solid var(--pt-border);
+  border-radius: var(--pt-radius);
+  padding: var(--pt-space-6);
+  display: grid;
+  gap: var(--pt-space-3);
+}
+
+.pt-panel__title {
+  margin: 0;
+  font-size: 1.0625rem;
+}
+
+.pt-panel__hint {
+  margin: 0;
+  color: var(--pt-text-muted);
+  font-size: 0.875rem;
+  max-width: 46rem;
+  line-height: 1.65;
+}
+
+.pt-pagehead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--pt-space-6);
+  flex-wrap: wrap;
+  margin-bottom: var(--pt-space-4);
+}
+
+/* -- small states --------------------------------------------------------- */
+
+.pt-lede,
+.pt-muted {
+  color: var(--pt-text-muted);
+}
+
+.pt-error {
+  color: var(--pt-danger);
+}
+
+.pt-empty {
+  border: 1px dashed var(--pt-border-strong);
+  border-radius: var(--pt-radius);
+  padding: var(--pt-space-6);
+}
+
+.pt-empty p {
+  margin: 0 0 var(--pt-space-2);
+}
+
+.pt-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pt-space-2);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pt-accent);
+}
+
+.pt-badge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.pt-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pt-space-2);
+  background: none;
+  border: 1px solid var(--pt-border-strong);
+  border-radius: 999px;
+  color: var(--pt-text-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+  padding: var(--pt-space-1) var(--pt-space-3);
+}
+
+.pt-chip--on {
+  color: var(--pt-text);
+  border-color: var(--pt-accent);
+  background: var(--pt-surface);
+}
+
+/* -- narrow viewports ------------------------------------------------------ */
+
+@media (max-width: 52rem) {
+  .pt-shell--railed {
+    grid-template-columns: 1fr;
+  }
+
+  /* The rail stops being a column and becomes a band above the content.
+     `position: static` matters: a sticky element with height:100vh at this
+     width covers the page. */
+  .pt-rail {
+    position: static;
+    height: auto;
+    width: 100%;
+    border-right: 0;
+    border-bottom: 1px solid var(--pt-border);
+  }
+
+  .pt-rail__items {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 900px) {
+  .pt-shell--guest .pt-rail {
+    width: 100%;
+  }
+
+  .pt-hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* The art is decoration; at this width the copy needs the room. */
+  .pt-hero__art {
+    display: none;
+  }
+}
+
+/* -- motion ---------------------------------------------------------------- */
+
+/*
+ * Anything that moves on its own stops when the reader has asked for that.
+ * Transitions on a deliberate action — the rail opening because a button was
+ * pressed — are covered too, which is a slight over-reach and the right
+ * trade: it is one rule, and unattended motion is what causes trouble.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* -- tenants, spaces, edges, two-step sign-in (from the Mediathek) -------- */
+
+.pt-select,
+.pt-input {
+  background: var(--pt-bg-sunken);
+  color: var(--pt-text);
+  border: 1px solid var(--pt-border);
+  border-radius: var(--pt-radius-sm);
+  padding: var(--pt-space-1) var(--pt-space-2);
+  font: inherit;
+  max-width: 100%;
+}
+
+.pt-select:focus-visible,
+.pt-input:focus-visible {
+  outline: 2px solid var(--pt-accent);
+  outline-offset: 1px;
+}
+
+.pt-chip__x {
+  background: none; border: 0; padding: 0 0 0 4px; cursor: pointer;
+  color: inherit; font: inherit; opacity: 0.7;
+}
+
+.pt-chip__x:hover { opacity: 1; }
+
+.pt-select--small { padding-block: 2px; font-size: 0.8rem; }
+
+.pt-unknown__form .pt-input { width: 12rem; }
+
+.pt-link { max-width: 36rem; }
+
+.pt-link__form { display: flex; gap: var(--pt-space-2); margin: var(--pt-space-2) 0; }
+
+.pt-link__code {
+  font-family: var(--pt-font-mono);
+  font-size: 1.4rem;
+  letter-spacing: 0.15em;
+  width: 11ch;
+  text-transform: uppercase;
+}
+
+.pt-link__actions { display: flex; gap: var(--pt-space-2); flex-wrap: wrap; align-items: center; }
+
+.pt-link__actions .pt-panel__hint { flex-basis: 100%; }
+
+.pt-facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--pt-space-1) var(--pt-space-4);
+  margin: var(--pt-space-4) 0;
+}
+
+.pt-facts dt { color: var(--pt-text-muted); }
+
+.pt-facts dd { margin: 0; overflow-wrap: anywhere; }
+
+.pt-ok { color: var(--pt-success); }
+
+.pt-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+
+.pt-table th {
+  text-align: left;
+  font-weight: 500;
+  color: var(--pt-text-muted);
+  border-bottom: 1px solid var(--pt-border);
+  padding: var(--pt-space-1) var(--pt-space-2);
+}
+
+.pt-table td {
+  border-bottom: 1px solid var(--pt-border);
+  padding: var(--pt-space-1) var(--pt-space-2);
+  overflow-wrap: anywhere;
+}
+
+.pt-steps {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pt-space-2);
+  margin: 0 0 var(--pt-space-4);
+  padding: 0;
+  align-items: center;
+}
+
+.pt-steps li {
+  display: flex;
+  align-items: center;
+  gap: var(--pt-space-2);
+  padding: var(--pt-space-1) var(--pt-space-3);
+  border: 1px solid var(--pt-border);
+  border-radius: 999px;
+  color: var(--pt-text-muted);
+  font-size: 0.9rem;
+}
+
+.pt-steps li span {
+  display: grid;
+  place-items: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  background: var(--pt-surface-raised);
+  font-size: 0.75rem;
+}
+
+.pt-steps li.is-on { border-color: var(--pt-accent); color: var(--pt-text); }
+
+.pt-steps li.is-on span { background: var(--pt-accent); color: var(--pt-text-inverse); }
+
+.pt-steps li.is-done span { background: var(--pt-success); color: var(--pt-text-inverse); }
+
+.pt-steps .pt-steps__lang { margin-left: auto; border: 0; padding: 0; }
+
+.pt-form { display: grid; gap: var(--pt-space-2); }
+
+/* Households and vaults (Settings, ADR-0005) */
+.pt-panel__sub { font-size: 0.95rem; margin: var(--pt-space-3) 0 var(--pt-space-1); }
+
+.pt-space { border-top: 1px solid var(--pt-border); margin-top: var(--pt-space-2); }
+
+.pt-members__list { list-style: none; display: flex; flex-wrap: wrap; gap: var(--pt-space-1); padding: 0; margin: var(--pt-space-1) 0; }
+
+.pt-members__add { display: flex; gap: var(--pt-space-2); flex-wrap: wrap; margin: var(--pt-space-1) 0; }
+
+.pt-members__add .pt-input { min-width: 16rem; }
+
+.pt-id { font-family: var(--pt-font-mono); font-size: 0.75rem; font-weight: 400; }
+
+/* a household's code for another site */
+.pt-sitecode { margin: 0 0 0.75rem; }
+
+.pt-sitecode summary { cursor: pointer; color: var(--pt-text-muted); font-size: 0.875rem; }
+
+.pt-sitecode code { overflow-wrap: anywhere; user-select: all; }
+
+/* two-step sign-in: QR, key, code */
+.pt-mfa { display: grid; gap: var(--pt-space-3); max-width: 22rem; }
+
+.pt-mfa__qr { justify-self: start; padding: var(--pt-space-2); background: #fff; border-radius: var(--pt-radius-sm, 4px); line-height: 0; }
+
+.pt-mfa__key { font-family: var(--pt-font-mono); letter-spacing: 0.04em; overflow-wrap: anywhere; user-select: all; }
+
+/* Settings → install an edge on another PC */
+.pt-steps { margin: 0; padding-left: 1.25rem; display: grid; gap: var(--pt-space-1); font-size: 0.875rem; }
+
+.pt-install { display: flex; flex-wrap: wrap; gap: var(--pt-space-2); }
+
+.pt-install a { text-decoration: none; }
+
+.pt-install__sha code { overflow-wrap: anywhere; font-size: 0.75rem; }
+
+.pt-install__manual summary { cursor: pointer; font-size: 0.875rem; color: var(--pt-text-muted); }
+
+.pt-install__cmd { font-family: var(--pt-font-mono); font-size: 0.75rem; background: var(--pt-bg-sunken); padding: var(--pt-space-2) var(--pt-space-3); border-radius: var(--pt-radius-sm); overflow-x: auto; }
+
+/* -- habitat and climate (docs/adr/0016) ----------------------------------- */
+
+.pt-habitat__start { display: grid; gap: var(--pt-space-3); max-width: 30rem; }
+
+.pt-climate { display: grid; gap: var(--pt-space-2); }
+.pt-climate__scroll { overflow-x: auto; }
+.pt-climate__table { font-variant-numeric: tabular-nums; min-width: 40rem; }
+.pt-climate__table td, .pt-climate__table thead th { text-align: right; }
+/* frost by the mean daily minimum: under 0 °C, and under 5 °C */
+.pt-climate--frost { color: var(--pt-danger); font-weight: 600; }
+.pt-climate--cold { color: var(--pt-warning); }
+.pt-climate__source { font-size: 0.8125rem; margin: 0; }
+
+/* -- habitat map, calendar, now (docs/adr/0016) ---------------------------- */
+
+.pt-savebar {
+  position: sticky; top: 0; z-index: 2;
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--pt-space-3);
+  background: var(--pt-surface-raised); border: 1px solid var(--pt-border-strong);
+  border-radius: var(--pt-radius); padding: var(--pt-space-2) var(--pt-space-4); margin-bottom: var(--pt-space-4);
+}
+.pt-savebar .pt-error { flex-basis: 100%; margin: 0; padding-left: 1.2rem; }
+
+.pt-habitat { display: grid; gap: var(--pt-space-4); }
+.pt-habitat__actions { display: flex; flex-wrap: wrap; gap: var(--pt-space-2); margin: 0; }
+.pt-habitat__zonehead { display: flex; align-items: center; gap: var(--pt-space-3); }
+.pt-habitat__name { font-size: 1.0625rem; font-weight: 600; max-width: 20rem; }
+.pt-habitat__fields { display: flex; flex-wrap: wrap; gap: var(--pt-space-3); }
+.pt-habitat__fields .pt-field { width: 9.5rem; }
+.pt-habitat__chips { display: flex; flex-wrap: wrap; gap: var(--pt-space-2); }
+
+.pt-bedbox { display: grid; gap: var(--pt-space-2); border-top: 1px solid var(--pt-border); padding-top: var(--pt-space-3); }
+.pt-bedbox__hint { margin: 0; font-size: 0.8125rem; }
+.pt-bedbox__brush { max-width: 22rem; }
+.pt-bed__scroll { overflow-x: auto; padding-bottom: var(--pt-space-1); }
+.pt-bed { display: grid; gap: 1px; width: max-content; background: var(--pt-border); border: 1px solid var(--pt-border-strong); }
+.pt-bed__cell {
+  width: 1.25rem; height: 1.25rem; padding: 0; border: 0; cursor: pointer;
+  background: var(--pt-bg-sunken);
+}
+.pt-bed__cell:hover { outline: 2px solid var(--pt-accent); outline-offset: -2px; }
+.pt-bed__cell--near { opacity: 0.35; }
+.pt-bed__cell--CellPlanned { opacity: 0.6; background-image: repeating-linear-gradient(45deg, transparent 0 3px, rgba(255, 255, 255, 0.35) 3px 5px); }
+.pt-bed__cell--CellHarvested { opacity: 0.4; }
+.pt-bed__cell--sel { outline: 2px solid var(--pt-text); outline-offset: -2px; }
+.pt-cellpanel { display: grid; gap: var(--pt-space-2); background: var(--pt-surface-raised); border-radius: var(--pt-radius-sm); padding: var(--pt-space-3); }
+.pt-cellpanel__job { margin: 0; font-size: 0.8125rem; font-variant-numeric: tabular-nums; }
+
+.pt-plants { display: grid; gap: var(--pt-space-3); grid-template-columns: minmax(10rem, 16rem) 1fr; align-items: start; }
+@media (max-width: 720px) { .pt-plants { grid-template-columns: 1fr; } }
+.pt-plants__sketch { width: 100%; height: auto; }
+.pt-plants__ground { fill: var(--pt-bg-sunken); stroke: var(--pt-border-strong); stroke-width: 0.05; }
+.pt-plants__label { fill: var(--pt-text-muted); }
+.pt-input--num { width: 5.5rem; }
+
+.pt-cal { min-width: 46rem; }
+.pt-cal td, .pt-cal thead th { text-align: center; white-space: nowrap; }
+.pt-cal__now { background: var(--pt-surface-raised); }
+.pt-cal__dot { display: inline-block; width: 0.6rem; height: 0.6rem; border-radius: 50%; margin-right: 0.4rem; }
+.pt-cal__act {
+  display: inline-block; min-width: 1.4rem; margin: 1px; padding: 0 0.2rem; border-radius: 3px;
+  font-size: 0.75rem; font-weight: 600; text-align: center; border: 1px solid var(--pt-border-strong);
+}
+.pt-cal__act--SowIndoors, .pt-cal__act--SowOutdoors, .pt-cal__act--PlantOut { background: var(--pt-accent); color: var(--pt-text-inverse); border-color: transparent; }
+.pt-cal__act--Harvest { background: var(--pt-success); color: var(--pt-text-inverse); border-color: transparent; }
+.pt-cal__act--Flowering { color: var(--pt-text); }
+.pt-cal__act--frost { background: var(--pt-warning); color: var(--pt-text-inverse); border-color: transparent; }
+.pt-cal__act--WinterPrune, .pt-cal__act--SummerPrune { color: var(--pt-text-muted); }
+.pt-cal__legend { display: flex; flex-wrap: wrap; gap: var(--pt-space-3); font-size: 0.8125rem; color: var(--pt-text-muted); margin: 0; }
+
+.pt-now__month { max-width: 12rem; }
+.pt-now { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--pt-space-2); }
+.pt-now__frost { border-left: 3px solid var(--pt-warning); padding-left: var(--pt-space-2); }
+.pt-now__warn { color: var(--pt-warning); font-size: 0.875rem; }
+.pt-now__could { display: flex; flex-wrap: wrap; gap: var(--pt-space-2); margin: 0; }
+
+/* the bed's wet weight, and the worm box's end of the grid (docs/specs/roofbed-system.md) */
+.pt-bedload { margin: 0; font-size: 0.875rem; padding: var(--pt-space-2) var(--pt-space-3); border-left: 3px solid var(--pt-border-strong);
+  background: var(--pt-surface-raised); border-radius: var(--pt-radius-sm); }
+.pt-bedload--terrace { border-left-color: var(--pt-warning); }
+.pt-bedload--heavy { border-left-color: var(--pt-danger); }
+.pt-bed__cell--bin { cursor: default; background: repeating-linear-gradient(90deg, var(--pt-surface-raised) 0 4px, var(--pt-border-strong) 4px 5px); }
+
+/* a Perma5Guild: the area's working unit, with its bed inside (docs/adr/0020) */
+.pt-guild { display: grid; gap: var(--pt-space-3); border: 1px solid var(--pt-border-strong); border-left: 3px solid var(--pt-accent);
+  border-radius: var(--pt-radius-sm); padding: var(--pt-space-4); background: var(--pt-bg-sunken); }
+.pt-guild .pt-bedbox { border-top: 0; padding-top: 0; }
+.pt-guild__robot { font-size: 0.8125rem; }
+.pt-guild__check { display: inline-flex; align-items: center; gap: var(--pt-space-2); font-size: 0.875rem; color: var(--pt-text-muted); }
+
+/* the feeding guide under a WormBed5 guild */
+.pt-guide { font-size: 0.875rem; }
+.pt-guide > summary { cursor: pointer; color: var(--pt-text-muted); }
+.pt-guide__kinds { display: grid; grid-template-columns: max-content 1fr; gap: var(--pt-space-1) var(--pt-space-3); margin: var(--pt-space-2) 0; }
+.pt-guide__kinds dd { margin: 0; }
+.pt-guide__class { font-weight: 600; }
+.pt-guide__class--never { color: var(--pt-danger, #b3261e); }
+
+/* recipes, and the mixed planting they ask for */
+.pt-recipes { display: grid; gap: var(--pt-space-4); }
+.pt-recipe { border-top: 1px solid var(--pt-border); padding: var(--pt-space-2) 0; }
+.pt-recipe > summary { cursor: pointer; }
+.pt-recipe__lines { list-style: none; padding: 0; margin: var(--pt-space-2) 0; display: grid; gap: var(--pt-space-1); font-size: 0.875rem; }
+.pt-recipe__lines--edit li { display: flex; justify-content: space-between; gap: var(--pt-space-3); align-items: center; }
+.pt-recipe__steps { font-size: 0.875rem; }
+.pt-recipe__dot { display: inline-block; width: 0.7rem; height: 0.7rem; border-radius: 2px; margin-right: var(--pt-space-2); vertical-align: baseline; }
+.pt-recipes__paste { width: 100%; font-family: inherit; }
+.pt-recipes__controls { display: flex; flex-wrap: wrap; gap: var(--pt-space-3); align-items: center; margin: var(--pt-space-3) 0; }
+.pt-recipes__legend { display: flex; flex-wrap: wrap; gap: var(--pt-space-2) var(--pt-space-4); font-size: 0.8125rem; }
+.pt-bed--preview .pt-bed__cell { cursor: default; }
+.pt-bed__cell--old { outline: 1px solid var(--pt-text); outline-offset: -1px; }
+
+/* the year in the bed */
+.pt-recipes__slider input { width: min(24rem, 100%); }
+.pt-yeartable { border-collapse: collapse; font-size: 0.8125rem; width: 100%; }
+.pt-yeartable th, .pt-yeartable td { text-align: left; vertical-align: top; padding: var(--pt-space-1) var(--pt-space-2); border-top: 1px solid var(--pt-border); }
+.pt-yeartable tbody tr { cursor: pointer; }
+.pt-yeartable__at { background: var(--pt-surface-raised); }
+
+/* the care calendar of a WormBed5 guild (docs/adr/0024): who does a task, and its months */
+.pt-care { display: grid; gap: var(--pt-space-2); margin-top: var(--pt-space-4); }
+.pt-care__who { display: inline-block; min-width: 3.5rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--pt-text-muted); }
+.pt-care__task--robot .pt-care__who { color: var(--pt-accent); }
+.pt-care__mark { display: inline-block; width: 1rem; height: 0.75rem; padding: 0; }
+.pt-care__mark--person { background: var(--pt-warning); border-color: transparent; }
+.pt-care__mark--robot { background: var(--pt-accent); border-color: transparent; }
+.pt-care-today__guild { display: grid; gap: var(--pt-space-1); }
+.pt-care-today__name { font-size: 1rem; margin: var(--pt-space-2) 0 0; }
+.pt-care-today__done { margin-left: var(--pt-space-2); padding: 0.1rem 0.6rem; font-size: 0.8125rem; }
+
+/* a guild's water (docs/adr/0025) */
+.pt-water__flows { list-style: none; margin: var(--pt-space-2) 0; padding: 0; display: grid; gap: var(--pt-space-2); }
+.pt-water__flows li { display: flex; flex-wrap: wrap; align-items: center; gap: var(--pt-space-1); }
+.pt-water__arrow { color: var(--pt-accent); font-weight: 700; }
+.pt-water__num { width: 5.5rem; }
+.pt-water__worm::before { background: var(--pt-warning); }
+.pt-water__stores, .pt-water__budget { font-size: 0.8125rem; }
+.pt-water__budget td { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* the Learn view: plan-do-check-act cycles (docs/adr/0026) */
+.pt-learn { display: grid; gap: var(--pt-space-4); }
+.pt-learn__guild { display: grid; gap: var(--pt-space-3); }
+.pt-learn__cycle { border: 1px solid var(--pt-border-strong); border-left: 3px solid var(--pt-accent); border-radius: var(--pt-radius-sm);
+  padding: var(--pt-space-3) var(--pt-space-4); display: grid; gap: var(--pt-space-2); background: var(--pt-bg-sunken); }
+.pt-learn__head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--pt-space-2) var(--pt-space-3); }
+.pt-learn__phases { display: flex; gap: var(--pt-space-1); list-style: none; margin: 0; padding: 0; }
+.pt-learn__due { color: var(--pt-warning); font-weight: 600; }
+.pt-learn__hyps { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--pt-space-3); }
+.pt-learn__hyp { display: grid; gap: var(--pt-space-1); padding-top: var(--pt-space-2); border-top: 1px solid var(--pt-border); }
+.pt-learn__hyphead { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--pt-space-2); }
+.pt-learn__code { font-family: var(--pt-font-mono, monospace); font-size: 0.75rem; color: var(--pt-text-muted); min-width: 2em; }
+.pt-learn__verdict--VerdictHolds::before { background: var(--pt-success); }
+.pt-learn__verdict--VerdictFails::before { background: var(--pt-danger); }
+.pt-learn__verdict--VerdictOpen::before { background: var(--pt-text-muted); }
+.pt-learn__numbers { margin: 0; font-size: 0.875rem; }
+.pt-learn__num { width: 6rem; }
+.pt-learn__strip { position: relative; height: 1.1rem; border-radius: 999px; background: var(--pt-bg); border: 1px solid var(--pt-border); max-width: 28rem; }
+.pt-learn__range { position: absolute; top: 0; bottom: 0; background: color-mix(in srgb, var(--pt-success) 30%, transparent); }
+.pt-learn__expected { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--pt-success); }
+.pt-learn__dot { position: absolute; top: 50%; width: 0.7rem; height: 0.7rem; margin: -0.35rem 0 0 -0.35rem; border-radius: 50%;
+  background: var(--pt-text); border: 2px solid var(--pt-bg); }
+.pt-learn__dot--out { background: var(--pt-danger); }
+.pt-learn__why { font-size: 0.8125rem; }
+.pt-learn__why > summary { cursor: pointer; color: var(--pt-text-muted); }
+.pt-learn__checks { margin: 0; padding-left: 1.1em; font-size: 0.8125rem; }
+.pt-learn__add { display: flex; flex-wrap: wrap; gap: var(--pt-space-2); align-items: center; margin: 0; }
+.pt-learn__act { width: 100%; max-width: 40rem; }
+
+/* Plant sets, crowded cells, farms of beds, two-step confirms (docs/adr/0027) */
+.pt-bed__cell--crowded { outline: 2px dashed var(--pt-danger); outline-offset: -2px; }
+.pt-plansets { margin: 0.75rem 0; }
+.pt-plansets > summary { cursor: pointer; font-weight: 600; }
+.pt-plansets__list { list-style: none; padding: 0; margin: 0.5rem 0; display: grid; gap: 0.5rem; }
+.pt-plansets__list li { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.75rem; }
+.pt-plansets__members { flex-basis: 100%; font-size: 0.875rem; }
+.pt-plansets__share { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.875rem; }
+.pt-plansets__bed h4 { margin: 0.75rem 0 0.25rem; }
+.pt-farm { width: 100%; max-height: 22rem; margin: 0.5rem 0; }
+.pt-farm__bed { cursor: pointer; }
+.pt-farm__bed rect { fill: var(--pt-surface-raised); stroke: var(--pt-border-strong); stroke-width: 3; }
+.pt-farm__bed--open rect, .pt-farm__bed:focus-visible rect { stroke: var(--pt-accent); stroke-width: 6; }
+.pt-farm__bed:focus { outline: none; }
+.pt-farm__label { font-size: 18px; fill: var(--pt-text); }
+.pt-confirm { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.pt-button--danger { background: var(--pt-danger); border-color: var(--pt-danger); color: #fff; }
+.pt-io__delete { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--pt-border); }
+
+/* A WormBed5, guided; plant sets explained (docs/adr/0028) */
+.pt-howto { margin: 0 0 1rem; }
+.pt-howto > summary { cursor: pointer; font-weight: 600; }
+.pt-howto ol { margin: 0.5rem 0 0; padding-left: 1.25rem; display: grid; gap: 0.25rem; }
+.pt-wizard { margin-bottom: 1rem; }
+.pt-wizard__step { border: 1px solid var(--pt-border); border-radius: var(--pt-radius-sm); padding: 0.75rem 1rem; margin: 0 0 0.75rem; display: grid; gap: 0.5rem; }
+.pt-wizard__step > legend { font-weight: 600; padding: 0 0.25rem; }
+.pt-wizard__step .pt-habitat__chips { margin: 0; }
+.pt-plansets__about { flex-basis: 100%; font-size: 0.875rem; }
+.pt-plansets__why { font-size: 0.875rem; }
+.pt-plansets__why > summary { cursor: pointer; }
+.pt-plansets__deep { flex-basis: 100%; font-size: 0.875rem; color: var(--pt-warning); }
+.pt-sets__steps { padding-left: 1.25rem; display: grid; gap: 0.25rem; }
+.pt-sets__index { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0; }
+.pt-sets__index .pt-chip { text-decoration: none; }
+.pt-sets__set { margin-top: 1rem; scroll-margin-top: 1rem; }
+.pt-sets__set h3 { margin: 1rem 0 0.25rem; font-size: 1rem; }
+.pt-sets__about { font-weight: 500; }
+.pt-sets__pairs { margin: 0; padding-left: 1.25rem; display: grid; gap: 0.25rem; }
+.pt-table__scroll { overflow-x: auto; }
+
+/* A bed's year in periods (docs/adr/0029): twelve months, growing in green, rest in grey */
+.pt-periods { display: grid; gap: var(--pt-space-2); margin: var(--pt-space-3) 0; }
+.pt-periods__title { margin: 0; font-size: 0.95rem; }
+.pt-periods__strip { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 2px; }
+.pt-periods__month { font: inherit; font-size: 0.75rem; padding: 0.35rem 0; border: 1px solid var(--pt-border); border-radius: var(--pt-radius-sm);
+  background: var(--pt-bg-sunken); color: var(--pt-text-muted); cursor: default; text-align: center; min-width: 0; overflow: hidden; }
+.pt-periods__month--GrowingKind { background: color-mix(in srgb, var(--pt-success) 30%, transparent); color: var(--pt-text); cursor: pointer; }
+.pt-periods__month--RestKind { background: color-mix(in srgb, var(--pt-text-muted) 22%, transparent); color: var(--pt-text); cursor: pointer; }
+.pt-periods__month--on { outline: 2px solid var(--pt-accent); outline-offset: -2px; font-weight: 600; }
+.pt-periods__edit { display: grid; gap: var(--pt-space-2); background: var(--pt-surface-raised); border-radius: var(--pt-radius-sm); padding: var(--pt-space-3); }
+.pt-bed__cell--CellLost { opacity: 0.35; background-image: repeating-linear-gradient(45deg, transparent 0 3px, var(--pt-danger) 3px 4px); }
+
+/* A bed's target in 3D (Bed3D.tsx) */
+.pt-bed3d { margin: var(--pt-space-2) 0; }
+.pt-bed3d > summary { cursor: pointer; font-weight: 600; }
+.pt-bed3d__view { width: 100%; min-height: 260px; border-radius: var(--pt-radius-sm); overflow: hidden; background: var(--pt-bg-sunken); margin-top: var(--pt-space-2); }
+.pt-bed3d__view canvas { display: block; width: 100%; touch-action: none; }

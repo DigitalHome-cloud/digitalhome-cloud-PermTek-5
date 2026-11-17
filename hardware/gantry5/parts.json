@@ -1,0 +1,43 @@
+{
+  "about": "What Gantry5 buys, with a price per unit to plan with. Estimates in euros, incl. VAT, for single pieces from a hobby shop; check before ordering. gantry5.py says how many of each a variant needs.",
+  "pricesChecked": "2026-10-17 (estimates, not quotes)",
+  "materials": {
+    "vslot-2020": {"name": "V-slot 2020 extrusion", "per": "m", "eur": 9, "supplier": "OpenBuilds-type V-slot, cut to length (Dold Mechatronik, Ooznest, AliExpress)"},
+    "vslot-2040": {"name": "V-slot 2040 extrusion", "per": "m", "eur": 14, "supplier": "as 2020; longer than 3 m: two pieces joined over a post"},
+    "vslot-2060": {"name": "V-slot 2060 extrusion", "per": "m", "eur": 19, "supplier": "as 2020"},
+    "gt2-belt": {"name": "GT2 belt, 6 mm, fibreglass", "per": "m", "eur": 2.5, "supplier": "3D-printer shops"},
+    "drag-chain": {"name": "Drag chain 10 x 20 mm", "per": "m", "eur": 6, "supplier": "3D-printer shops"},
+    "cable-4core": {"name": "Shielded 4-core cable for steppers, UV-stable sheath", "per": "m", "eur": 1.8, "supplier": "electronics shops"},
+    "birch-ply-12": {"name": "Birch plywood 12 mm", "per": "m2", "eur": 45, "supplier": "timber merchant; cut on a CNC or by jigsaw from the DXF printed 1:1"},
+    "aluminium-6": {"name": "Aluminium plate 6 mm (5083 or 6082)", "per": "m2", "eur": 160, "supplier": "online cutting service from the DXF (water jet or CNC)"},
+    "larch-45x195": {"name": "Larch heartwood, untreated, 45 x 195 mm", "per": "m", "eur": 11, "supplier": "sawmill or timber merchant; or Douglas fir"},
+    "larch-70x70": {"name": "Larch heartwood, untreated, 70 x 70 mm", "per": "m", "eur": 7, "supplier": "as the boards"},
+    "tie-rod-m10": {"name": "Threaded rod M10, stainless A2, with washers and nuts", "per": "m", "eur": 9, "supplier": "hardware store"}
+  },
+  "items": {
+    "v-wheel": {"name": "Mini V wheel kit (wheel, bearings, spacer)", "eur": 2.5, "supplier": "OpenBuilds-type"},
+    "eccentric-spacer": {"name": "Eccentric spacer 6 mm", "eur": 1.2, "supplier": "OpenBuilds-type"},
+    "nema17": {"name": "Stepper NEMA17, 48 mm, 2 A", "eur": 15, "supplier": "StepperOnline or 3D-printer shops"},
+    "gt2-pulley": {"name": "GT2 pulley 20 teeth, 5 mm bore", "eur": 2, "supplier": "3D-printer shops"},
+    "gt2-idler": {"name": "GT2 idler 20 teeth, 5 mm bore", "eur": 2, "supplier": "3D-printer shops"},
+    "t8-screw": {"name": "Lead screw T8 x 8 with brass nut and coupler", "eur": 18, "supplier": "3D-printer shops"},
+    "end-switch": {"name": "End switch (micro switch, normally closed wiring)", "eur": 1.5, "supplier": "electronics shops"},
+    "controller": {"name": "FluidNC controller, ESP32 with TMC2209 drivers (e.g. the Jackpot board)", "eur": 85, "supplier": "FluidNC's board makers"},
+    "pi5": {"name": "Raspberry Pi 5, 8 GB, with case, cooler and 27 W supply", "eur": 120, "supplier": "Raspberry Pi resellers"},
+    "pi-ssd": {"name": "microSD 64 GB (or an NVMe hat and SSD)", "eur": 15, "supplier": "Raspberry Pi resellers"},
+    "psu-24v": {"name": "Power supply 24 V, 150 W (e.g. Mean Well LRS-150-24)", "eur": 28, "supplier": "electronics shops"},
+    "estop": {"name": "E-stop mushroom, twist to release, NC contact", "eur": 15, "supplier": "electrical wholesaler"},
+    "contactor": {"name": "Contactor 2 NO, 24 V DC coil: the e-stop cuts motor and valve power through it", "eur": 22, "supplier": "electrical wholesaler"},
+    "valve": {"name": "Solenoid valve 1/2 inch, normally closed, 24 V DC, brass", "eur": 16, "supplier": "irrigation shops"},
+    "valve-relay": {"name": "Relay module for the valve (driven by the controller's coolant output)", "eur": 5, "supplier": "electronics shops"},
+    "flow-meter": {"name": "Flow meter 1/2 inch, Hall pulses (YF-S201 class)", "eur": 6, "supplier": "electronics shops"},
+    "nozzle": {"name": "Watering nozzle, brass, with 8 mm hose", "eur": 6, "supplier": "irrigation shops"},
+    "soil-probe": {"name": "Soil moisture and temperature probe, capacitive, I2C", "eur": 12, "supplier": "Adafruit STEMMA soil sensor class"},
+    "camera": {"name": "Raspberry Pi Camera Module 3 with a 1 m ribbon", "eur": 32, "supplier": "Raspberry Pi resellers"},
+    "enclosure": {"name": "Enclosure IP65, about 300 x 200 x 120 mm, with cable glands", "eur": 30, "supplier": "electrical wholesaler"},
+    "fasteners": {"name": "Fastener kit: M5 bolts and T-nuts, M3 for motors, M2 for the camera", "eur": 25, "supplier": "hardware store"},
+    "corner-bracket": {"name": "Corner bracket for 20-series extrusion", "eur": 1.5, "supplier": "OpenBuilds-type"},
+    "liner": {"name": "Root barrier and liner, EPDM or HDPE, per m2", "eur": 12, "supplier": "garden centre"},
+    "protection-mat": {"name": "Roof protection mat, per m2", "eur": 8, "supplier": "roofer's merchant"}
+  }
+}

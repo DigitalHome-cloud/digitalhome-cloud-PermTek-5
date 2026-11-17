@@ -1,0 +1,34 @@
+{
+  "about": "Gantry5-gen1 (docs/specs/roofbed-robot.md, docs/specs/gantry5-prototype.md). Millimetres. x along the bed's length, y across, z up; z = 0 is the soil's surface. railAboveSoil is the top of the x rails; zStack is from there down to the tool's tip with the z axis up, so the tool's clearance over the soil is railAboveSoil - zStack (packages/core GANTRY5).",
+  "bench": {
+    "about": "A table-top gantry over a seed tray: proves homing, limits, the e-stop, the watering nozzle and the driver before anything goes on the roof.",
+    "travel": [1000, 600],
+    "railAboveSoil": 250,
+    "soilAboveBase": 100,
+    "zStack": 200,
+    "reachBelowSoil": 80,
+    "dualX": false,
+    "postsPerSide": 2,
+    "plateMaterial": "birch-ply-12",
+    "bed": null
+  },
+  "full": {
+    "about": "Over the 3 m x 1.2 m bed, rails on posts standing on the bed's wooden frame.",
+    "park": 200,
+    "railAboveSoil": 650,
+    "rimAboveSoil": 30,
+    "zStack": 230,
+    "reachBelowSoil": 80,
+    "dualX": true,
+    "postSpacing": 1000,
+    "plateMaterial": "aluminium-6",
+    "bed": {
+      "length": 3000,
+      "width": 1200,
+      "substrateDepth": 150,
+      "board": [45, 195],
+      "post": [70, 70],
+      "tieRodEvery": 1000
+    }
+  }
+}

@@ -1,0 +1,24 @@
+@prefix perma:  <https://permaculture.digitalhome.cloud/ontology#> .
+@prefix id:     <https://permaculture.digitalhome.cloud/id/> .
+@prefix schema: <https://schema.org/> .
+
+# Added 2026-10-09: third set, from a roof bed and a small orchard.
+
+id:recipe-confiture-de-prunes a schema:Recipe ;
+    schema:name "Confiture de prunes"@fr , "Plum jam"@en , "Pflaumenmarmelade"@de ;
+    schema:inLanguage "fr" ;
+    schema:recipeYield "environ 5 pots de 370 g" ;
+    schema:totalTime "PT1H30M" ;
+    perma:preservesAs perma:Bottled ;
+    perma:shelfLifeDays 365 ;
+    schema:description "Ripe plums, stoned; the jam sets at 105 °C or when a drop wrinkles on a cold plate."@en ;
+    schema:recipeInstructions (
+        "Dénoyauter les prunes et les couper en quartiers."
+        "Les laisser macérer une nuit avec le sucre et le jus de citron."
+        "Cuire à feu vif en remuant jusqu'à la prise, environ 20 minutes."
+        "Mettre en pots chauds, fermer et retourner."
+    ) ;
+    perma:usesIngredient
+        [ schema:name "2 kg de prunes" ; perma:crop id:crop-plum ; perma:part perma:Fruit ; perma:acceptsMethod perma:Fresh , perma:Frozen ] ,
+        [ schema:name "1,2 kg de sucre" ] ,
+        [ schema:name "1 citron" ] .

@@ -1,0 +1,347 @@
+@prefix perma:   <https://permaculture.digitalhome.cloud/ontology#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+
+# ============================================================
+# perma-core, habitat module, v0.1: the places of one habitat (a DHC home,
+# ADR 0015) and what grows there, as its owners map it.
+#
+#   - a GARDEN ZONE, shown to people as an AREA of the site: the roof, the garden, a balcony. Its exposure and a
+#     microclimate offset adjust the area's climate (a roof is warmer and
+#     windier than the street).
+#   - a GUILD (Perma5Guild): an area's working unit of bed, worm box, tank,
+#     sensors and robot(s). Its type (WormBed5 ...) fixes the structure.
+#   - a GROWING BED in a zone, split into square cells: the grid a person
+#     plants by hand today and a gantry robot can work later.
+#   - a PLANTING CELL: where one plant or sowing point stands. Only planted
+#     cells are stored; the crop's spacing gives how many cells it covers.
+#   - a GARDEN PLANT: a plant kept for years at one spot, e.g. a fruit tree.
+#     Positions are in metres inside its zone, never geographic.
+#   - a guild's WATER (v0.2, docs/adr/0025): rain catchments, water stores (a
+#     rain barrel, the bed's tank pipes, the worm box's sump, a garden tank)
+#     and the valves between them. Worm liquid and clean water are kept apart.
+#
+# The things are the habitat's own (id space of the app); crops are linked
+# from the shared library by IRI. Namespace provisional, as the other modules.
+# ============================================================
+
+<https://permaculture.digitalhome.cloud/ontology/habitat>
+    a owl:Ontology ;
+    rdfs:label "perma-core: habitat"@en , "perma-core: Lebensraum"@de , "perma-core : habitat"@fr ;
+    dcterms:description "Zones, growing beds with their cells, and long-lived plants of one habitat."@en ;
+    owl:versionInfo "0.2.0" .
+
+# ------------------------------------------------------------ classes
+
+perma:GardenZone a owl:Class ;
+    rdfs:label "Area"@en , "Bereich"@de , "Zone"@fr ;
+    rdfs:comment "An area of a site, with one microclimate: the roof, the garden, a balcony. People call it an area; the class keeps its first name."@en .
+
+perma:Guild a owl:Class ;
+    rdfs:label "Perma5Guild"@en , "Perma5Guild"@de , "Perma5Guild"@fr ;
+    rdfs:comment "An area's working unit: its bed, worm box, tank, sensors and robot(s), kept and run together. A guild TYPE (perma:guildType, e.g. WormBed5) fixes the structure: the parts, the jobs, the sensors. An instance sets the sizes and settings. One edge runs one guild (docs/adr/0020, docs/specs/perma5guild.md)."@en .
+
+perma:GrowingBed a owl:Class ;
+    rdfs:label "Growing bed"@en , "Beet"@de , "Planche de culture"@fr ;
+    rdfs:comment "A rectangular bed in a zone, split into square cells (row 0 and column 0 at one corner)."@en .
+
+perma:BedFarm a owl:Class ;
+    rdfs:label "Farm of beds"@en , "Beetfeld"@de , "Ensemble de planches"@fr ;
+    rdfs:comment "Rectangle beds of one size in rows, with paths between them: the surface category perma:BedFarmSurface. Its beds are ordinary growing beds that say perma:inFarm."@en .
+
+perma:GrowingPeriod a owl:Class ;
+    rdfs:label "Growing period"@en , "Anbauabschnitt"@de , "Période de culture"@fr ;
+    rdfs:comment "A stretch of a bed's year, by month: a growing period with its plant sets and its target (the cells that say perma:inPeriod), or a rest. A bed's periods do not overlap; the bed works through them year after year (docs/adr/0029)."@en .
+
+perma:PlantingCell a owl:Class ;
+    rdfs:label "Planting cell"@en , "Pflanzzelle"@de , "Case de plantation"@fr ;
+    rdfs:comment "Where one plant or sowing point of a bed stands, with its crop and how far it has got."@en .
+
+perma:GardenPlant a owl:Class ;
+    rdfs:label "Garden plant"@en , "Gartenpflanze"@de , "Plante du jardin"@fr ;
+    rdfs:comment "A plant kept for years at one spot of a zone, e.g. a fruit tree or a currant bush."@en .
+
+# ------------------------------------------------------------ zones
+
+perma:zoneKind a owl:ObjectProperty ;
+    rdfs:domain perma:GardenZone ; rdfs:range skos:Concept ;
+    rdfs:label "kind of area"@en , "Art des Bereichs"@de , "type de zone"@fr ;
+    rdfs:comment "One concept from perma:ZoneKinds."@en .
+
+perma:exposure a owl:ObjectProperty ;
+    rdfs:domain perma:GardenZone ; rdfs:range skos:Concept ;
+    rdfs:label "exposure"@en , "Lage"@de , "exposition"@fr ;
+    rdfs:comment "Concepts from perma:Exposures: sun, half shade, shade, windy."@en .
+
+perma:areaM2 a owl:DatatypeProperty ;
+    rdfs:domain perma:GardenZone ; rdfs:range xsd:decimal ;
+    rdfs:label "area (m²)"@en , "Fläche (m²)"@de , "surface (m²)"@fr .
+
+perma:microclimateOffsetC a owl:DatatypeProperty ;
+    rdfs:domain perma:GardenZone ; rdfs:range xsd:decimal ;
+    rdfs:label "microclimate offset (°C)"@en , "Mikroklima-Abweichung (°C)"@de , "écart microclimatique (°C)"@fr ;
+    rdfs:comment "Added to the area's monthly temperatures for this zone: about +1 on a roof, 0 in an open garden, below 0 in a frost hollow."@en .
+
+perma:inZone a owl:ObjectProperty ;
+    rdfs:range perma:GardenZone ;
+    rdfs:label "in area"@en , "im Bereich"@de , "dans la zone"@fr .
+
+# ------------------------------------------------------------ guilds
+
+perma:guildType a owl:ObjectProperty ;
+    rdfs:domain perma:Guild ; rdfs:range skos:Concept ;
+    rdfs:label "guild type"@en , "Gildentyp"@de , "type de guilde"@fr ;
+    rdfs:comment "One concept from perma:GuildTypes. The first is perma:WormBed5: a flat bed with a worm box at one end, worked by a gantry."@en .
+
+perma:robotModel a owl:ObjectProperty ;
+    rdfs:domain perma:Guild ; rdfs:range skos:Concept ;
+    rdfs:label "robot"@en , "Roboter"@de , "robot"@fr ;
+    rdfs:comment "The robot that works the guild: one concept from perma:RobotModels, e.g. perma:Gantry5Gen1 (Gantry5, first generation)."@en .
+
+perma:wormsMayLeave a owl:DatatypeProperty ;
+    rdfs:domain perma:Guild ; rdfs:range xsd:boolean ;
+    rdfs:label "worms may leave the box"@en , "Würmer dürfen die Kiste verlassen"@de , "les vers peuvent quitter le bac"@fr ;
+    rdfs:comment "True: the worm box has exits into the bed's soil, a refuge when the box turns too hot, cold or sour. False: a closed box, with cleaner measurements and no refuge."@en .
+
+perma:inGuild a owl:ObjectProperty ;
+    rdfs:range perma:Guild ;
+    rdfs:label "in guild"@en , "in der Gilde"@de , "dans la guilde"@fr ;
+    rdfs:comment "The guild a bed or a water part belongs to. A bed without one is a plain bed, worked by hand. A water part may stand in another area than its guild (a garden tank), so its own perma:inZone says where."@en .
+
+# ------------------------------------------------------------ beds and cells
+
+perma:lengthCm a owl:DatatypeProperty ;
+    rdfs:domain perma:GrowingBed ; rdfs:range xsd:integer ;
+    rdfs:label "length (cm)"@en , "Länge (cm)"@de , "longueur (cm)"@fr ;
+    rdfs:comment "Along the columns."@en .
+
+perma:widthCm a owl:DatatypeProperty ;
+    rdfs:domain perma:GrowingBed ; rdfs:range xsd:integer ;
+    rdfs:label "width (cm)"@en , "Breite (cm)"@de , "largeur (cm)"@fr ;
+    rdfs:comment "Along the rows."@en .
+
+perma:substrateDepthCm a owl:DatatypeProperty ;
+    rdfs:domain perma:GrowingBed ; rdfs:range xsd:integer ;
+    rdfs:label "substrate depth (cm)"@en , "Substrattiefe (cm)"@de , "profondeur du substrat (cm)"@fr ;
+    rdfs:comment "The soil the plants root in, above the tank pipes when the bed has them."@en .
+
+perma:cellSizeCm a owl:DatatypeProperty ;
+    rdfs:domain perma:GrowingBed ; rdfs:range xsd:integer ;
+    rdfs:label "cell size (cm)"@en , "Zellgröße (cm)"@de , "taille de case (cm)"@fr .
+
+perma:substrateKind a owl:ObjectProperty ;
+    rdfs:domain perma:GrowingBed ; rdfs:range skos:Concept ;
+    rdfs:label "substrate"@en , "Substrat"@de , "substrat"@fr ;
+    rdfs:comment "One concept from perma:SubstrateKinds. It sets how heavy the wet bed is (docs/specs/roofbed-system.md)."@en .
+
+perma:tankPipeCount a owl:DatatypeProperty ;
+    rdfs:domain perma:GrowingBed ; rdfs:range xsd:integer ;
+    rdfs:label "tank pipes"@en , "Tankrohre"@de , "tuyaux réservoir"@fr ;
+    rdfs:comment "Drain pipes lying under the substrate along the bed's length: the water tank of a wicking bed. The soil draws the water up from below."@en .
+
+perma:tankPipeMm a owl:DatatypeProperty ;
+    rdfs:domain perma:GrowingBed ; rdfs:range xsd:integer ;
+    rdfs:label "pipe diameter (mm)"@en , "Rohrdurchmesser (mm)"@de , "diamètre des tuyaux (mm)"@fr ;
+    rdfs:comment "Outer diameter of the tank pipes, e.g. 110."@en .
+
+perma:mulchCm a owl:DatatypeProperty ;
+    rdfs:domain perma:GrowingBed ; rdfs:range xsd:integer ;
+    rdfs:label "mulch (cm)"@en , "Mulch (cm)"@de , "paillis (cm)"@fr ;
+    rdfs:comment "Thickness of the mulch on the bed, 0 for none. It keeps the soil moist and most weeds down. On a robot bed keep it thin (up to about 3 cm): a thick mulch stops a seeder and hides the soil from the camera."@en .
+
+perma:wormBinCm a owl:DatatypeProperty ;
+    rdfs:domain perma:GrowingBed ; rdfs:range xsd:integer ;
+    rdfs:label "worm box (cm)"@en , "Wurmkiste (cm)"@de , "lombricomposteur (cm)"@fr ;
+    rdfs:comment "Length of the bed's far end (the highest columns) taken by a worm compost box: two bins, the upper one above the soil for the worms, the lower one a sump for the liquid, which a tap lets on to the tank pipes. No cells are planted there."@en .
+
+perma:surfaceCategory a owl:ObjectProperty ;
+    rdfs:range skos:Concept ;
+    rdfs:label "surface category"@en , "Flächenart"@de , "catégorie de surface"@fr ;
+    rdfs:comment "What kind of surface a bed or farm is (perma:SurfaceCategories). Each category has its own limits and its own planner; a bed without one is a rectangle bed."@en .
+
+perma:inFarm a owl:ObjectProperty ;
+    rdfs:domain perma:GrowingBed ; rdfs:range perma:BedFarm ;
+    rdfs:label "in farm"@en , "im Beetfeld"@de , "dans l'ensemble"@fr .
+
+perma:bedRows a owl:DatatypeProperty ;
+    rdfs:domain perma:BedFarm ; rdfs:range xsd:integer ;
+    rdfs:label "rows of beds"@en , "Beetreihen"@de , "rangs de planches"@fr .
+
+perma:bedsPerRow a owl:DatatypeProperty ;
+    rdfs:domain perma:BedFarm ; rdfs:range xsd:integer ;
+    rdfs:label "beds per row"@en , "Beete je Reihe"@de , "planches par rang"@fr .
+
+perma:pathCm a owl:DatatypeProperty ;
+    rdfs:domain perma:BedFarm ; rdfs:range xsd:integer ;
+    rdfs:label "path (cm)"@en , "Weg (cm)"@de , "allée (cm)"@fr ;
+    rdfs:comment "Width of the paths between the beds."@en .
+
+perma:bedLengthCm a owl:DatatypeProperty ;
+    rdfs:domain perma:BedFarm ; rdfs:range xsd:integer ;
+    rdfs:label "bed length (cm)"@en , "Beetlänge (cm)"@de , "longueur des planches (cm)"@fr .
+
+perma:bedWidthCm a owl:DatatypeProperty ;
+    rdfs:domain perma:BedFarm ; rdfs:range xsd:integer ;
+    rdfs:label "bed width (cm)"@en , "Beetbreite (cm)"@de , "largeur des planches (cm)"@fr .
+
+perma:ofBed a owl:ObjectProperty ;
+    rdfs:domain perma:GrowingPeriod ; rdfs:range perma:GrowingBed ;
+    rdfs:label "of bed"@en , "des Beets"@de , "de la planche"@fr .
+
+perma:fromMonth a owl:DatatypeProperty ;
+    rdfs:domain perma:GrowingPeriod ; rdfs:range xsd:integer ;
+    rdfs:label "from month"@en , "ab Monat"@de , "du mois"@fr ;
+    rdfs:comment "The period's first month, 1..12."@en .
+
+perma:toMonth a owl:DatatypeProperty ;
+    rdfs:domain perma:GrowingPeriod ; rdfs:range xsd:integer ;
+    rdfs:label "to month"@en , "bis Monat"@de , "au mois"@fr ;
+    rdfs:comment "The period's last month, 1..12; below perma:fromMonth it lies in the next year (November to February)."@en .
+
+perma:periodKind a owl:ObjectProperty ;
+    rdfs:domain perma:GrowingPeriod ; rdfs:range skos:Concept ;
+    rdfs:label "kind"@en , "Art"@de , "type"@fr ;
+    rdfs:comment "One concept from perma:PeriodKinds: growing or rest."@en .
+
+perma:setChoice a owl:ObjectProperty ;
+    rdfs:domain perma:GrowingPeriod ;
+    rdfs:label "plant set chosen"@en , "gewähltes Pflanzenset"@de , "ensemble choisi"@fr ;
+    rdfs:comment "A plant set the period is planted from, with its share of the room (perma:plantSet, perma:share). A rest period's set is its cover crop."@en .
+
+perma:plantSet a owl:ObjectProperty ;
+    rdfs:range perma:PlantSet ;
+    rdfs:label "plant set"@en , "Pflanzenset"@de , "ensemble de plantes"@fr .
+
+perma:inPeriod a owl:ObjectProperty ;
+    rdfs:domain perma:PlantingCell ; rdfs:range perma:GrowingPeriod ;
+    rdfs:label "in period"@en , "im Abschnitt"@de , "dans la période"@fr ;
+    rdfs:comment "The growing period whose target this cell is. A cell without one belongs to the bed as it stands."@en .
+
+perma:inBed a owl:ObjectProperty ;
+    rdfs:domain perma:PlantingCell ; rdfs:range perma:GrowingBed ;
+    rdfs:label "in bed"@en , "im Beet"@de , "dans la planche"@fr .
+
+perma:row a owl:DatatypeProperty ;
+    rdfs:domain perma:PlantingCell ; rdfs:range xsd:integer ;
+    rdfs:label "row"@en , "Reihe"@de , "rangée"@fr .
+
+perma:col a owl:DatatypeProperty ;
+    rdfs:domain perma:PlantingCell ; rdfs:range xsd:integer ;
+    rdfs:label "column"@en , "Spalte"@de , "colonne"@fr .
+
+perma:grows a owl:ObjectProperty ;
+    rdfs:range perma:Crop ;
+    rdfs:label "grows"@en , "trägt"@de , "porte"@fr ;
+    rdfs:comment "The crop of the library a cell or a garden plant grows."@en .
+
+perma:cellStatus a owl:ObjectProperty ;
+    rdfs:domain perma:PlantingCell ; rdfs:range skos:Concept ;
+    rdfs:label "status"@en , "Stand"@de , "état"@fr ;
+    rdfs:comment "One concept from perma:CellStatuses: planned, sown, growing, harvested, lost."@en .
+
+perma:cellSowingDepthMm a owl:DatatypeProperty ;
+    rdfs:domain perma:PlantingCell ; rdfs:range xsd:integer ;
+    rdfs:label "sowing depth here (mm)"@en , "Saattiefe hier (mm)"@de , "profondeur de semis ici (mm)"@fr ;
+    rdfs:comment "Only when this cell differs from the crop's perma:sowingDepthMm."@en .
+
+perma:cellSeedsPerPoint a owl:DatatypeProperty ;
+    rdfs:domain perma:PlantingCell ; rdfs:range xsd:integer ;
+    rdfs:label "seeds here"@en , "Samen hier"@de , "graines ici"@fr ;
+    rdfs:comment "Only when this cell differs from the crop's perma:seedsPerPoint."@en .
+
+perma:sownOn a owl:DatatypeProperty ;
+    rdfs:domain perma:PlantingCell ; rdfs:range xsd:date ;
+    rdfs:label "sown on"@en , "gesät am"@de , "semé le"@fr .
+
+# ------------------------------------------------------------ garden plants
+
+perma:plantedYear a owl:DatatypeProperty ;
+    rdfs:domain perma:GardenPlant ; rdfs:range xsd:integer ;
+    rdfs:label "planted in"@en , "gepflanzt"@de , "planté en"@fr .
+
+perma:rootstock a owl:DatatypeProperty ;
+    rdfs:domain perma:GardenPlant ; rdfs:range xsd:string ;
+    rdfs:label "rootstock"@en , "Unterlage"@de , "porte-greffe"@fr ;
+    rdfs:comment "For a grafted tree: the rootstock, which sets its size (e.g. Quince A, St Julien A, Gisela 5)."@en .
+
+perma:xM a owl:DatatypeProperty ;
+    rdfs:domain perma:GardenPlant ; rdfs:range xsd:decimal ;
+    rdfs:label "x (m)"@en , "x (m)"@de , "x (m)"@fr ;
+    rdfs:comment "Metres from the zone's left edge, on the zone's own sketch."@en .
+
+perma:yM a owl:DatatypeProperty ;
+    rdfs:domain perma:GardenPlant ; rdfs:range xsd:decimal ;
+    rdfs:label "y (m)"@en , "y (m)"@de , "y (m)"@fr ;
+    rdfs:comment "Metres from the zone's top edge, on the zone's own sketch."@en .
+
+# ------------------------------------------------------------ water (v0.2, docs/adr/0025)
+#
+#   roof catchment ─gutter→ rain barrel ─tap→ tank pipes (the bed)
+#   worm box sump ─valve→ tank pipes
+#   worm box sump ─valve→ garden tank          the surplus, for the trees
+#
+# A store HOLDS clean water, worm liquid or both. Worm liquid never flows into
+# a store kept for clean water (a barrel that feeds the gantry's nozzle): the
+# shapes refuse it. That is roofbed-system.md's "never on leaves" as data.
+
+perma:RainCatchment a owl:Class ;
+    rdfs:label "Rain catchment"@en , "Regenfläche"@de , "Surface de captage"@fr ;
+    rdfs:comment "A surface whose rain is collected, e.g. a stretch of roof with its gutter."@en .
+
+perma:WaterStore a owl:Class ;
+    rdfs:label "Water store"@en , "Wasserspeicher"@de , "Réserve d'eau"@fr ;
+    rdfs:comment "Something that holds water or worm liquid: a rain barrel, a bed's tank pipes, a worm box's sump, a garden tank. Its kind is a concept from perma:WaterStoreKinds."@en .
+
+perma:Valve a owl:Class ;
+    rdfs:label "Valve"@en , "Ventil"@de , "Vanne"@fr ;
+    rdfs:comment "A tap between two parts: water or liquid flows from one to the other while it is open. A person opens a manual tap; an edge valve opens when the edge does it, after a person confirmed."@en .
+
+perma:catchmentM2 a owl:DatatypeProperty ;
+    rdfs:domain perma:RainCatchment ; rdfs:range xsd:decimal ;
+    rdfs:label "catchment (m²)"@en , "Auffangfläche (m²)"@de , "surface de captage (m²)"@fr ;
+    rdfs:comment "Area that sends its rain to the store, seen from above."@en .
+
+perma:runoffShare a owl:DatatypeProperty ;
+    rdfs:domain perma:RainCatchment ; rdfs:range xsd:decimal ;
+    rdfs:label "runoff share"@en , "Abflussanteil"@de , "coefficient de ruissellement"@fr ;
+    rdfs:comment "The share of the rain that reaches the store, 0..1: about 0.8 for a hard roof, 0.5 for a gravel roof, 0.3 for a green roof."@en .
+
+perma:drainsTo a owl:ObjectProperty ;
+    rdfs:domain perma:RainCatchment ; rdfs:range perma:WaterStore ;
+    rdfs:label "drains to"@en , "leitet in"@de , "s'écoule vers"@fr ;
+    rdfs:comment "The store its gutter fills, without a valve."@en .
+
+perma:storeKind a owl:ObjectProperty ;
+    rdfs:domain perma:WaterStore ; rdfs:range skos:Concept ;
+    rdfs:label "kind of store"@en , "Art des Speichers"@de , "type de réserve"@fr ;
+    rdfs:comment "One concept from perma:WaterStoreKinds."@en .
+
+perma:capacityL a owl:DatatypeProperty ;
+    rdfs:domain perma:WaterStore ; rdfs:range xsd:decimal ;
+    rdfs:label "capacity (l)"@en , "Fassungsvermögen (l)"@de , "capacité (l)"@fr .
+
+perma:holds a owl:ObjectProperty ;
+    rdfs:domain perma:WaterStore ; rdfs:range skos:Concept ;
+    rdfs:label "holds"@en , "enthält"@de , "contient"@fr ;
+    rdfs:comment "What may be in it: concepts from perma:WaterKinds. A store with only perma:CleanWater never takes worm liquid."@en .
+
+perma:overflowTo a owl:ObjectProperty ;
+    rdfs:domain perma:WaterStore ; rdfs:range perma:WaterStore ;
+    rdfs:label "overflows to"@en , "läuft über in"@de , "déborde vers"@fr ;
+    rdfs:comment "Where it goes when full. None: the roof drain or the ground."@en .
+
+perma:flowFrom a owl:ObjectProperty ;
+    rdfs:domain perma:Valve ; rdfs:range perma:WaterStore ;
+    rdfs:label "from"@en , "von"@de , "de"@fr .
+
+perma:flowTo a owl:ObjectProperty ;
+    rdfs:domain perma:Valve ; rdfs:range perma:WaterStore ;
+    rdfs:label "to"@en , "nach"@de , "vers"@fr .
+
+perma:valveKind a owl:ObjectProperty ;
+    rdfs:domain perma:Valve ; rdfs:range skos:Concept ;
+    rdfs:label "kind of valve"@en , "Art des Ventils"@de , "type de vanne"@fr ;
+    rdfs:comment "One concept from perma:ValveKinds: a manual tap or an edge valve."@en .
